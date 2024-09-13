@@ -26,4 +26,6 @@ The API and database for the LEMURS project.
 
 ### Start
 
+Run: `./gradlew build`
+Copy the `lemurs-api-0.0.1-SNAPSHOT.jar` file to the docker folder.  Rename it to `lemurs-api`.
 Run: `docker-compose up`

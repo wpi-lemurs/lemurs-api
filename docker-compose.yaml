@@ -12,11 +12,31 @@ services:
     volumes:
       - lemurs-data:/var/lib/postgresql/data 
       - ./database/createTables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    networks:
+      - lemurs-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 1s
       timeout: 5s
       retries: 10
+  api:
+    container_name: lemurs-api
+    image: lemurs-api-image
+    build:
+      context: docker
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    restart: always
+    environment:
+      LEMURS_POSTRGRES_HOST: lemurs-db:5432
+      LEMURS_POSTRGRES_USERNAME: ${LEMURS_POSTRGRES_USERNAME}
+      LEMURS_POSTRGRES_PASSWORD: ${LEMURS_POSTRGRES_PASSWORD}
+    networks:
+      - lemurs-network
 volumes:
   lemurs-data:
     driver: local
+networks:
+  lemurs-network:
+    driver: bridge

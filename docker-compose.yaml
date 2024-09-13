@@ -1,0 +1,22 @@
+services:
+  db:
+    container_name: lemurs-db
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      POSTGRES_USER: ${LEMURS_POSTRGRES_USERNAME}
+      POSTGRES_PASSWORD: ${LEMURS_POSTRGRES_PASSWORD}
+      POSTGRES_DB: lemurs
+    volumes:
+      - lemurs-data:/var/lib/postgresql/data 
+      - ./database/createTables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+volumes:
+  lemurs-data:
+    driver: local

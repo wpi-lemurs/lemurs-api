@@ -20,6 +20,7 @@ The API and database for the LEMURS project.
 
 ### Environment Variables
 
+`LEMURS_POSTRGRES_HOST` - The database host url. Example: `localhost:5432` \
 `LEMURS_POSTRGRES_USERNAME` - The database admin username. \
 `LEMURS_POSTRGRES_PASSWORD` - The database admin password.
 

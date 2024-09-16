@@ -38,3 +38,6 @@ out/
 
 ### Built Jar ###
 docker/lemurs-api.jar
+
+### Environment File ###
+.env

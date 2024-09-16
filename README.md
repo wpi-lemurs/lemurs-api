@@ -21,6 +21,8 @@ The API and database for the LEMURS project.
 
 ### Environment Variables
 
+Copy `.env.example` to `.env` and edit variables as needed:
+
 `LEMURS_POSTRGRES_USERNAME` - The database admin username. \
 `LEMURS_POSTRGRES_PASSWORD` - The database admin password.
 

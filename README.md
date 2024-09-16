@@ -7,6 +7,7 @@ The API and database for the LEMURS project.
 - [Links](#links)
 - [Requirements](#requirements)
 - [Setup](#setup)
+- [Run](#run)
 - [Quick Development](#quick-development)
 
 ## Links
@@ -23,12 +24,21 @@ The API and database for the LEMURS project.
 
 Copy `.env.example` to `.env` and edit variables as needed:
 
+`COMPOSE_PROFILES` - Which environment this is for. Enumeration: `dev`, `dev-quick`, `prod`
 `LEMURS_POSTRGRES_USERNAME` - The database admin username. \
 `LEMURS_POSTRGRES_PASSWORD` - The database admin password.
 
-### Start
+## Run
 
-Run: `docker-compose up -d`
+Run: `docker-compose up -d` \
+Stop: `docker-compose down`
+
+Stop and remove the image: Run compose down and add a `--rmi local` flag.
+
+> [!WARNING]  
+> The followng deletes data! \
+> Stop and remove volumes: Run compose down and add a `-v` flag.
+
 
 ## Quick Development
 
@@ -38,5 +48,5 @@ To do this:
 1. Install JDK 21
 2. Add the following environment variable: \
 `LEMURS_POSTRGRES_HOST` - The database host url. Default: `localhost:5432`
-3. Shut off the api container. (But not the database container.)
+3. Use `COMPOSE_PROFILES = "dev-quick"` for the environment.
 4. Run `./gradlew bootRun` to start api locally.  

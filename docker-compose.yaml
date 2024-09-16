@@ -1,5 +1,9 @@
 services:
   db:
+    profiles:
+      - dev
+      - dev-quick
+      - prod
     container_name: lemurs-db
     image: postgres:alpine
     ports:
@@ -20,6 +24,9 @@ services:
       timeout: 5s
       retries: 10
   api:
+    profiles:
+      - dev
+      - prod
     container_name: lemurs-api
     image: lemurs-api-image
     depends_on:

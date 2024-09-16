@@ -7,6 +7,7 @@ The API and database for the LEMURS project.
 - [Links](#links)
 - [Requirements](#requirements)
 - [Setup](#setup)
+- [Quick Development](#quick-development)
 
 ## Links
 
@@ -20,12 +21,20 @@ The API and database for the LEMURS project.
 
 ### Environment Variables
 
-`LEMURS_POSTRGRES_HOST` - The database host url. Example: `localhost:5432` \
 `LEMURS_POSTRGRES_USERNAME` - The database admin username. \
 `LEMURS_POSTRGRES_PASSWORD` - The database admin password.
 
 ### Start
 
-Run: `./gradlew build`
-Copy the `lemurs-api-0.0.1-SNAPSHOT.jar` file to the docker folder.  Rename it to `lemurs-api`.
-Run: `docker-compose up`
+Run: `docker-compose up -d`
+
+## Quick Development
+
+When trying to quickly re-run the application, it may be preferable to run the api locally, instead of rebuilding the docker image.
+
+To do this:
+1. Install JDK 21
+2. Add the following environment variable: \
+`LEMURS_POSTRGRES_HOST` - The database host url. Default: `localhost:5432`
+3. Shut off the api container. (But not the database container.)
+4. Run `./gradlew bootRun` to start api locally.  

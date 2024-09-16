@@ -8,6 +8,10 @@ plugins {
 group = 'edu.wpi.lemurs'
 version = '0.0.1-SNAPSHOT'
 
+bootJar {
+	archiveFileName = 'lemurs-api.jar'
+}
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)

@@ -1,13 +1,10 @@
 services:
   db:
+    &db
     profiles:
-      - dev
-      - dev-partial
-      - prod
+      - base
     container_name: lemurs-db
     image: postgres:alpine
-    ports:
-      - 5432:5432
     restart: always
     environment:
       POSTGRES_USER: ${LEMURS_POSTRGRES_USERNAME}
@@ -23,14 +20,23 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
-  api:
+  db-dev: 
     profiles:
       - dev
+      - dev-partial
+    <<: *db
+    ports:
+      - 5432:5432
+  db-prod:
+    profiles:
       - prod
+    <<: *db
+  api:
+    &api
+    profiles:
+      - base
     container_name: lemurs-api
     image: lemurs-api-image
-    depends_on:
-      - db
     build:
       context: .
       dockerfile: Dockerfile
@@ -43,6 +49,18 @@ services:
       LEMURS_POSTRGRES_PASSWORD: ${LEMURS_POSTRGRES_PASSWORD}
     networks:
       - lemurs-network
+  api-dev: 
+    profiles:
+      - dev
+    <<: *api
+    depends_on:
+      - db-dev
+  api-prod:
+    profiles:
+      - prod
+    <<: *api
+    depends_on:
+      - db-prod
 volumes:
   lemurs-data:
     driver: local

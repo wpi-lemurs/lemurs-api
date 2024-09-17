@@ -33,7 +33,7 @@ The API and database for the LEMURS project.
 
 Copy `.env.example` to `.env` and edit variables as needed:
 
-`COMPOSE_PROFILES` - Which environment this is for. Enumeration: `dev`, `dev-quick`, `prod`
+`COMPOSE_PROFILES` - Which environment this is for. Enumeration: `dev`, `dev-partial`, `prod`
 `LEMURS_POSTRGRES_USERNAME` - The database admin username. \
 `LEMURS_POSTRGRES_PASSWORD` - The database admin password.
 
@@ -57,5 +57,5 @@ To do this:
 1. Install JDK 21
 2. Add the following environment variable: \
 `LEMURS_POSTRGRES_HOST` - The database host url. If database is run locally, this should be: `localhost:5432`.
-3. Use `COMPOSE_PROFILES = "dev-quick"` for the environment.
+3. Use `COMPOSE_PROFILES = "dev-partial"` for the environment.
 4. Run `./gradlew bootRun` to start api locally.  

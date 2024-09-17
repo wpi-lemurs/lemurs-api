@@ -2,7 +2,7 @@ services:
   db:
     profiles:
       - dev
-      - dev-quick
+      - dev-partial
       - prod
     container_name: lemurs-db
     image: postgres:alpine

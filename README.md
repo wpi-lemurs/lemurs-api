@@ -35,7 +35,8 @@ Copy `.env.example` to `.env` and edit variables as needed:
 
 `COMPOSE_PROFILES` - Which environment this is for. Enumeration: `dev`, `dev-partial`, `prod`
 `LEMURS_POSTRGRES_USERNAME` - The database admin username. \
-`LEMURS_POSTRGRES_PASSWORD` - The database admin password.
+`LEMURS_POSTRGRES_PASSWORD` - The database admin password. \
+`LEMURS_API_PORT` - The api port that will be exposed. Example: `8080`
 
 ## Run
 
@@ -56,6 +57,6 @@ When trying to quickly re-run the application, it may be preferable to run the a
 To do this:
 1. Install JDK 21
 2. Add the following environment variable: \
-`LEMURS_POSTRGRES_HOST` - The database host url. If database is run locally, this should be: `localhost:5432`.
+`LEMURS_POSTRGRES_HOST` - The database host url. If database is run locally, this should be: `localhost:5432`
 3. Use `COMPOSE_PROFILES = "dev-partial"` for the environment.
 4. Run `./gradlew bootRun` to start api locally.  

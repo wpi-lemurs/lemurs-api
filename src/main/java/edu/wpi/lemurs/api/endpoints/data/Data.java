@@ -1,6 +1,8 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.data;
 
+import edu.wpi.lemurs.api.status.DataStatus;
+import edu.wpi.lemurs.api.status.DataStatusConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -14,9 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-
-import edu.wpi.lemurs.api.status.DataStatus;
-import edu.wpi.lemurs.api.status.DataStatusConverter;
 
 /** A {@link Data} represents a single unit of generic data. */
 @Table

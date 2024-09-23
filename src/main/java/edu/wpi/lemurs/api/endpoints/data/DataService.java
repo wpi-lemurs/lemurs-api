@@ -3,7 +3,6 @@ package edu.wpi.lemurs.api.endpoints.data;
 
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
 import edu.wpi.lemurs.api.status.DataStatus;
-
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

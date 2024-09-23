@@ -1,11 +1,9 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.services;
+package edu.wpi.lemurs.api.endpoints.data;
 
-import edu.wpi.lemurs.api.api.data.DataDto;
-import edu.wpi.lemurs.api.entities.data.Data;
-import edu.wpi.lemurs.api.entities.data.DataStatus;
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
-import edu.wpi.lemurs.api.repositories.DataRepository;
+import edu.wpi.lemurs.api.status.DataStatus;
+
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

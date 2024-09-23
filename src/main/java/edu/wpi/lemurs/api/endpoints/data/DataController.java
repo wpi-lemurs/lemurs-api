@@ -1,7 +1,6 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.api.data;
+package edu.wpi.lemurs.api.endpoints.data;
 
-import edu.wpi.lemurs.api.services.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Creates an endpoint for posting data. */
 @RestController
-public class DataApi {
+public class DataController {
 
   private DataService dataService;
 
-  /** Autowires a {@link DataApi} */
+  /** Autowires a {@link DataController} */
   @Autowired
-  public DataApi(DataService dataService) {
+  public DataController(DataService dataService) {
     this.dataService = dataService;
   }
 

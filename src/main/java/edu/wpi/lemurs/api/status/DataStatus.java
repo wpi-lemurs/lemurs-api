@@ -1,5 +1,5 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.entities.data;
+package edu.wpi.lemurs.api.status;
 
 import java.util.HashMap;
 import java.util.Map;

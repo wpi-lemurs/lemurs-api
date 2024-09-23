@@ -1,5 +1,5 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.api.data;
+package edu.wpi.lemurs.api.endpoints.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;

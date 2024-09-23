@@ -1,3 +1,4 @@
+/* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api;
 
 import edu.wpi.lemurs.api.status.DataStatus;

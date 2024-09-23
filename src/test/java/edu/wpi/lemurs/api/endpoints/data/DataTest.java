@@ -1,20 +1,20 @@
+/* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import edu.wpi.lemurs.api.TestConstants;
 import org.junit.jupiter.api.Test;
 
-import edu.wpi.lemurs.api.TestConstants;
+class DataTest implements TestConstants {
 
-public class DataTest implements TestConstants {
-  
   @Test
-  public void testData() {
+  void testData() {
     Data data = new Data(TEST_ID_0, TEST_TYPE_0, TEST_JSON_DATA_0, TEST_STATUS_UNPROCESSED);
 
-    assertEquals(data.getId(), TEST_ID_0);
-    assertEquals(data.getType(), TEST_TYPE_0);
-    assertEquals(data.getData(), TEST_JSON_DATA_0);
-    assertEquals(data.getStatus(), TEST_STATUS_UNPROCESSED);
+    assertEquals(TEST_ID_0, data.getId());
+    assertEquals(TEST_TYPE_0, data.getType());
+    assertEquals(TEST_JSON_DATA_0, data.getData());
+    assertEquals(TEST_STATUS_UNPROCESSED, data.getStatus());
   }
 }

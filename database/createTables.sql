@@ -5,3 +5,10 @@ CREATE TABLE data (
   status INT NOT NULL,
 	PRIMARY KEY (id)
 );
+
+CREATE TABLE survey (
+	id INT GENERATED ALWAYS AS IDENTITY,
+  name VARCHAR(255) NOT NULL,
+  total INT NOT NULL, 
+  PRIMARY KEY (id)
+);

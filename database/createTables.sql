@@ -1,4 +1,4 @@
-CREATE TABLE user (
+CREATE TABLE app_user (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	umass_id INT NOT NULL,
 	is_disabled BOOLEAN NOT NULL,

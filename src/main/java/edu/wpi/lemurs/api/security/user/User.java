@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /** A {@link User} represents a user in the app. */
-@Table
+@Table(name = "app_user")
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

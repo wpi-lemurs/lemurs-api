@@ -1,10 +1,10 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.security.auth.jwt;
 
+import edu.wpi.lemurs.api.endpoints.user.User;
+import edu.wpi.lemurs.api.endpoints.user.UserService;
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
 import edu.wpi.lemurs.api.exceptions.ImpossibleRuntimeException;
-import edu.wpi.lemurs.api.security.user.User;
-import edu.wpi.lemurs.api.security.user.UserService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

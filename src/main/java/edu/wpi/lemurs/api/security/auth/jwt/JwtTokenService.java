@@ -1,8 +1,8 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.security.auth.jwt;
 
+import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
-import edu.wpi.lemurs.api.security.user.User;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;

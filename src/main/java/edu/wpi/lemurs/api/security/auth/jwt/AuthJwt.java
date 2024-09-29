@@ -1,7 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.security.auth.jwt;
 
-import edu.wpi.lemurs.api.security.user.User;
+import edu.wpi.lemurs.api.endpoints.user.User;
 import java.util.Objects;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;

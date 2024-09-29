@@ -1,5 +1,5 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.security.user;
+package edu.wpi.lemurs.api.endpoints.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

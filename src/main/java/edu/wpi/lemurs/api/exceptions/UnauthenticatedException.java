@@ -1,7 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.exceptions;
 
-import edu.wpi.lemurs.api.security.user.User;
+import edu.wpi.lemurs.api.endpoints.user.User;
 
 /**
  * An {@link Exception} when no {@link User} is authenticated for a secure request.

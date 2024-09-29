@@ -1,5 +1,5 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.security.user;
+package edu.wpi.lemurs.api.endpoints.user;
 
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
 import jakarta.transaction.Transactional;
@@ -38,11 +38,11 @@ public class UserService {
   /**
    * Creates a {@link User} from a UMass id.
    *
-   * @param umassID The new UMass id.
+   * @param userDto The new user's info.
    * @return The create {@link User}.
    */
-  public User createUser(Integer umassID) {
-    User user = new User(null, umassID, false, false);
+  public User createUser(UserDto userDto) {
+    User user = new User(null, userDto.getUmassId(), false, false);
     return userRepository.save(user);
   }
 }

@@ -25,13 +25,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class AuthJwtFilter extends OncePerRequestFilter {
 
-  private JwtTokenService jwtTokenProvider;
+  private JwtService jwtService;
   private UserService userService;
 
   /** Autowires a {@link AuthJwtFilter} */
   @Autowired
-  public AuthJwtFilter(JwtTokenService jwtTokenProvider, UserService userService) {
-    this.jwtTokenProvider = jwtTokenProvider;
+  public AuthJwtFilter(JwtService jwtService, UserService userService) {
+    this.jwtService = jwtService;
     this.userService = userService;
   }
 
@@ -48,13 +48,13 @@ public class AuthJwtFilter extends OncePerRequestFilter {
     }
 
     try {
-      jwtTokenProvider.validateToken(token);
+      jwtService.validateToken(token);
     } catch (JwtException e) {
       filterChain.doFilter(request, response);
       return;
     }
 
-    Integer id = jwtTokenProvider.getId(token);
+    Integer id = jwtService.getId(token);
     User user;
     try {
       user = userService.getUser(id);

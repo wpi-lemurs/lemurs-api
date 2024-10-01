@@ -14,9 +14,9 @@ import javax.crypto.SecretKey;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-/** A {@link JwtTokenService} is a service for creating and validating jwt tokens. */
+/** A {@link JwtService} is a service for creating and validating jwt tokens. */
 @Service
-public class JwtTokenService {
+public class JwtService {
 
   private static final long EXPIRATION_TIME_IN_MILLISECONDS = (long) 60 * 60 * 1000;
   private static final String JWT_SIGNATURE = System.getenv("LEMURS_SIGNATURE");

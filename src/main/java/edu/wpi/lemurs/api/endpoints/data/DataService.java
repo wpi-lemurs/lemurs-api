@@ -4,6 +4,8 @@ package edu.wpi.lemurs.api.endpoints.data;
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
 import edu.wpi.lemurs.api.status.DataStatus;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ public class DataService {
   private DataRepository dataRepository;
 
   /** Autowires a {@link DataService}. */
+  @Autowired
   public DataService(DataRepository dataRepository) {
     this.dataRepository = dataRepository;
   }

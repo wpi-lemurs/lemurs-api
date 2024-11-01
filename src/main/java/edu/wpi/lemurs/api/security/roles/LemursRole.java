@@ -1,13 +1,11 @@
+/* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.security.roles;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Map;
-import java.util.HashMap;
-
-/**
- * Represents a role for the LEMURS system.
- */
+/** Represents a role for the LEMURS system. */
 public enum LemursRole implements GrantedAuthority {
 
   /** A roleless can do nothing. */
@@ -34,8 +32,8 @@ public enum LemursRole implements GrantedAuthority {
   }
 
   /**
-   * Gets the {@link LemursRole} for the given permission value. If an invalid permission is given, returns
-   * {@code DataStatus.ROLELESS}.
+   * Gets the {@link LemursRole} for the given permission value. If an invalid permission is given,
+   * returns {@code DataStatus.ROLELESS}.
    */
   public static LemursRole valueOf(int permission) {
     LemursRole role = INT_TO_ROLE.get(permission);
@@ -50,6 +48,7 @@ public enum LemursRole implements GrantedAuthority {
 
   /**
    * Creates a role with a string representation and permissions level.
+   *
    * @param representation The string representation.
    * @param permission The permission level.
    */
@@ -65,6 +64,7 @@ public enum LemursRole implements GrantedAuthority {
 
   /**
    * Returns the role's permisison.
+   *
    * @return The role's permission level.
    */
   public int getPermission() {

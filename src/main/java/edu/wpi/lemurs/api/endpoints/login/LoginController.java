@@ -1,16 +1,15 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.login;
 
-import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.security.auth.jwt.JwtService;
+import edu.wpi.lemurs.api.security.auth.microsoft.AuthMicrosoftService;
+import edu.wpi.lemurs.api.security.auth.microsoft.MicrosoftLoginDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,11 +18,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class LoginController {
 
   private JwtService jwtService;
+  private AuthMicrosoftService authMicrosoftService;
 
   /** Autowires the {@link LoginController}. */
   @Autowired
-  public LoginController(JwtService jwtService) {
+  public LoginController(JwtService jwtService, AuthMicrosoftService authMicrosoftService) {
     this.jwtService = jwtService;
+    this.authMicrosoftService = authMicrosoftService;
   }
 
   /**
@@ -31,15 +32,11 @@ public class LoginController {
    * token.
    */
   @PostMapping("/auth/login")
-  public ResponseEntity<JwtResponse> registerUserAccount(@RequestBody LoginDto loginDto) {
+  public ResponseEntity<JwtResponse> registerUserAccount(
+      @RequestBody MicrosoftLoginDto microsoftLoginDto) {
 
     try {
-      // TODO: This is just for testing the JWT.  Currently just logs in as the request user id.
-      Authentication tempAuthentication =
-          new UsernamePasswordAuthenticationToken(
-              new User(loginDto.getUserID(), null, false, false),
-              null,
-              AuthorityUtils.NO_AUTHORITIES);
+      Authentication tempAuthentication = authMicrosoftService.login(microsoftLoginDto);
 
       String token = jwtService.generateToken(tempAuthentication);
 

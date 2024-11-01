@@ -1,11 +1,12 @@
+/* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.security.roles;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 /**
- * A {@link LemursRoleConverter} converts between the {@link LemursRole} enum and an integer permission
- * representation.
+ * A {@link LemursRoleConverter} converts between the {@link LemursRole} enum and an integer
+ * permission representation.
  */
 @Converter(autoApply = true)
 public class LemursRoleConverter implements AttributeConverter<LemursRole, Integer> {
@@ -19,4 +20,3 @@ public class LemursRoleConverter implements AttributeConverter<LemursRole, Integ
     return LemursRole.valueOf(permission);
   }
 }
-

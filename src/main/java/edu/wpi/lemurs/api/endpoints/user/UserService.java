@@ -5,8 +5,11 @@ import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
+import edu.wpi.lemurs.api.security.auth.email.AuthorizedEmail;
+import edu.wpi.lemurs.api.security.auth.email.AuthorizedEmailService;
 import edu.wpi.lemurs.api.security.roles.LemursRole;
 import jakarta.transaction.Transactional;
+import java.util.Date;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +20,16 @@ public class UserService {
 
   private SecurityService securityService;
   private UserRepository userRepository;
+  private AuthorizedEmailService authorizedEmailService;
 
   /** Autowires a {@link UserService}. */
-  public UserService(SecurityService securityService, UserRepository userRepository) {
+  public UserService(
+      SecurityService securityService,
+      UserRepository userRepository,
+      AuthorizedEmailService authorizedEmailService) {
     this.securityService = securityService;
     this.userRepository = userRepository;
+    this.authorizedEmailService = authorizedEmailService;
   }
 
   /**
@@ -44,16 +52,32 @@ public class UserService {
   /**
    * Creates a {@link User} from a UMass id.
    *
-   * @param userDto The new user's info.
+   * @param umassID The new user's umass id.
    * @return The create {@link User}.
-   * @throws UnauthorizedException 
-   * @throws UnauthenticatedException 
+   * @throws UnauthorizedException
+   * @throws UnauthenticatedException
    */
-  public User createUser(UserDto userDto) throws UnauthenticatedException, UnauthorizedException {
+  public void authroizeEmail(UserDto userDto)
+      throws UnauthenticatedException, UnauthorizedException {
 
     securityService.assertHasPermission(LemursRole.OWNER);
 
-    User user = new User(null, userDto.getUmassId(), false, false);
+    AuthorizedEmail authorizedEmail =
+        new AuthorizedEmail(userDto.getEmail(), userDto.getUmassId(), new Date());
+    authorizedEmailService.authorize(authorizedEmail);
+  }
+
+  /**
+   * Creates a {@link User} from a UMass id. Does not check authorization.
+   *
+   * @param umassID The new user's umass id.
+   * @return The create {@link User}.
+   * @throws UnauthorizedException
+   * @throws UnauthenticatedException
+   */
+  public User createUserWithoutAuthorization(Integer umassID) {
+
+    User user = new User(null, umassID, false, false);
     return userRepository.save(user);
   }
 }

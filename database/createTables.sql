@@ -23,12 +23,11 @@ CREATE TABLE auth_microsoft (
 );
 
 -- Table for authorized emails.
-CREATE TABLE authorized_emails (
-	id INT GENERATED ALWAYS AS IDENTITY,
+CREATE TABLE authorized_email (
 	email VARCHAR NOT NULL,
 	umass_id INT NOT NULL,
 	expiration TIMESTAMP,
-	PRIMARY KEY (id)
+	PRIMARY KEY (email)
 );
 
 -- Table for roles.

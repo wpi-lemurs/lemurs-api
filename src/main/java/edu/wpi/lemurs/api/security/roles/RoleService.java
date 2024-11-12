@@ -38,7 +38,7 @@ public class RoleService {
 
   /**
    * Determines if the user has the appropriate role.
-   * 
+   *
    * @param userID The user's id.
    * @param role The role to check for.
    * @return Whether the user has the role.
@@ -51,7 +51,7 @@ public class RoleService {
 
   /**
    * Determins if the user has at least the permission of the role.
-   * 
+   *
    * @param userID The user's id.
    * @param role The role to check for.
    * @return Whether the user has the role's permission.
@@ -65,5 +65,9 @@ public class RoleService {
       }
     }
     return false;
+  }
+
+  public void addRoleWithoutPermission(Integer userID, LemursRole lemursRole) {
+    roleRepository.save(new Role(userID, lemursRole));
   }
 }

@@ -14,4 +14,5 @@ import lombok.Setter;
 public class UserDto {
   private Integer umassId;
   private String email;
+  // TODO: Allow for adding user with permissions.
 }

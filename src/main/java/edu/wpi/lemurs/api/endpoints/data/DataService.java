@@ -48,11 +48,11 @@ public class DataService {
    * Saves data to the database.
    *
    * @param dataDto The {@link DataDto} representing the data.
-   * @throws Throwable 
-   * @throws UnauthenticatedException 
+   * @throws Throwable
+   * @throws UnauthenticatedException
    */
   public void saveData(DataDto dataDto) throws UnauthenticatedException, UnauthorizedException {
-    
+
     securityService.assertHasRole(LemursRole.USER);
 
     Data data =

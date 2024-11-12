@@ -1,14 +1,14 @@
+/* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.security;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
 import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.roles.LemursRole;
 import edu.wpi.lemurs.api.security.roles.RoleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 /** The {@link SecurityService} provides information on the authenticated {@link User}. */
 @Service
@@ -37,16 +37,17 @@ public class SecurityService {
     }
   }
 
-  public void assertHasRole(LemursRole role) throws UnauthenticatedException, UnauthorizedException {
+  public void assertHasRole(LemursRole role)
+      throws UnauthenticatedException, UnauthorizedException {
     if (!roleService.hasRole(getUser().getId(), role)) {
       throw new UnauthorizedException();
     }
   }
 
-  public void assertHasPermission(LemursRole role) throws UnauthenticatedException, UnauthorizedException {
+  public void assertHasPermission(LemursRole role)
+      throws UnauthenticatedException, UnauthorizedException {
     if (!roleService.hasPermission(getUser().getId(), role)) {
       throw new UnauthorizedException();
     }
   }
 }
-

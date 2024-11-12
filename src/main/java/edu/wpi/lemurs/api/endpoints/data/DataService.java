@@ -2,6 +2,10 @@
 package edu.wpi.lemurs.api.endpoints.data;
 
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
+import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
+import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
+import edu.wpi.lemurs.api.security.SecurityService;
+import edu.wpi.lemurs.api.security.roles.LemursRole;
 import edu.wpi.lemurs.api.status.DataStatus;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DataService {
 
+  private SecurityService securityService;
   private DataRepository dataRepository;
 
   /** Autowires a {@link DataService}. */
   @Autowired
-  public DataService(DataRepository dataRepository) {
+  public DataService(DataRepository dataRepository, SecurityService securityService) {
     this.dataRepository = dataRepository;
+    this.securityService = securityService;
   }
 
   /**
@@ -42,8 +48,13 @@ public class DataService {
    * Saves data to the database.
    *
    * @param dataDto The {@link DataDto} representing the data.
+   * @throws Throwable 
+   * @throws UnauthenticatedException 
    */
-  public void saveData(DataDto dataDto) {
+  public void saveData(DataDto dataDto) throws UnauthenticatedException, UnauthorizedException {
+    
+    securityService.assertHasRole(LemursRole.USER);
+
     Data data =
         new Data(null, dataDto.getType(), dataDto.getData().toString(), DataStatus.NOT_PROCESSED);
     dataRepository.save(data);

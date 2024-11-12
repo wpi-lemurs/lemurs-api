@@ -22,17 +22,48 @@ public class RoleService {
   /**
    * Gets all of the roles for the user.
    *
-   * @param userId The user's id.
+   * @param userID The user's id.
    * @return The user.
    */
-  public List<LemursRole> getRoles(int userId) {
+  public List<LemursRole> getRoles(int userID) {
 
     List<LemursRole> roles = new ArrayList<>();
 
-    for (Role role : roleRepository.findByUserId(userId)) {
+    for (Role role : roleRepository.findByUserId(userID)) {
       roles.add(role.getLemursRole());
     }
 
     return roles;
+  }
+
+  /**
+   * Determines if the user has the appropriate role.
+   * 
+   * @param userID The user's id.
+   * @param role The role to check for.
+   * @return Whether the user has the role.
+   */
+  public boolean hasRole(int userID, LemursRole role) {
+    List<LemursRole> roles = getRoles(userID);
+
+    return roles.contains(role);
+  }
+
+  /**
+   * Determins if the user has at least the permission of the role.
+   * 
+   * @param userID The user's id.
+   * @param role The role to check for.
+   * @return Whether the user has the role's permission.
+   */
+  public boolean hasPermission(int userID, LemursRole role) {
+    List<LemursRole> roles = getRoles(userID);
+
+    for (LemursRole r : roles) {
+      if (role.getPermission() <= r.getPermission()) {
+        return true;
+      }
+    }
+    return false;
   }
 }

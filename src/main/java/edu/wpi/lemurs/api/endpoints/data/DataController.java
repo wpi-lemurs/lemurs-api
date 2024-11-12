@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
+import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
+
 /** Creates an endpoint for posting data. */
 @RestController
 public class DataController {
@@ -27,6 +30,10 @@ public class DataController {
       dataService.saveData(dataDto);
 
       return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (UnauthenticatedException e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    } catch (UnauthorizedException e) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }

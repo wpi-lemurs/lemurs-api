@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
+import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
+
 /** Creates an endpoint for adding/editing users. */
 @RestController
 public class UserController {
@@ -26,6 +29,10 @@ public class UserController {
       userService.createUser(userDto);
 
       return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (UnauthenticatedException e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    } catch (UnauthorizedException e) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     } catch (Exception e) {
       // TODO: Check for unique contraint failure, return 409 bad request in that scenario.
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

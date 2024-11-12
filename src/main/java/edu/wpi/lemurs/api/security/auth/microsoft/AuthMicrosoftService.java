@@ -113,7 +113,7 @@ public class AuthMicrosoftService {
       throw new BadCredentialsException("Credential expired.");
     }
 
-    return claims.getSubject();
+    return claims.get("oid").toString();
   }
 
   /**
@@ -124,6 +124,7 @@ public class AuthMicrosoftService {
    * @throws BadCredentialsException Thrown if there is no {@link User} linked to this microsoft id.
    */
   private User getUser(String microsoftID) throws BadCredentialsException {
+    System.out.println("Got the microsoft id: " + microsoftID);
     Optional<AuthMicrosoft> optionalID = authMicrosoftRepository.findById(microsoftID);
     if (optionalID.isEmpty()) {
       throw new BadCredentialsException("Microsoft token did not have an id.");
@@ -144,8 +145,8 @@ public class AuthMicrosoftService {
   public void updateCredentials(Integer userID, String code)
       throws BadCredentialsException, BadExternalCommunicationException {
     String idToken = code;
-    String googleID = getMicrosoftID(idToken);
-    AuthMicrosoft authMicrosoft = new AuthMicrosoft(googleID, userID);
+    String microsoftID = getMicrosoftID(idToken);
+    AuthMicrosoft authMicrosoft = new AuthMicrosoft(microsoftID, userID);
     authMicrosoftRepository.save(authMicrosoft);
   }
 }

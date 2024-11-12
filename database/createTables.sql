@@ -22,6 +22,15 @@ CREATE TABLE auth_microsoft (
         REFERENCES app_user(id)
 );
 
+-- Table for authorized emails.
+CREATE TABLE authorized_emails (
+	id INT GENERATED ALWAYS AS IDENTITY,
+	email VARCHAR NOT NULL,
+	umass_id INT NOT NULL,
+	expiration TIMESTAMP,
+	PRIMARY KEY (id)
+);
+
 -- Table for roles.
 CREATE TABLE app_role (
 	app_user_id INT NOT NULL,

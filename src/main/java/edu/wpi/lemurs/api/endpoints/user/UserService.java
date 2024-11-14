@@ -62,8 +62,12 @@ public class UserService {
 
     securityService.assertHasPermission(LemursRole.OWNER);
 
+    Date expiration = new Date();
+
+    expiration = new Date(expiration.getTime() + 1000 * 60 * 60 * 24 * 7);
+
     AuthorizedEmail authorizedEmail =
-        new AuthorizedEmail(userDto.getEmail(), userDto.getUmassId(), new Date());
+        new AuthorizedEmail(userDto.getEmail(), userDto.getUmassId(), expiration);
     authorizedEmailService.authorize(authorizedEmail);
   }
 

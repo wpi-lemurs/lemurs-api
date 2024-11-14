@@ -43,7 +43,8 @@ public class SecurityConfig {
     httpSecurity
         .csrf(chain -> chain.disable())
         .authorizeHttpRequests(
-            chain -> chain.requestMatchers("/auth/**").permitAll().anyRequest().authenticated())
+            chain -> chain.requestMatchers("/auth/**").permitAll().anyRequest().permitAll())
+        // TODO: Any request should be .authenticated() but there is some kind of CORS issue.
         .httpBasic(chain -> chain.disable())
         .formLogin(chain -> chain.disable())
         .sessionManagement(chain -> chain.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

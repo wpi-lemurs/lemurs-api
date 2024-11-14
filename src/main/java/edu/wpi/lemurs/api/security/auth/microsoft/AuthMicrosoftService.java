@@ -183,6 +183,7 @@ public class AuthMicrosoftService {
           UnauthenticatedException,
           UnauthorizedException {
     Integer umassID = authorizedEmailService.getUmassID(microsoftID.getEmail());
+    authorizedEmailService.removeEmail(microsoftID.getEmail());
 
     User user = userService.createUserWithoutAuthorization(umassID);
     authMicrosoftRepository.save(new AuthMicrosoft(microsoftID.getId(), user.getId()));

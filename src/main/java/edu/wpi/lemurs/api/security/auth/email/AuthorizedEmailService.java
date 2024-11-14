@@ -48,4 +48,8 @@ public class AuthorizedEmailService {
   public void authorize(AuthorizedEmail authorizedEmail) {
     authorizedEmailRepository.save(authorizedEmail);
   }
+
+  public void removeEmail(String email) {
+    authorizedEmailRepository.deleteById(email);
+  }
 }

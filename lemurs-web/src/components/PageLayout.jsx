@@ -21,18 +21,18 @@ export const PageLayout = (props) => {
         <>
             <Navbar bg="primary" variant="dark" className="navbarStyle">
                 <a className="navbar-brand" href="/">
-                    Microsoft Identity Platform
+                    LEMURS
                 </a>
                 <div className="collapse navbar-collapse justify-content-end">
-                    {isAuthenticated ? <SignOutButton /> : <SignInButton />}
+                    {isAuthenticated ? <SignOutButton setToken={props.setToken} /> : <SignInButton setToken={props.setToken}/>}
                 </div>
             </Navbar>
                 <div className="title">
                     <h5>
-                        Welcome to the Microsoft Authentication Library For JavaScript - React SPA
+                        Welcome to the LEMURS web interface.
                     </h5>
                 </div>
-                <div className="profileContent">
+                <div className="content">
                     {props.children}
                 </div>
         </>

@@ -45,7 +45,7 @@ async function loginUser(accessToken) {
         headers: new Headers({ "content-type": "application/json" }),
         body: JSON.stringify({ code: accessToken }),
       }
-    ).then((response) => {
+    ).then(async (response) => {
       if (!response.ok) {
         throw response.status;
       }

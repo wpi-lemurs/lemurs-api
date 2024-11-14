@@ -3,19 +3,20 @@
  * Licensed under the MIT License.
  */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 
 import { useIsAuthenticated } from '@azure/msal-react';
 import { SignInButton } from './SignInButton';
 import { SignOutButton } from './SignOutButton';
+import { TokenContext } from './token/TokenContext';
 
 /**
  * Renders the navbar component with a sign-in or sign-out button depending on whether or not a user is authenticated
  * @param props
  */
 export const PageLayout = (props) => {
-    const isAuthenticated = useIsAuthenticated();
+    const { token } = useContext(TokenContext)    
 
     return (
         <>
@@ -24,7 +25,7 @@ export const PageLayout = (props) => {
                     LEMURS
                 </a>
                 <div className="collapse navbar-collapse justify-content-end">
-                    {isAuthenticated ? <SignOutButton setToken={props.setToken} /> : <SignInButton setToken={props.setToken}/>}
+                    {(token == "") ? <SignInButton setToken={props.setToken}/> : <SignOutButton setToken={props.setToken} />}
                 </div>
             </Navbar>
                 <div className="title">

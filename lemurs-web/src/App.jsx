@@ -6,6 +6,7 @@ import { loginRequest } from './authConfig';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
 import './App.css';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import { TokenContext } from './components/token/TokenContext';
 import useToken from './components/token/useToken';
 
@@ -39,13 +40,42 @@ const ProfileContent = () => {
  */
 const MainContent = () => {
     const {token} = useContext(TokenContext)
+    const [email, setEmail] = useState("")
+    const [umassID, setUmassID] = useState("");
+
+    const authorizeEmail = () => {
+        fetch(
+            `${process.env.REACT_APP_LEMURS_SERVER_HOST}/user`,
+            {
+                method: "POST",
+                headers: new Headers({ Authorization: token, "content-type": "application/json"}),
+                body: JSON.stringify({"umassId": Number(umassID), "email": email})
+            }
+            ).then(async (response) => {
+            if (!response.ok) {
+                throw response.status;
+            }
+        });
+    }
 
     return (
         <div className="App">
             {(token === "") ? (
                 <h5 className="card-title">Please sign in to use the LEMURS web interface.</h5>
             ) : (
-                <h5> Not Ready Yet... </h5>
+                <Form className=''>
+                    <Form.Group className="mb-3" controlId="authEmailForm.EmailInput">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control type="email" placeholder="name@example.com" onChange={(e) => {setEmail(e.target.value)}}/>
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="authEmailForm.UmassIDInput">
+                        <Form.Label>Umass ID</Form.Label>
+                        <Form.Control type="text" rows={3} onChange={(e) => {setUmassID(e.target.value)}}/>
+                    </Form.Group>
+                    <Button variant="primary" type="button" onClick={authorizeEmail}>
+                        Authorize
+                    </Button>
+                </Form>
             ) }
         </div>
     );

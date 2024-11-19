@@ -187,7 +187,7 @@ public class AuthMicrosoftService {
 
     User user = userService.createUserWithoutAuthorization(umassID);
     authMicrosoftRepository.save(new AuthMicrosoft(microsoftID.getId(), user.getId(), new Date()));
-    roleService.addRoleWithoutPermission(user.getId(), LemursRole.USER);
+    roleService.addRoleWithoutAuthCheck(user.getId(), LemursRole.USER);
 
     return user;
   }

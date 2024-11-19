@@ -27,11 +27,12 @@ public class Role {
 
   @Id private LemursRole lemursRole;
 
+  /** The compound primary key for the {@link Role} class. */
   @NoArgsConstructor
   @AllArgsConstructor
   @Getter
   @Setter
-  static class RoleKey implements Serializable {
+  public static class RoleKey implements Serializable {
     @Column(nullable = false, name = "app_user_id")
     private Integer userId;
 

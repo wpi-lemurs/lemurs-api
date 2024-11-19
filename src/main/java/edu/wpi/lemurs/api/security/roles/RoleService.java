@@ -14,6 +14,7 @@ public class RoleService {
 
   private RoleRepository roleRepository;
 
+  /** Autowires a {@link RoleService}. */
   @Autowired
   public RoleService(RoleRepository roleRepository) {
     this.roleRepository = roleRepository;
@@ -67,7 +68,14 @@ public class RoleService {
     return false;
   }
 
-  public void addRoleWithoutPermission(Integer userID, LemursRole lemursRole) {
+  /**
+   * Adds a role to a user.
+   *
+   * @param userID The user's id.
+   * @param lemursRole The role to add.
+   * @apiNote This service method does not check the caller's permissions.
+   */
+  public void addRoleWithoutAuthCheck(Integer userID, LemursRole lemursRole) {
     roleRepository.save(new Role(userID, lemursRole));
   }
 }

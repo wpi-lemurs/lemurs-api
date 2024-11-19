@@ -6,7 +6,6 @@ import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
 import edu.wpi.lemurs.api.security.roles.LemursRole;
-import edu.wpi.lemurs.api.status.DataStatus;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

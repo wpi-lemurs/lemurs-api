@@ -8,7 +8,7 @@ import jakarta.persistence.Converter;
  * A {@link LemursRoleConverter} converts between the {@link LemursRole} enum and an integer
  * permission representation.
  */
-@Converter(autoApply = true)
+@Converter()
 public class LemursRoleConverter implements AttributeConverter<LemursRole, Integer> {
   @Override
   public Integer convertToDatabaseColumn(LemursRole role) {

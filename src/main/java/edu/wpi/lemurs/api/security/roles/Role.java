@@ -23,21 +23,20 @@ import lombok.Setter;
 @Setter
 @IdClass(RoleKey.class)
 public class Role {
-  @Id
-  @Column(nullable = false, name = "app_user_id")
-  private Integer userId;
+  @Id private Integer userId;
 
-  @Id
-  @Column(nullable = false, name = "role")
-  @Convert(converter = LemursRoleConverter.class)
-  private LemursRole lemursRole;
+  @Id private LemursRole lemursRole;
 
   @NoArgsConstructor
   @AllArgsConstructor
   @Getter
   @Setter
   static class RoleKey implements Serializable {
+    @Column(nullable = false, name = "app_user_id")
     private Integer userId;
+
+    @Column(nullable = false, name = "role")
+    @Convert(converter = LemursRoleConverter.class)
     private LemursRole lemursRole;
   }
 }

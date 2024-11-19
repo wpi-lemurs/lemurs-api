@@ -1,8 +1,6 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.data;
 
-import edu.wpi.lemurs.api.status.DataStatus;
-import edu.wpi.lemurs.api.status.DataStatusConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;

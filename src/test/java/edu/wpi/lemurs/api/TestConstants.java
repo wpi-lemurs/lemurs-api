@@ -1,7 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api;
 
-import edu.wpi.lemurs.api.status.DataStatus;
+import edu.wpi.lemurs.api.endpoints.data.DataStatus;
 
 public interface TestConstants {
   public static Integer TEST_ID_0 = 3;

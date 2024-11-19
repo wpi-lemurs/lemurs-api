@@ -25,7 +25,7 @@ CREATE TABLE auth_microsoft (
 -- Table for authorized emails.
 CREATE TABLE authorized_email (
 	email VARCHAR NOT NULL,
-	umass_id INT NOT NULL,
+	umass_id VARCHAR NOT NULL,
 	expiration TIMESTAMP,
 	PRIMARY KEY (email)
 );

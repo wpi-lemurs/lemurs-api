@@ -24,7 +24,7 @@ public class RefreshController {
   }
 
   /**
-   * The {@code /auth/login} {@code POST} endpoint receives user credentials and returns a JWT
+   * The {@code /auth/refresh} {@code POST} endpoint receives user credentials and returns a JWT
    * token.
    */
   @PostMapping("/auth/refresh")
@@ -32,7 +32,7 @@ public class RefreshController {
 
     try {
       return new ResponseEntity<>(
-          jwtService.useRefreshToken(refreshDto.getRefreshToken()), HttpStatus.OK);
+          jwtService.refreshJwtResponse(refreshDto.getRefreshToken()), HttpStatus.OK);
     } catch (BadCredentialsException | UnauthenticatedException e) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }

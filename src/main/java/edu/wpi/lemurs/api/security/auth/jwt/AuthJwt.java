@@ -6,11 +6,12 @@ import java.util.Objects;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 
-/** A JWT authentication token. */
+/** An {@link AuthJwt} represents a successful JWT authentication token. */
 public class AuthJwt extends AbstractAuthenticationToken {
   private transient String jwtToken;
   private final transient User user;
 
+  /** Creates an authenticationed {@link AuthJwt} for the given access token and user. */
   public AuthJwt(String jwtToken, User user) {
     super(AuthorityUtils.NO_AUTHORITIES);
     this.jwtToken = jwtToken;

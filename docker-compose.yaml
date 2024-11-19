@@ -1,6 +1,5 @@
 services:
-  db:
-    &db
+  db: &db
     profiles:
       - base
     container_name: lemurs-db
@@ -31,8 +30,9 @@ services:
     profiles:
       - prod
     <<: *db
-  api:
-    &api
+    ports:
+      - 5432:5432
+  api: &api
     profiles:
       - base
     container_name: lemurs-api

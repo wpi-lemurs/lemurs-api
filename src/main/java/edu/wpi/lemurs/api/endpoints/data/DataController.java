@@ -26,7 +26,7 @@ public class DataController {
   @PostMapping("/data")
   public ResponseEntity<Void> saveData(@RequestBody DataDto dataDto) {
     try {
-      dataService.saveData(dataDto);
+      dataService.saveData(dataDto.getType(), dataDto.getData().toString());
 
       return new ResponseEntity<>(HttpStatus.CREATED);
     } catch (UnauthenticatedException e) {

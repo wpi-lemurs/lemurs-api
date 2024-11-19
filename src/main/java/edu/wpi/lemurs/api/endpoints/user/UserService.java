@@ -2,34 +2,19 @@
 package edu.wpi.lemurs.api.endpoints.user;
 
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
-import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
-import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
-import edu.wpi.lemurs.api.security.SecurityService;
-import edu.wpi.lemurs.api.security.auth.email.AuthorizedEmail;
-import edu.wpi.lemurs.api.security.auth.email.AuthorizedEmailService;
-import edu.wpi.lemurs.api.security.roles.LemursRole;
-import jakarta.transaction.Transactional;
-import java.util.Date;
 import java.util.Optional;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.stereotype.Service;
 
 /** The {@link UserService} is a service that allows for {@link User} management. */
 @Service
-@Transactional
 public class UserService {
 
-  private SecurityService securityService;
   private UserRepository userRepository;
-  private AuthorizedEmailService authorizedEmailService;
 
   /** Autowires a {@link UserService}. */
-  public UserService(
-      SecurityService securityService,
-      UserRepository userRepository,
-      AuthorizedEmailService authorizedEmailService) {
-    this.securityService = securityService;
+  public UserService(UserRepository userRepository) {
     this.userRepository = userRepository;
-    this.authorizedEmailService = authorizedEmailService;
   }
 
   /**
@@ -54,34 +39,26 @@ public class UserService {
    *
    * @param umassID The new user's umass id.
    * @return The create {@link User}.
-   * @throws UnauthorizedException
-   * @throws UnauthenticatedException
+   * @apiNote This user service does not check for authorization.
    */
-  public void authroizeEmail(UserDto userDto)
-      throws UnauthenticatedException, UnauthorizedException {
-
-    securityService.assertHasPermission(LemursRole.OWNER);
-
-    Date expiration = new Date();
-
-    expiration = new Date(expiration.getTime() + 1000 * 60 * 60 * 24 * 7);
-
-    AuthorizedEmail authorizedEmail =
-        new AuthorizedEmail(userDto.getEmail(), userDto.getUmassId(), expiration);
-    authorizedEmailService.authorize(authorizedEmail);
+  public User createUserWithoutAuthCheck(String umassID) {
+    User user = new User(null, umassID, false, false);
+    return userRepository.save(user);
   }
 
   /**
-   * Creates a {@link User} from a UMass id. Does not check authorization.
+   * Throws an {@link DisabledException} if the user is disabled or deleted.
    *
-   * @param umassID The new user's umass id.
-   * @return The create {@link User}.
-   * @throws UnauthorizedException
-   * @throws UnauthenticatedException
+   * @param user The user to check.
+   * @throws DisabledException Thrown if the account is disabled or deleted.
    */
-  public User createUserWithoutAuthorization(String umassID) {
+  public void assertEnabledUser(User user) throws DisabledException {
+    if (user.isDisabled()) {
+      throw new DisabledException("Account is disabled.");
+    }
 
-    User user = new User(null, umassID, false, false);
-    return userRepository.save(user);
+    if (user.isDeleted()) {
+      throw new DisabledException("Account is deleted.");
+    }
   }
 }

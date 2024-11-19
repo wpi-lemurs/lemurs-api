@@ -12,5 +12,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MicrosoftLoginDto {
-  private String code;
+  private String accessToken;
 }

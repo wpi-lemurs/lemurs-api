@@ -7,6 +7,8 @@ import org.apache.logging.log4j.Logger;
 /**
  * This is a {@link RuntimeException} that should not be possible, if it occurs there is a major
  * logical error.
+ *
+ * @fs.httpStatus 500 Internal Server Error
  */
 public class ImpossibleRuntimeException extends RuntimeException {
 

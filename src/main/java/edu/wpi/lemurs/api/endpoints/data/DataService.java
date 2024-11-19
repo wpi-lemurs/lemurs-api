@@ -32,8 +32,9 @@ public class DataService {
    * @param id The data's id.
    * @return The {@link Data}.
    * @throws EntityDoesNotExistException Thrown if there is no data with the given id.
-   * @throws UnauthorizedException Thrown if the user does not have Researcher permissions.
    * @throws UnauthenticatedException Thrown if the user is not authenticated.
+   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.RESEARCHER}
+   *     permissions.
    */
   public Data getData(Integer id)
       throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
@@ -53,15 +54,16 @@ public class DataService {
    * Saves data to the database.
    *
    * @param dataDto The {@link DataDto} representing the data.
-   * @throws Throwable
-   * @throws UnauthenticatedException
+   * @throws UnauthenticatedException Thrown if the user is not authenticated.
+   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.RESEARCHER}
+   *     permissions.
    */
-  public void saveData(DataDto dataDto) throws UnauthenticatedException, UnauthorizedException {
+  public void saveData(String type, String dataJson)
+      throws UnauthenticatedException, UnauthorizedException {
 
     securityService.assertHasRole(LemursRole.USER);
 
-    Data data =
-        new Data(null, dataDto.getType(), dataDto.getData().toString(), DataStatus.NOT_PROCESSED);
+    Data data = new Data(null, type, dataJson, DataStatus.NOT_PROCESSED);
     dataRepository.save(data);
   }
 }

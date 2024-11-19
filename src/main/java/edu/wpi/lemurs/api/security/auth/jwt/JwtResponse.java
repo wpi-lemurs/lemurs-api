@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** A JWT formatted for sending back to the requestor. */
+/** The JWT access and refresh tokens formatted for sending back to the requestor. */
 @Getter
 @Setter
 @NoArgsConstructor

@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -48,7 +47,7 @@ public class AuthJwtFilter extends OncePerRequestFilter {
     }
 
     try {
-      jwtService.validateToken(token);
+      jwtService.assertValidAccessToken(token);
     } catch (JwtException e) {
       filterChain.doFilter(request, response);
       return;
@@ -62,13 +61,7 @@ public class AuthJwtFilter extends OncePerRequestFilter {
       throw new ImpossibleRuntimeException(e);
     }
 
-    if (user.isDisabled()) {
-      throw new DisabledException("Account is deleted.");
-    }
-
-    if (user.isDeleted()) {
-      throw new DisabledException("Account is disabled.");
-    }
+    userService.assertEnabledUser(user);
 
     AuthJwt authenticationToken = new AuthJwt(token, user);
     SecurityContextHolder.getContext().setAuthentication(authenticationToken);

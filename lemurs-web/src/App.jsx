@@ -47,7 +47,7 @@ const MainContent = () => {
 
     const authorizeEmail = () => {
         fetch(
-            `${process.env.REACT_APP_LEMURS_SERVER_HOST}/user`,
+            `${process.env.REACT_APP_LEMURS_SERVER_HOST}/user/authorize`,
             {
                 method: "POST",
                 headers: new Headers({ Authorization: token, "content-type": "application/json"}),

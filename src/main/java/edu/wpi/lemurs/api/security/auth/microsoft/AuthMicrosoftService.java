@@ -4,6 +4,7 @@ package edu.wpi.lemurs.api.security.auth.microsoft;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import edu.wpi.lemurs.api.EnvironmentService;
 import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.endpoints.user.UserService;
 import edu.wpi.lemurs.api.exceptions.BadExternalCommunicationException;
@@ -41,6 +42,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class AuthMicrosoftService {
 
+  private EnvironmentService env;
   private AuthMicrosoftRepository authMicrosoftRepository;
   private AuthorizedEmailService authorizedEmailService;
   private UserService userService;
@@ -49,33 +51,68 @@ public class AuthMicrosoftService {
   /** Autowires an {@link AuthMicrosoftService}. */
   @Autowired
   public AuthMicrosoftService(
+      EnvironmentService env,
       AuthMicrosoftRepository authMicrosoftRepository,
       UserService userService,
       AuthorizedEmailService authorizedEmailService,
       RoleService roleService) {
+    this.env = env;
     this.authMicrosoftRepository = authMicrosoftRepository;
     this.userService = userService;
     this.authorizedEmailService = authorizedEmailService;
     this.roleService = roleService;
   }
 
-  public Authentication login(MicrosoftLoginDto microsoftLoginDto) throws BadCredentialsException {
+  /**
+   * Attempts to login a user given a microsoft access token.
+   *
+   * @param accessToken The microsoft access token.
+   * @return A successful {@link AuthMicrosoftAuthentication}.
+   * @throws BadCredentialsException Thrown if the access token is not valid, or there is no user
+   *     for this microsoft account.
+   */
+  public Authentication login(String accessToken) throws BadCredentialsException {
+    String idToken = accessToken;
+    MicrosoftID microsoftID = getMicrosoftID(idToken);
+
+    User user;
     try {
-      String idToken = microsoftLoginDto.getCode();
-      MicrosoftID microsoftID = getMicrosoftID(idToken);
-
-      User user;
+      user = getUser(microsoftID.getId());
+    } catch (BadCredentialsException e) {
       try {
-        user = getUser(microsoftID.getId());
-      } catch (BadCredentialsException e) {
         user = attemptAddUser(microsoftID);
+      } catch (BadCredentialsException
+          | EntityDoesNotExistException
+          | UnauthenticatedException
+          | UnauthorizedException e1) {
+        throw new BadCredentialsException("Invalid Microsoft Key");
       }
+    }
 
-      // TODO: checkAccountStatus(user);
+    userService.assertEnabledUser(user);
 
-      return new AuthMicrosoftAuthentication(idToken, user);
-    } catch (Exception e) {
-      throw new BadCredentialsException("Invalid Microsoft Key");
+    return new AuthMicrosoftAuthentication(idToken, user);
+  }
+
+  /**
+   * Throws an exception if the the credentials were updated after the token was issued.
+   *
+   * @param userID The user to check.
+   * @param issuedAt The issue date to check against.
+   * @return The {@link Date} when the user's credentials were last updated.
+   * @throws EntityDoesNotExistException Thrown if the user does not have these credentials.
+   * @throws UnauthenticatedException Throw if the credentials were updated since this refresh token
+   *     was issued.
+   */
+  public void assertValidRefreshDate(Integer userID, Date issuedAt)
+      throws EntityDoesNotExistException, UnauthenticatedException {
+    Optional<AuthMicrosoft> authMicrosoft = authMicrosoftRepository.findByUserID(userID);
+    if (authMicrosoft.isEmpty()) {
+      throw new EntityDoesNotExistException();
+    }
+    Date lastUpdated = authMicrosoft.get().getUpdated();
+    if (!issuedAt.after(lastUpdated)) {
+      throw new UnauthenticatedException();
     }
   }
 
@@ -89,6 +126,8 @@ public class AuthMicrosoftService {
    */
   private MicrosoftID getMicrosoftID(String idToken) throws BadCredentialsException {
 
+    // TODO: Make this code better: return better error codes, only grab data once per day, maybe
+    // seperate into smaller methods.
     String url =
         "https://login.microsoftonline.com/"
             + System.getenv("LEMURS_MICROSOFT_TENANT_ID")
@@ -114,7 +153,7 @@ public class AuthMicrosoftService {
     }
     String issuer = jsonObject.get("issuer").getAsString();
 
-    Locator<Key> locator = new MicrosoftKeyLocator();
+    Locator<Key> locator = new MicrosoftKeyLocator(env);
 
     Claims claims =
         Jwts.parser().keyLocator(locator).build().parseSignedClaims(idToken).getPayload();
@@ -167,7 +206,7 @@ public class AuthMicrosoftService {
   }
 
   /**
-   * Attempts to add a {@link User} from if their email is in the system.
+   * Attempts to add a {@link User} based on if their email is in the system.
    *
    * @param microsoftID The microsoft id.
    * @return The {@link User} linked to the microsoft id.
@@ -183,31 +222,17 @@ public class AuthMicrosoftService {
           UnauthenticatedException,
           UnauthorizedException {
     String umassID = authorizedEmailService.getUmassID(microsoftID.getEmail());
-    authorizedEmailService.removeEmail(microsoftID.getEmail());
+    authorizedEmailService.deauthorizeWithoutAuthCheck(microsoftID.getEmail());
 
-    User user = userService.createUserWithoutAuthorization(umassID);
+    User user = userService.createUserWithoutAuthCheck(umassID);
     authMicrosoftRepository.save(new AuthMicrosoft(microsoftID.getId(), user.getId(), new Date()));
-    roleService.addRoleWithoutAuthCheck(user.getId(), LemursRole.USER);
+    roleService.addRoleWithoutAuthCheck(
+        user.getId(), LemursRole.USER); // TODO: This roles should be based on what the adder says.
 
     return user;
   }
 
-  public void updateCredentials(Integer userID, String code)
-      throws BadCredentialsException, BadExternalCommunicationException {
-    String idToken = code;
-    MicrosoftID microsoftID = getMicrosoftID(idToken);
-    AuthMicrosoft authMicrosoft = new AuthMicrosoft(microsoftID.getId(), userID, new Date());
-    authMicrosoftRepository.save(authMicrosoft);
-  }
-
-  public Date getLastUpdated(Integer userID) throws EntityDoesNotExistException {
-    Optional<AuthMicrosoft> authMicrosoft = authMicrosoftRepository.findByUserID(userID);
-    if (authMicrosoft.isEmpty()) {
-      throw new EntityDoesNotExistException();
-    }
-    return authMicrosoft.get().getUpdated();
-  }
-
+  /** A {@link MicrosoftID} represents the combined user id and email of a user. */
   @Data
   @NoArgsConstructor
   @AllArgsConstructor

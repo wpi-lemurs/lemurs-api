@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/** An {@link AuthorizedEmail} represents an email address that can be added as a user. */
 @Entity
 @Data
 @NoArgsConstructor

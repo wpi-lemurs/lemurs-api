@@ -1,6 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.security.auth.jwt;
 
+import edu.wpi.lemurs.api.EnvironmentService;
 import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.endpoints.user.UserService;
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
@@ -24,110 +25,42 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
-  public static final String TOKEN_PURPOSE_KEY = "purpose";
-  public static final String ACCESS_TOKEN = "access";
-  public static final String REFRESH_TOKEN = "refresh";
+  /** The claim key for the purpose. */
+  public static final String PURPOSE_CLAIM_KEY = "purpose";
 
-  public static final String TOKEN_LOGIN_METHOD_KEY = "login_method";
+  /** The access token purpose. */
+  public static final String PURPOSE_ACCESS_TOKEN = "access";
+
+  /** The refresh token purpose. */
+  public static final String PURPOSE_REFRESH_TOKEN = "refresh";
+
+  /** The claim key for the login method. */
+  public static final String LOGIN_METHOD_CLAIM_KEY = "login_method";
+
+  /** The login method for microsoft. */
   public static final String LOGIN_METHOD_MICROSOFT = "Microsoft";
 
-  /** Access tokens last 1 hour. */
-  private static final long ACCESS_TOKEN_EXPIRATION_TIME_IN_MILLISECONDS = (long) 60 * 60 * 1000;
+  /** Access tokens expiration length in ms. (1 hour) */
+  private static final long ACCESS_TOKEN_EXPIRATION_TIME = (long) 60 * 60 * 1000;
 
-  /** Refresh tokens last 90 days. */
-  private static final long REFRESH_TOKEN_EXPIRATION_TIME_IN_MILLISECONDS =
-      (long) 90 * 24 * 60 * 60 * 1000;
+  /** Refresh tokens expiration length in ms. (14 days) */
+  private static final long REFRESH_TOKEN_EXPIRATION_TIME = (long) 14 * 24 * 60 * 60 * 1000;
 
-  private static final String JWT_SIGNATURE = System.getenv("LEMURS_SIGNATURE");
-
+  private EnvironmentService env;
   private AuthMicrosoftService authMicrosoftService;
   private UserService userService;
 
+  /** Autowires a {@link JwtService}. */
   @Autowired
-  public JwtService(AuthMicrosoftService authMicrosoftService, UserService userService) {
+  public JwtService(
+      EnvironmentService env, AuthMicrosoftService authMicrosoftService, UserService userService) {
     this.authMicrosoftService = authMicrosoftService;
     this.userService = userService;
+    this.env = env;
   }
 
   /**
-   * Generates an access jwt token for an authenticated {@link User}.
-   *
-   * @param authentication The {@link Authentication} for a {@link User}.
-   * @return The token.
-   * @throws UnauthenticatedException Thrown if no {@link User} is authenticated.
-   */
-  public String generateAccessToken(Authentication authentication) throws UnauthenticatedException {
-
-    User user;
-    Object principal = authentication.getPrincipal();
-    if (User.class.isAssignableFrom(principal.getClass())) {
-      user = (User) principal;
-    } else {
-      throw new UnauthenticatedException();
-    }
-    Integer id = user.getId();
-    Date currentDate = new Date();
-    Date expirationDate =
-        new Date(currentDate.getTime() + ACCESS_TOKEN_EXPIRATION_TIME_IN_MILLISECONDS);
-
-    return Jwts.builder()
-        .subject(id.toString())
-        .claim(TOKEN_PURPOSE_KEY, ACCESS_TOKEN)
-        .issuedAt(currentDate)
-        .expiration(expirationDate)
-        .signWith(key())
-        .compact();
-  }
-
-  /**
-   * Generates a refresh jwt token for an authenticated {@link User}.
-   *
-   * @param authentication The {@link Authentication} for a {@link User}.
-   * @return The token.
-   * @throws UnauthenticatedException Thrown if no {@link User} is authenticated.
-   */
-  public String generateRefreshToken(Authentication authentication)
-      throws UnauthenticatedException {
-
-    User user;
-    Object principal = authentication.getPrincipal();
-    if (User.class.isAssignableFrom(principal.getClass())) {
-      user = (User) principal;
-    } else {
-      throw new UnauthenticatedException();
-    }
-    Integer id = user.getId();
-    Date currentDate = new Date();
-    Date expirationDate =
-        new Date(currentDate.getTime() + REFRESH_TOKEN_EXPIRATION_TIME_IN_MILLISECONDS);
-
-    String loginMethod = null;
-
-    if (authentication.getClass().isAssignableFrom(AuthMicrosoftAuthentication.class)) {
-      loginMethod = LOGIN_METHOD_MICROSOFT;
-    }
-
-    return Jwts.builder()
-        .subject(id.toString())
-        .claim(TOKEN_PURPOSE_KEY, REFRESH_TOKEN)
-        .claim(TOKEN_LOGIN_METHOD_KEY, loginMethod)
-        .issuedAt(currentDate)
-        .expiration(expirationDate)
-        .signWith(key())
-        .compact();
-  }
-
-  /**
-   * Returns the secret application key.
-   *
-   * @return The secret application key.
-   */
-  private Key key() {
-    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(JWT_SIGNATURE));
-  }
-
-  /**
-   * Validates a jwt token.
+   * Throws an exception if the token is not a valid access token.
    *
    * @param token The jwt token.
    * @throws MalformedJwtException Thrown if the token is malformed.
@@ -135,20 +68,20 @@ public class JwtService {
    * @throws ExpiredJwtException Thrown if the token is expired.
    * @throws IllegalArgumentException Thrown if the token is null or whitespace.
    */
-  public void validateToken(String token)
+  public void assertValidAccessToken(String token)
       throws MalformedJwtException,
           SecurityException,
           ExpiredJwtException,
           IllegalArgumentException {
     Jwts.parser()
-        .require(TOKEN_PURPOSE_KEY, ACCESS_TOKEN)
+        .require(PURPOSE_CLAIM_KEY, PURPOSE_ACCESS_TOKEN)
         .verifyWith((SecretKey) key())
         .build()
         .parse(token);
   }
 
   /**
-   * Gets the {@link Perosn} id within a jwt token.
+   * Gets the {@link Person} id within a jwt token.
    *
    * @param token The jwt token.
    * @return The {@link Person} id within the token.
@@ -164,7 +97,20 @@ public class JwtService {
             .getSubject());
   }
 
-  public JwtResponse getJWTResponse(Authentication authentication) throws UnauthenticatedException {
+  /**
+   * Generates the access and refresh tokens based on an authentication.
+   *
+   * @param authentication The authentication.
+   * @return A {@link JwtResponse} with an access and refresh token.
+   * @throws UnauthenticatedException Thrown if the authentication is not valid or not for a real
+   *     user.
+   */
+  public JwtResponse getJwtResponse(Authentication authentication) throws UnauthenticatedException {
+
+    if (!authentication.isAuthenticated()) {
+      throw new UnauthenticatedException();
+    }
+
     String acccessToken = generateAccessToken(authentication);
     String refreshToken = generateRefreshToken(authentication);
 
@@ -175,31 +121,37 @@ public class JwtService {
     return jwtAuthResponse;
   }
 
-  public JwtResponse useRefreshToken(String refreshToken) throws UnauthenticatedException {
+  /**
+   * Refreshes access and refresh tokens based on a refresh token.
+   *
+   * @param refreshToken The refresh token.
+   * @return A {@link JwtResponse} with an access and refresh token.
+   * @throws UnauthenticatedException Thrown if the refresh token is not valid, or credential have
+   *     been updated.
+   */
+  public JwtResponse refreshJwtResponse(String refreshToken) throws UnauthenticatedException {
     Claims claims =
         Jwts.parser()
-            .require(TOKEN_PURPOSE_KEY, REFRESH_TOKEN)
+            .require(PURPOSE_CLAIM_KEY, PURPOSE_REFRESH_TOKEN)
             .verifyWith((SecretKey) key())
             .build()
             .parseSignedClaims(refreshToken)
             .getPayload();
 
-    String loginMethod = (String) claims.get(TOKEN_LOGIN_METHOD_KEY);
+    String loginMethod = (String) claims.get(LOGIN_METHOD_CLAIM_KEY);
     if (loginMethod == null) {
       throw new UnauthenticatedException();
     }
 
     Integer userID = Integer.parseInt(claims.getSubject());
+    Date issuedAt = claims.getIssuedAt();
 
     try {
       switch (loginMethod) {
         case LOGIN_METHOD_MICROSOFT:
-          Date lastUpdated = authMicrosoftService.getLastUpdated(userID);
-          if (lastUpdated.after(claims.getIssuedAt())) {
-            throw new UnauthenticatedException();
-          }
+          authMicrosoftService.assertValidRefreshDate(userID, issuedAt);
 
-          return getJWTResponse(
+          return getJwtResponse(
               new AuthMicrosoftAuthentication(loginMethod, userService.getUser(userID)));
         default:
           throw new UnauthenticatedException();
@@ -207,5 +159,81 @@ public class JwtService {
     } catch (EntityDoesNotExistException e) {
       throw new UnauthenticatedException();
     }
+  }
+
+  /**
+   * Returns the secret application key.
+   *
+   * @return The secret application key.
+   */
+  private Key key() {
+    return Keys.hmacShaKeyFor(Decoders.BASE64.decode(env.getJwtSignature()));
+  }
+
+  /**
+   * Generates an access JWT token for an authenticated {@link User}.
+   *
+   * @param authentication The {@link Authentication} for a {@link User}.
+   * @return The token.
+   * @throws UnauthenticatedException Thrown if no {@link User} is authenticated.
+   */
+  private String generateAccessToken(Authentication authentication)
+      throws UnauthenticatedException {
+
+    User user;
+    Object principal = authentication.getPrincipal();
+    if (User.class.isAssignableFrom(principal.getClass())) {
+      user = (User) principal;
+    } else {
+      throw new UnauthenticatedException();
+    }
+    Integer id = user.getId();
+    Date currentDate = new Date((new Date()).getTime() + 1 * 1000);
+    Date expirationDate = new Date(currentDate.getTime() + ACCESS_TOKEN_EXPIRATION_TIME);
+
+    return Jwts.builder()
+        .subject(id.toString())
+        .claim(PURPOSE_CLAIM_KEY, PURPOSE_ACCESS_TOKEN)
+        .issuedAt(currentDate)
+        .expiration(expirationDate)
+        .signWith(key())
+        .compact();
+  }
+
+  /**
+   * Generates a refresh jwt token for an authenticated {@link User}.
+   *
+   * @param authentication The {@link Authentication} for a {@link User}.
+   * @return The token.
+   * @throws UnauthenticatedException Thrown if no {@link User} is authenticated.
+   */
+  private String generateRefreshToken(Authentication authentication)
+      throws UnauthenticatedException {
+
+    User user;
+    Object principal = authentication.getPrincipal();
+    if (User.class.isAssignableFrom(principal.getClass())) {
+      user = (User) principal;
+    } else {
+      throw new UnauthenticatedException();
+    }
+    Integer id = user.getId();
+    Date currentDate = new Date((new Date()).getTime() + 1 * 1000);
+    Date expirationDate = new Date(currentDate.getTime() + REFRESH_TOKEN_EXPIRATION_TIME);
+
+    String loginMethod = null;
+
+    if (authentication.getClass().isAssignableFrom(AuthMicrosoftAuthentication.class)) {
+      loginMethod = LOGIN_METHOD_MICROSOFT;
+    }
+
+    return Jwts.builder()
+        .subject(id.toString())
+        .claim(PURPOSE_CLAIM_KEY, PURPOSE_REFRESH_TOKEN)
+        .claim(LOGIN_METHOD_CLAIM_KEY, loginMethod)
+        .issuedAt(currentDate)
+        .expiration(expirationDate)
+        .signWith(key())
+        .compact();
   }
 }

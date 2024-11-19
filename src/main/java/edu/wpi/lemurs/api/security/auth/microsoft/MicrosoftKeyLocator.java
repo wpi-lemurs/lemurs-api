@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import edu.wpi.lemurs.api.EnvironmentService;
 import io.jsonwebtoken.LocatorAdapter;
 import io.jsonwebtoken.ProtectedHeader;
 import java.io.ByteArrayInputStream;
@@ -23,7 +24,15 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/** Gets the public keys for Microsoft authentication and allows for verification with it. */
 public class MicrosoftKeyLocator extends LocatorAdapter<Key> {
+
+  private EnvironmentService env;
+
+  /** Creates a MicrosoftKeyLocator with necessary services. */
+  public MicrosoftKeyLocator(EnvironmentService env) {
+    this.env = env;
+  }
 
   @Override
   public Key locate(ProtectedHeader header) {
@@ -31,9 +40,9 @@ public class MicrosoftKeyLocator extends LocatorAdapter<Key> {
 
     String url =
         "https://login.microsoftonline.com/"
-            + System.getenv("LEMURS_MICROSOFT_TENANT_ID")
+            + env.getMicrosoftTenantID()
             + "/discovery/v2.0/keys?appId="
-            + System.getenv("LEMURS_MICROSOFT_APP_ID");
+            + env.getMicrosoftAppID();
     String urlTemplate = UriComponentsBuilder.fromHttpUrl(url).encode().toUriString();
     HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
     ResponseEntity<String> response;

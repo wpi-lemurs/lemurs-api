@@ -37,9 +37,10 @@ public class LoginController {
       @RequestBody MicrosoftLoginDto microsoftLoginDto) {
 
     try {
-      Authentication tempAuthentication = authMicrosoftService.login(microsoftLoginDto);
+      Authentication tempAuthentication =
+          authMicrosoftService.login(microsoftLoginDto.getAccessToken());
 
-      JwtResponse jwtAuthResponse = jwtService.getJWTResponse(tempAuthentication);
+      JwtResponse jwtAuthResponse = jwtService.getJwtResponse(tempAuthentication);
 
       return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
     } catch (BadCredentialsException | UnauthenticatedException e) {

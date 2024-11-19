@@ -2,26 +2,12 @@
 package edu.wpi.lemurs.api.exceptions;
 
 import edu.wpi.lemurs.api.endpoints.user.User;
+import lombok.experimental.StandardException;
 
 /**
  * An {@link Exception} when no {@link User} is authenticated for a secure request.
  *
  * @fs.httpStatus 401 Unauthorized
  */
-public class UnauthenticatedException extends Exception {
-  public UnauthenticatedException() {
-    super();
-  }
-
-  public UnauthenticatedException(Throwable cause) {
-    super(cause);
-  }
-
-  public UnauthenticatedException(String msg) {
-    super(msg);
-  }
-
-  public UnauthenticatedException(String msg, Throwable cause) {
-    super(msg, cause);
-  }
-}
+@StandardException
+public class UnauthenticatedException extends Exception {}

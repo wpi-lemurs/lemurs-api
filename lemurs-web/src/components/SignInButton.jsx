@@ -43,7 +43,7 @@ async function loginUser(accessToken) {
       {
         method: "POST",
         headers: new Headers({ "content-type": "application/json" }),
-        body: JSON.stringify({ code: accessToken }),
+        body: JSON.stringify({ accessToken: accessToken }),
       }
     ).then(async (response) => {
       if (!response.ok) {

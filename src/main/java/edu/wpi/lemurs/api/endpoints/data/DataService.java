@@ -32,8 +32,14 @@ public class DataService {
    * @param id The data's id.
    * @return The {@link Data}.
    * @throws EntityDoesNotExistException Thrown if there is no data with the given id.
+   * @throws UnauthorizedException Thrown if the user does not have Researcher permissions.
+   * @throws UnauthenticatedException Thrown if the user is not authenticated.
    */
-  public Data getData(Integer id) throws EntityDoesNotExistException {
+  public Data getData(Integer id)
+      throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
+
+    securityService.assertHasPermission(LemursRole.RESEARCHER);
+
     Optional<Data> data = dataRepository.findById(id);
 
     if (data.isEmpty()) {

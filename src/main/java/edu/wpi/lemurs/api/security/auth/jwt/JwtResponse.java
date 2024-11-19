@@ -1,5 +1,5 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.endpoints.login;
+package edu.wpi.lemurs.api.security.auth.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,5 +13,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class JwtResponse {
   private String accessToken;
-  private String tokenType = "Bearer";
+  private String refreshToken;
 }

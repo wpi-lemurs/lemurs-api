@@ -1,11 +1,10 @@
 -- Table for users.
 CREATE TABLE app_user (
 	id INT GENERATED ALWAYS AS IDENTITY,
-	umass_id INT NOT NULL,
+	umass_id VARCHAR NOT NULL UNIQUE,
 	is_disabled BOOLEAN NOT NULL,
 	is_deleted BOOLEAN NOT NULL,
-	PRIMARY KEY (id),
-	UNIQUE (umass_id)
+	PRIMARY KEY (id)
 );
 
 -- Index for finding users based on their umass id.
@@ -16,6 +15,7 @@ ON app_user (umass_id);
 CREATE TABLE auth_microsoft (
 	auth_id VARCHAR NOT NULL,
 	app_user_id INT NOT NULL UNIQUE,
+	updated TIMESTAMP,
 	PRIMARY KEY (app_user_id),
 	CONSTRAINT fk_app_auth_microsoft_app_user_id
       FOREIGN KEY(app_user_id) 

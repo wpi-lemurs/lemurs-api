@@ -79,7 +79,7 @@ public class UserService {
    * @throws UnauthorizedException
    * @throws UnauthenticatedException
    */
-  public User createUserWithoutAuthorization(Integer umassID) {
+  public User createUserWithoutAuthorization(String umassID) {
 
     User user = new User(null, umassID, false, false);
     return userRepository.save(user);

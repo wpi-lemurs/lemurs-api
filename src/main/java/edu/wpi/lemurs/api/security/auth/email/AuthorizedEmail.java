@@ -22,7 +22,7 @@ public class AuthorizedEmail {
   private String email;
 
   @Column(nullable = false)
-  private Integer umassId;
+  private String umassId;
 
   @Column(nullable = false)
   private Date expiration;

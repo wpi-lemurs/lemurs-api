@@ -182,11 +182,11 @@ public class AuthMicrosoftService {
           EntityDoesNotExistException,
           UnauthenticatedException,
           UnauthorizedException {
-    Integer umassID = authorizedEmailService.getUmassID(microsoftID.getEmail());
+    String umassID = authorizedEmailService.getUmassID(microsoftID.getEmail());
     authorizedEmailService.removeEmail(microsoftID.getEmail());
 
     User user = userService.createUserWithoutAuthorization(umassID);
-    authMicrosoftRepository.save(new AuthMicrosoft(microsoftID.getId(), user.getId()));
+    authMicrosoftRepository.save(new AuthMicrosoft(microsoftID.getId(), user.getId(), new Date()));
     roleService.addRoleWithoutPermission(user.getId(), LemursRole.USER);
 
     return user;
@@ -196,8 +196,16 @@ public class AuthMicrosoftService {
       throws BadCredentialsException, BadExternalCommunicationException {
     String idToken = code;
     MicrosoftID microsoftID = getMicrosoftID(idToken);
-    AuthMicrosoft authMicrosoft = new AuthMicrosoft(microsoftID.getId(), userID);
+    AuthMicrosoft authMicrosoft = new AuthMicrosoft(microsoftID.getId(), userID, new Date());
     authMicrosoftRepository.save(authMicrosoft);
+  }
+
+  public Date getLastUpdated(Integer userID) throws EntityDoesNotExistException {
+    Optional<AuthMicrosoft> authMicrosoft = authMicrosoftRepository.findByUserID(userID);
+    if (authMicrosoft.isEmpty()) {
+      throw new EntityDoesNotExistException();
+    }
+    return authMicrosoft.get().getUpdated();
   }
 
   @Data

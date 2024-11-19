@@ -16,14 +16,14 @@ export const SignInButton = ({setToken}) => {
                 console.log(e);
             }).then(async (response) => {
                 const token = await loginUser(response.accessToken)
-                setToken(`${token.tokenType} ${token.accessToken}`);
+                setToken(`Bearer ${token.accessToken}`);
             });
         } else if (loginType === "redirect") {
             instance.loginRedirect(loginRequest).catch(e => {
                 console.log(e);
             }).then(async (response) => {
                 const token = await loginUser(response.accessToken)
-                setToken(`${token.tokenType} ${token.accessToken}`);
+                setToken(`Bearer ${token.accessToken}`);
             });
         }
     }

@@ -29,7 +29,7 @@ public class AuthorizedEmailService {
    * @return The {@link User}.
    * @throws EntityDoesNotExistException Thrown if there is no user with the given email.
    */
-  public Integer getUmassID(String email) throws EntityDoesNotExistException {
+  public String getUmassID(String email) throws EntityDoesNotExistException {
     Optional<AuthorizedEmail> authorizedEmail = authorizedEmailRepository.findById(email);
 
     if (authorizedEmail.isEmpty()) {

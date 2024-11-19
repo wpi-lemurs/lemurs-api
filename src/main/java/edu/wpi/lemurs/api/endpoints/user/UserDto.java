@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-  private Integer umassId;
+  private String umassId;
   private String email;
   // TODO: Allow for adding user with permissions.
 }

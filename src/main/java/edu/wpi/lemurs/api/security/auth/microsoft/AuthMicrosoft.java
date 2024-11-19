@@ -4,6 +4,7 @@ package edu.wpi.lemurs.api.security.auth.microsoft;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,4 +27,7 @@ public class AuthMicrosoft {
 
   @Column(nullable = false, name = "app_user_id")
   private Integer userID;
+
+  @Column(nullable = false)
+  private Date updated;
 }

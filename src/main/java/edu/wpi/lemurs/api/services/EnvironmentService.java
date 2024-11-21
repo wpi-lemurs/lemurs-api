@@ -1,5 +1,5 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api;
+package edu.wpi.lemurs.api.services;
 
 import org.springframework.stereotype.Service;
 
@@ -24,5 +24,10 @@ public class EnvironmentService {
   /** Gets the Microsoft app ID. */
   public String getMicrosoftAppID() {
     return System.getenv("LEMURS_MICROSOFT_APP_ID");
+  }
+
+  /** Gets the LEMURS sender email address. */
+  public String getLemursEmailAddress() {
+    return System.getenv("LEMURS_EMAIL_ADDRESS");
   }
 }

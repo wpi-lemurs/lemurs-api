@@ -4,7 +4,7 @@ package edu.wpi.lemurs.api.security.auth.microsoft;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import edu.wpi.lemurs.api.EnvironmentService;
+
 import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.endpoints.user.UserService;
 import edu.wpi.lemurs.api.exceptions.BadExternalCommunicationException;
@@ -15,6 +15,7 @@ import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.auth.email.AuthorizedEmailService;
 import edu.wpi.lemurs.api.security.roles.LemursRole;
 import edu.wpi.lemurs.api.security.roles.RoleService;
+import edu.wpi.lemurs.api.services.EnvironmentService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Locator;

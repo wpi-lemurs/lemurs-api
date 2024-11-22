@@ -37,7 +37,12 @@ Copy `.env.example` to `.env` and edit variables as needed:
 `LEMURS_POSTRGRES_USERNAME` - The database admin username. \
 `LEMURS_POSTRGRES_PASSWORD` - The database admin password. \
 `LEMURS_API_PORT` - The api port that will be exposed. Example: `8080`
-`LEMURS_SIGNATURE` - A base 64 url encoded jwt secret. Can be generated with tools like: https://jwtsecret.com/generate.
+`LEMURS_SIGNATURE` - A base 64 url encoded jwt secret. Can be generated with tools like: https://jwtsecret.com/generate.\
+`LEMURS_EMAIL_ADDRESS` - The email alias that will be used for sending the email. Example `lemurs-noreply@wpi.edu` \
+`LEMURS_EMAIL_HOST` - The smtp email host server. Example: `smtp-mail.outlook.com` \
+`LEMURS_EMAIL_PORT` - The smtp port. Example: `587` \
+`LEMURS_EMAIL_USERNAME` - The email account login username. Ideally this should be a service account. Example: `lemurs-noreply@wpi.edu` \
+`LEMURS_EMAIL_PASSWORD` - The email account's password or app key.
 
 Note that in production configuration, the database username/password should not matter a lot as the database is not exposed.
 However, the jwt secret in LEMURS_SIGNATURE can be used to take full control of the API.

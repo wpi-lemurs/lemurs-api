@@ -152,7 +152,8 @@ public class JwtService {
           authMicrosoftService.assertValidRefreshDate(userID, issuedAt);
 
           return getJwtResponse(
-              new AuthMicrosoftAuthentication(loginMethod, userService.getUser(userID)));
+              new AuthMicrosoftAuthentication(
+                  loginMethod, userService.getUserWithoutAuthCheck(userID)));
         default:
           throw new UnauthenticatedException();
       }

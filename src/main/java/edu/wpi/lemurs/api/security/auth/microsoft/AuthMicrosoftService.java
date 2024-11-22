@@ -4,7 +4,6 @@ package edu.wpi.lemurs.api.security.auth.microsoft;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-
 import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.endpoints.user.UserService;
 import edu.wpi.lemurs.api.exceptions.BadExternalCommunicationException;
@@ -200,7 +199,7 @@ public class AuthMicrosoftService {
     }
 
     try {
-      return userService.getUser(id);
+      return userService.getUserWithoutAuthCheck(id);
     } catch (EntityDoesNotExistException e) {
       throw new ImpossibleRuntimeException(e);
     }

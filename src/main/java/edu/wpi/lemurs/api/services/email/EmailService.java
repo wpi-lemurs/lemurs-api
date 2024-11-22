@@ -1,16 +1,16 @@
-package edu.wpi.lemurs.api.services;
+/* Copyright (C) 2024 Worcester Polytechnic University */
+package edu.wpi.lemurs.api.services.email;
 
+import edu.wpi.lemurs.api.services.EnvironmentService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 
 /**
  * The {@link EmailService} is a service that provides the ability to send emails as the
@@ -19,7 +19,7 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailService {
 
-  private static final String EMAIL_DISPLAY_NAME = "LEMURS";
+  private static final String EMAIL_DISPLAY_NAME = "LEMURS TEAM";
 
   private EnvironmentService env;
   private JavaMailSender emailSender;
@@ -40,8 +40,7 @@ public class EmailService {
    * @throws MessagingException Thrown if the email content creation fails.
    * @throws UnsupportedEncodingException Thrown if the email creation for the sender fails.
    * @throws MailException Thrown if the email failed to send.
-   * @apiNote This method should only be called by the {@code /auth/register} and {@code
-   *     /auth/verify} endpoints.
+   * @apiNote This method does not check for authorization.
    */
   public void sendEmailWithoutAuthorization(String to, String subject, String text)
       throws MessagingException, UnsupportedEncodingException, MailException {
@@ -49,8 +48,7 @@ public class EmailService {
 
     MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-    helper.setFrom(
-        new InternetAddress(env.getLemursEmailAddress(), EMAIL_DISPLAY_NAME));
+    helper.setFrom(new InternetAddress(env.getLemursEmailAddress(), EMAIL_DISPLAY_NAME));
     helper.setTo(to);
     helper.setSubject(subject);
     helper.setText(text);

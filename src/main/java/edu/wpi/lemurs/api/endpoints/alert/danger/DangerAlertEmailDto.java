@@ -1,16 +1,16 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.endpoints.test.email;
+package edu.wpi.lemurs.api.endpoints.alert.danger;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** A {@link EmailDto} represents a test email to be sent. */
-@Getter
-@Setter
+/** Dto for a {@link DangerAlertEmail}. */
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmailDto {
-  private String to;
+@Getter
+@Setter
+public class DangerAlertEmailDto {
+  private String email;
 }

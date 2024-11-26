@@ -175,7 +175,7 @@ public class AuthMicrosoftService {
     }
 
     String microsoftID = claims.get("oid").toString();
-    String email = claims.get("preferred_username").toString();
+    String email = claims.get("upn").toString();
 
     return new MicrosoftID(microsoftID, email);
   }

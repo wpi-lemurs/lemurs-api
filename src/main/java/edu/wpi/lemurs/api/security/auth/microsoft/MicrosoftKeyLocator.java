@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
-import edu.wpi.lemurs.api.EnvironmentService;
+import edu.wpi.lemurs.api.services.EnvironmentService;
 import io.jsonwebtoken.LocatorAdapter;
 import io.jsonwebtoken.ProtectedHeader;
 import java.io.ByteArrayInputStream;

@@ -56,7 +56,7 @@ public class AuthJwtFilter extends OncePerRequestFilter {
     Integer id = jwtService.getId(token);
     User user;
     try {
-      user = userService.getUser(id);
+      user = userService.getUserWithoutAuthCheck(id);
     } catch (EntityDoesNotExistException e) {
       throw new ImpossibleRuntimeException(e);
     }

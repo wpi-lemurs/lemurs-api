@@ -23,8 +23,9 @@ public class UserService {
    * @param id The user's id.
    * @return The {@link User}.
    * @throws EntityDoesNotExistException Thrown if there is no user with the given id.
+   * @apiNote This does not check for authorization.
    */
-  public User getUser(Integer id) throws EntityDoesNotExistException {
+  public User getUserWithoutAuthCheck(Integer id) throws EntityDoesNotExistException {
     Optional<User> user = userRepository.findById(id);
 
     if (user.isEmpty()) {

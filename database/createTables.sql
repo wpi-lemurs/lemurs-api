@@ -48,3 +48,9 @@ CREATE TABLE data (
   status INT NOT NULL,
 	PRIMARY KEY (id)
 );
+
+-- Table for emails of people who should be alerted if someone is in danger.
+CREATE TABLE danger_alert_email (
+	email VARCHAR,
+	PRIMARY KEY (email)
+)

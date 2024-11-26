@@ -4,9 +4,9 @@ package edu.wpi.lemurs.api.exceptions;
 import lombok.experimental.StandardException;
 
 /**
- * An {@link Exception} when an entity does not exist.
+ * An {@link Exception} when an external communication fails.
  *
- * @fs.httpStatus 404 Not Found
+ * @fs.httpStatus 500 Internal Server Error
  */
 @StandardException
-public class EntityDoesNotExistException extends Exception {}
+public class BadExternalCommunicationException extends Exception {}

@@ -37,6 +37,10 @@ Copy `.env.example` to `.env` and edit variables as needed:
 `LEMURS_POSTRGRES_USERNAME` - The database admin username. \
 `LEMURS_POSTRGRES_PASSWORD` - The database admin password. \
 `LEMURS_API_PORT` - The api port that will be exposed. Example: `8080`
+`LEMURS_SIGNATURE` - A base 64 url encoded jwt secret. Can be generated with tools like: https://jwtsecret.com/generate.
+
+Note that in production configuration, the database username/password should not matter a lot as the database is not exposed.
+However, the jwt secret in LEMURS_SIGNATURE can be used to take full control of the API.
 
 ## Run
 
@@ -56,7 +60,8 @@ When trying to quickly re-run the application, it may be preferable to run the a
 
 To do this:
 1. Install JDK 21
-2. Add the following environment variable: \
+2. Add all of the environment variables to your user/system environment variables.  (Spring will not be able to use the .env file)
+3. Add the following environment variable: \
 `LEMURS_POSTRGRES_HOST` - The database host url. If database is run locally, this should be: `localhost:5432`
-3. Use `COMPOSE_PROFILES = "dev-partial"` for the environment.
-4. Run `./gradlew bootRun` to start api locally.  
+4. Use `COMPOSE_PROFILES = "dev-partial"` for the environment.
+5. Run `./gradlew bootRun` to start api locally.  

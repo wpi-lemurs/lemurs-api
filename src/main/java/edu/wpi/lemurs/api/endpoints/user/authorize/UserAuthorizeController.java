@@ -1,8 +1,9 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.endpoints.data;
+package edu.wpi.lemurs.api.endpoints.user.authorize;
 
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
+import edu.wpi.lemurs.api.security.auth.email.AuthorizedEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,23 +11,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Creates an endpoint for posting data. */
+/** Endpoint for authorizing users. */
 @RestController
-public class DataController {
+public class UserAuthorizeController {
+  private AuthorizedEmailService authorizedEmailService;
 
-  private DataService dataService;
-
-  /** Autowires a {@link DataController} */
+  /** Autowires a {@link UserAuthorizeController} */
   @Autowired
-  public DataController(DataService dataService) {
-    this.dataService = dataService;
+  public UserAuthorizeController(AuthorizedEmailService authorizedEmailService) {
+    this.authorizedEmailService = authorizedEmailService;
   }
 
-  /** The <code>/data</code> {@code POST} endpoint saves the sent data. */
-  @PostMapping("/data")
-  public ResponseEntity<Void> saveData(@RequestBody DataDto dataDto) {
+  /**
+   * The <code>/user/authorize</code> {@code POST} endpoint authorizes a user for the given user
+   * info.
+   */
+  @PostMapping("/user/authorize")
+  public ResponseEntity<Void> authorize(@RequestBody AuthEmailDto authEmailDto) {
     try {
-      dataService.saveData(dataDto.getType(), dataDto.getData().toString());
+      authorizedEmailService.authorize(authEmailDto.getEmail(), authEmailDto.getUmassId());
 
       return new ResponseEntity<>(HttpStatus.CREATED);
     } catch (UnauthenticatedException e) {

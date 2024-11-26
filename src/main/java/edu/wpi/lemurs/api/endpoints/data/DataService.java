@@ -2,8 +2,12 @@
 package edu.wpi.lemurs.api.endpoints.data;
 
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
-import edu.wpi.lemurs.api.status.DataStatus;
+import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
+import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
+import edu.wpi.lemurs.api.security.SecurityService;
+import edu.wpi.lemurs.api.security.roles.LemursRole;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class DataService {
 
+  private SecurityService securityService;
   private DataRepository dataRepository;
 
   /** Autowires a {@link DataService}. */
-  public DataService(DataRepository dataRepository) {
+  @Autowired
+  public DataService(DataRepository dataRepository, SecurityService securityService) {
     this.dataRepository = dataRepository;
+    this.securityService = securityService;
   }
 
   /**
@@ -25,8 +32,15 @@ public class DataService {
    * @param id The data's id.
    * @return The {@link Data}.
    * @throws EntityDoesNotExistException Thrown if there is no data with the given id.
+   * @throws UnauthenticatedException Thrown if the user is not authenticated.
+   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.RESEARCHER}
+   *     permissions.
    */
-  public Data getData(Integer id) throws EntityDoesNotExistException {
+  public Data getData(Integer id)
+      throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
+
+    securityService.assertHasPermission(LemursRole.RESEARCHER);
+
     Optional<Data> data = dataRepository.findById(id);
 
     if (data.isEmpty()) {
@@ -40,10 +54,16 @@ public class DataService {
    * Saves data to the database.
    *
    * @param dataDto The {@link DataDto} representing the data.
+   * @throws UnauthenticatedException Thrown if the user is not authenticated.
+   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.RESEARCHER}
+   *     permissions.
    */
-  public void saveData(DataDto dataDto) {
-    Data data =
-        new Data(null, dataDto.getType(), dataDto.getData().toString(), DataStatus.NOT_PROCESSED);
+  public void saveData(String type, String dataJson)
+      throws UnauthenticatedException, UnauthorizedException {
+
+    securityService.assertHasRole(LemursRole.USER);
+
+    Data data = new Data(null, type, dataJson, DataStatus.NOT_PROCESSED);
     dataRepository.save(data);
   }
 }

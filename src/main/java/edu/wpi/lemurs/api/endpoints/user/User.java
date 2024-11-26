@@ -1,8 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.endpoints.data;
+package edu.wpi.lemurs.api.endpoints.user;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,30 +11,26 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
-/** A {@link Data} represents a single unit of generic data. */
-@Table
+/** A {@link User} represents a user in the app. */
+@Table(name = "app_user")
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class Data {
+public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
   private Integer id;
 
   @Column(nullable = false)
-  private String type;
+  private String umassId;
 
   @Column(nullable = false)
-  @JdbcTypeCode(SqlTypes.JSON)
-  private String data;
+  private boolean isDisabled;
 
   @Column(nullable = false)
-  @Convert(converter = DataStatusConverter.class)
-  private DataStatus status;
+  private boolean isDeleted;
 }

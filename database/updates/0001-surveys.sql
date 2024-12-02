@@ -32,6 +32,12 @@ CREATE TABLE survey_question (
 	PRIMARY KEY (survey_id, question_id)
 );
 
+-- Bridge table view based on survey id.
+CREATE VIEW survey_question_view AS
+	SELECT S.id survey_id, Q.*, B.position position
+	FROM survey S JOIN survey_question B ON S.id = B.survey_id JOIN question Q ON B.question_id = Q.id;
+
+-- Table for capturing survey response.
 CREATE TABLE survey_response (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	app_user_id INT NOT NULL, 
@@ -42,6 +48,7 @@ CREATE TABLE survey_response (
 	PRIMARY KEY (id)
 );
 
+-- Table for capturing answers to survey quetions.
 CREATE TABLE answer (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	survey_response_id INT NOT NULL,
@@ -50,11 +57,13 @@ CREATE TABLE answer (
 	PRIMARY KEY (id)
 );
 
+-- Table for user progress.
 CREATE TABLE progress (
 	app_user_id INT NOT NULL,
 	earned DECIMAL(8, 2) NOT NULL,
 	daily_surveys_completed INT NOT NULL,
 	weekly_surveys_completed INT NOT NULL,
+	started TIMESTAMP NOT NULL,
 	week_reset TIMESTAMP NOT NULL,
 	next_daily_survey TIMESTAMP NOT NULL,
 	next_weekly_survey TIMESTAMP NOT NULL,

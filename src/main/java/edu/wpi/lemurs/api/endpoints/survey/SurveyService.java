@@ -34,19 +34,19 @@ public class SurveyService {
   /**
    * Gets all of the daily surveys for the user.
    *
-   * @return A list of {@link SurveyResponse}s with each daily survey.
+   * @return A list of {@link SurveyApiResponse}s with each daily survey.
    * @throws UnauthenticatedException Thrown if the user is not authenticated.
    * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
    */
-  public List<SurveyResponse> getDailySurveys()
+  public List<SurveyApiResponse> getDailySurveys()
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
-    List<SurveyResponse> surveys = new ArrayList<>();
+    List<SurveyApiResponse> surveys = new ArrayList<>();
     for (Survey survey : surveyRepository.findByIsDailyTrue()) {
       List<QuestionResponse> questions = new ArrayList<>();
-      SurveyResponse surveyResponse =
-          new SurveyResponse(survey.getId(), survey.getName(), questions);
+      SurveyApiResponse surveyResponse =
+          new SurveyApiResponse(survey.getId(), survey.getName(), questions);
       for (SurveyQuestionView question :
           surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
         questions.add(
@@ -68,19 +68,19 @@ public class SurveyService {
   /**
    * Gets all of the daily surveys for the user.
    *
-   * @return A list of {@link SurveyResponse}s with each daily survey.
+   * @return A list of {@link SurveyApiResponse}s with each daily survey.
    * @throws UnauthenticatedException Thrown if the user is not authenticated.
    * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
    */
-  public List<SurveyResponse> getWeeklySurveys()
+  public List<SurveyApiResponse> getWeeklySurveys()
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
-    List<SurveyResponse> surveys = new ArrayList<>();
+    List<SurveyApiResponse> surveys = new ArrayList<>();
     for (Survey survey : surveyRepository.findByIsWeeklyTrue()) {
       List<QuestionResponse> questions = new ArrayList<>();
-      SurveyResponse surveyResponse =
-          new SurveyResponse(survey.getId(), survey.getName(), questions);
+      SurveyApiResponse surveyResponse =
+          new SurveyApiResponse(survey.getId(), survey.getName(), questions);
       for (SurveyQuestionView question :
           surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
         questions.add(

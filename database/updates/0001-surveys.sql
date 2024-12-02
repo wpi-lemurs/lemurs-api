@@ -52,8 +52,10 @@ CREATE TABLE survey_response (
 CREATE TABLE answer (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	survey_response_id INT NOT NULL,
+	question_id INT NOT NULL,
 	answer TEXT,
-	FOREIGN KEY(survey_response_id) REFERENCES survey(id),
+	FOREIGN KEY(question_id) REFERENCES question(id),
+	FOREIGN KEY(survey_response_id) REFERENCES survey_response(id),
 	PRIMARY KEY (id)
 );
 

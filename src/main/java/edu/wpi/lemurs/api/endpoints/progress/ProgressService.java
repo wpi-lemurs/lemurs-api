@@ -19,9 +19,12 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class ProgressService {
 
-  private static Integer GOAL_2_WEEKS = 0;
-  private static Integer GOAL_3_WEEKS = 1;
-  private static Integer GOAL_TOTAL = 2;
+  private static final Integer GOAL_2_WEEKS = 0;
+  private static final Integer GOAL_3_WEEKS = 1;
+  private static final Integer GOAL_TOTAL = 2;
+
+  private static final Integer DAILY_INCENTIVE_ID = 0;
+  private static final Integer WEEKLY_INCENTIVE_ID = 1;
 
   private SecurityService securityService;
   private ProgressRepository progressRepository;
@@ -159,5 +162,52 @@ public class ProgressService {
     availability.add(daily);
     availability.add(weekly);
     return availability;
+  }
+
+  public void recordDaily(Date timestamp) throws UnauthenticatedException, UnauthorizedException {
+    securityService.assertHasRole(LemursRole.USER);
+
+    Progress progress = getProgress();
+    Date now = new Date();
+    // TODO: Determine how much to trust the user's timestamp.
+    if (progress.getNextDailySurvey().after(now)) {
+      return;
+    }
+
+    Incentive incentive = incentiveRepository.findById(DAILY_INCENTIVE_ID).get();
+    BigDecimal totalEarned = progress.getEarned().add(incentive.getReward());
+
+    for (GoalProgress goalProgress : getGoalProgress()) {
+      if (!goalProgress.isComplete()) {
+        Goal goal = goalRepository.findById(goalProgress.getGoalID()).get();
+        if (goal.getRequiredDailySurveys() <= progress.getDailySurveysCompleted()) {
+          goalProgress.setComplete(true);
+          totalEarned.add(goal.getReward());
+        }
+      }
+    }
+
+    progress.setNextDailySurvey(
+        new Date(now.getTime() + 1000 * 60 * 60 * 12)); // TODO: Improve the logic.
+    progress.setDailySurveysCompleted(progress.getDailySurveysCompleted() + 1);
+    progress.setEarned(totalEarned);
+  }
+
+  public void recordWeekly(Date timestamp) throws UnauthenticatedException, UnauthorizedException {
+    securityService.assertHasRole(LemursRole.USER);
+
+    Progress progress = getProgress();
+    Date now = new Date();
+    // TODO: Determine how much to trust the user's timestamp.
+    if (progress.getNextWeeklySurvey().after(now)) {
+      return;
+    }
+
+    Incentive incentive = incentiveRepository.findById(WEEKLY_INCENTIVE_ID).get();
+
+    progress.setNextWeeklySurvey(
+        new Date(now.getTime() + 1000 * 60 * 60 * 24 * 7)); // TODO: Improve the logic.
+    progress.setWeeklySurveysCompleted(progress.getWeeklySurveysCompleted() + 1);
+    progress.setEarned(progress.getEarned().add(incentive.getReward()));
   }
 }

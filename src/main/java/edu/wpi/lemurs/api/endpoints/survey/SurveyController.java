@@ -26,9 +26,9 @@ public class SurveyController {
   }
 
   @GetMapping("/survey/daily")
-  public ResponseEntity<List<SurveyResponse>> getDailySurveys() {
+  public ResponseEntity<List<SurveyApiResponse>> getDailySurveys() {
     try {
-      List<SurveyResponse> surveys = surveyService.getDailySurveys();
+      List<SurveyApiResponse> surveys = surveyService.getDailySurveys();
 
       return new ResponseEntity<>(surveys, HttpStatus.OK);
     } catch (UnauthenticatedException e) {
@@ -39,9 +39,9 @@ public class SurveyController {
   }
 
   @GetMapping("/survey/weekly")
-  public ResponseEntity<List<SurveyResponse>> getWeeklySurveys() {
+  public ResponseEntity<List<SurveyApiResponse>> getWeeklySurveys() {
     try {
-      List<SurveyResponse> surveys = surveyService.getWeeklySurveys();
+      List<SurveyApiResponse> surveys = surveyService.getWeeklySurveys();
 
       return new ResponseEntity<>(surveys, HttpStatus.OK);
     } catch (UnauthenticatedException e) {

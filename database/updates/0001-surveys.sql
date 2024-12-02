@@ -64,13 +64,13 @@ CREATE TABLE progress (
 	daily_surveys_completed INT NOT NULL,
 	weekly_surveys_completed INT NOT NULL,
 	started TIMESTAMP NOT NULL,
-	week_reset TIMESTAMP NOT NULL,
 	next_daily_survey TIMESTAMP NOT NULL,
 	next_weekly_survey TIMESTAMP NOT NULL,
   FOREIGN KEY(app_user_id) REFERENCES app_user(id),
 	PRIMARY KEY (app_user_id)
 );
 
+-- Table for incentives.
 CREATE TABLE incentive (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	name VARCHAR(255) NOT NULL UNIQUE,
@@ -78,12 +78,23 @@ CREATE TABLE incentive (
 	PRIMARY KEY (id)
 );
 
+-- Table for goals.
 CREATE TABLE goal (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	name VARCHAR(255) NOT NULL,
 	required_daily_surveys INT NOT NULL,
+	max_days INT NULL,
 	reward DECIMAL(8,2) NOT NULL,
-	prerequisite_goal_id INT NULL,
-	FOREIGN KEY(prerequisite_goal_id) REFERENCES goal(id),
 	PRIMARY KEY (id)
 );
+
+-- Table for user goal progress.
+CREATE TABLE goal_progress (
+	app_user_id INT NOT NULL,
+	goal_id INT NOT NULL,
+	is_complete BOOLEAN NULL DEFAULT NULL,
+	time_limit TIMESTAMP NOT NULL,
+  FOREIGN KEY(app_user_id) REFERENCES app_user(id),
+	FOREIGN KEY(goal_id) REFERENCES goal(id),
+	PRIMARY KEY (app_user_id, goal_id)
+)

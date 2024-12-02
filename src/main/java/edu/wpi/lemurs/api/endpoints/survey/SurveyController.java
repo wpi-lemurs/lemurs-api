@@ -1,6 +1,8 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey;
 
+import edu.wpi.lemurs.api.endpoints.progress.AvailableResponse;
+import edu.wpi.lemurs.api.endpoints.progress.ProgressService;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import java.util.List;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class SurveyController {
 
   private SurveyService surveyService;
+  private ProgressService progressService;
 
   @Autowired
-  public SurveyController(SurveyService surveyService) {
+  public SurveyController(SurveyService surveyService, ProgressService progressService) {
     this.surveyService = surveyService;
+    this.progressService = progressService;
   }
 
   @GetMapping("/survey/daily")
@@ -40,6 +44,20 @@ public class SurveyController {
       List<SurveyResponse> surveys = surveyService.getWeeklySurveys();
 
       return new ResponseEntity<>(surveys, HttpStatus.OK);
+    } catch (UnauthenticatedException e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    } catch (UnauthorizedException e) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+  }
+
+  @GetMapping("/survey/available")
+  public ResponseEntity<List<AvailableResponse>> getAvailability() {
+    try {
+
+      List<AvailableResponse> availability = progressService.getSurveyAvailability();
+
+      return new ResponseEntity<>(availability, HttpStatus.OK);
     } catch (UnauthenticatedException e) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     } catch (UnauthorizedException e) {

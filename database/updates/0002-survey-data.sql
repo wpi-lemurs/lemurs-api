@@ -172,3 +172,14 @@ INSERT INTO "survey_question" ("survey_id", "question_id", "position") OVERRIDIN
 	('1', '78', '56'),
 	('1', '79', '64'),
 	('1', '80', '72');
+
+--- Incentive Constants
+INSERT INTO "incentive" ("id", "name", "reward") OVERRIDING SYSTEM VALUE VALUES
+	('0', 'daily_survey', '3'),
+	('1', 'weekly_survey', '5');
+
+-- Goal Constants
+INSERT INTO "goal" ("id", "name", "required_daily_surveys", "reward", "prerequisite_goal_id") OVERRIDING SYSTEM VALUE VALUES
+	('0', '80% Pariticipation Week 1-2', '23', '10', NULL),
+	('1', '80% Pariticipation Week 1-3', '34', '15', '0'),
+	('2', '80% Pariticipation Week 1-4', '45', '25', '1');

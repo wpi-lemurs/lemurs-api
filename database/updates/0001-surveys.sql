@@ -33,7 +33,7 @@ CREATE TABLE survey_question (
 );
 
 CREATE TABLE survey_response (
-	id INT NOT NULL,
+	id INT GENERATED ALWAYS AS IDENTITY,
 	app_user_id INT NOT NULL, 
 	survey_id INT NOT NULL,
 	timestamp TIMESTAMP NOT NULL,
@@ -43,9 +43,38 @@ CREATE TABLE survey_response (
 );
 
 CREATE TABLE answer (
-	id INT NOT NULL,
+	id INT GENERATED ALWAYS AS IDENTITY,
 	survey_response_id INT NOT NULL,
 	answer TEXT,
 	FOREIGN KEY(survey_response_id) REFERENCES survey(id),
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE progress (
+	app_user_id INT NOT NULL,
+	earned DECIMAL(8, 2) NOT NULL,
+	daily_surveys_completed INT NOT NULL,
+	weekly_surveys_completed INT NOT NULL,
+	week_reset TIMESTAMP NOT NULL,
+	next_daily_survey TIMESTAMP NOT NULL,
+	next_weekly_survey TIMESTAMP NOT NULL,
+  FOREIGN KEY(app_user_id) REFERENCES app_user(id),
+	PRIMARY KEY (app_user_id)
+);
+
+CREATE TABLE incentive (
+	id INT GENERATED ALWAYS AS IDENTITY,
+	name VARCHAR(255) NOT NULL UNIQUE,
+	reward DECIMAL(8,2) NOT NULL,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE goal (
+	id INT GENERATED ALWAYS AS IDENTITY,
+	name VARCHAR(255) NOT NULL,
+	required_daily_surveys INT NOT NULL,
+	reward DECIMAL(8,2) NOT NULL,
+	prerequisite_goal_id INT NULL,
+	FOREIGN KEY(prerequisite_goal_id) REFERENCES goal(id),
 	PRIMARY KEY (id)
 );

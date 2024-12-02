@@ -1,0 +1,6 @@
+-- Table for surveys.
+CREATE TABLE survey (
+	id INT GENERATED ALWAYS AS IDENTITY,
+	name VARCHAR(255) NOT NULL,
+	PRIMARY KEY (id)
+);

@@ -3,15 +3,17 @@ services:
     profiles:
       - base
     container_name: lemurs-db
-    image: postgres:alpine
+    image: lemurs-db
     restart: always
+    build:
+      context: ./database/
+      dockerfile: Dockerfile
     environment:
       POSTGRES_USER: ${LEMURS_POSTRGRES_USERNAME}
       POSTGRES_PASSWORD: ${LEMURS_POSTRGRES_PASSWORD}
       POSTGRES_DB: lemurs
     volumes:
       - lemurs-data:/var/lib/postgresql/data 
-      - ./database/createTables.sql:/docker-entrypoint-initdb.d/create_tables.sql
     networks:
       - lemurs-network
     healthcheck:

@@ -10,12 +10,16 @@ while [[ "$DBSTATUS" != "0" && $i -lt 60 ]]; do
 done
 
 if [[ "$DBSTATUS" != "0" ]]; then 
-	echo "PostgreSQL  is taking more than 60 seconds to start up"
+	echo "PostgreSQL is taking more than 60 seconds to start up"
 	exit 1
 fi
 
 # Run the update schema scripts as necessary.
-current=`cat /var/lib/postgresql/schema.version`
+if [ ! -e /var/lib/postgresql/data/schema.version ]; then
+  echo "-0001" > /var/lib/postgresql/data/schema.version
+fi
+
+current=`cat /var/lib/postgresql/data/schema.version`
 for entry in /usr/config/updates/*
 do
 	index=${entry:20:4}
@@ -31,4 +35,4 @@ do
 	fi
 done
 
-echo $current > /var/lib/postgresql/schema.version
+echo $current > /var/lib/postgresql/data/schema.version

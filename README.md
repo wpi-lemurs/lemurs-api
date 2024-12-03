@@ -34,8 +34,8 @@ The API and database for the LEMURS project.
 Copy `.env.example` to `.env` and edit variables as needed:
 
 `COMPOSE_PROFILES` - Which environment this is for. Enumeration: `dev`, `dev-partial`, `prod`
-`LEMURS_POSTRGRES_USERNAME` - The database admin username. \
-`LEMURS_POSTRGRES_PASSWORD` - The database admin password. \
+`LEMURS_POSTGRES_USERNAME` - The database admin username. \
+`LEMURS_POSTGRES_PASSWORD` - The database admin password. \
 `LEMURS_API_PORT` - The api port that will be exposed. Example: `8080`
 `LEMURS_SIGNATURE` - A base 64 url encoded jwt secret. Can be generated with tools like: https://jwtsecret.com/generate.\
 `LEMURS_EMAIL_ADDRESS` - The email alias that will be used for sending the email. Example `lemurs-noreply@wpi.edu` \
@@ -67,6 +67,6 @@ To do this:
 1. Install JDK 21
 2. Add all of the environment variables to your user/system environment variables.  (Spring will not be able to use the .env file)
 3. Add the following environment variable: \
-`LEMURS_POSTRGRES_HOST` - The database host url. If database is run locally, this should be: `localhost:5432`
+`LEMURS_POSTGRES_HOST` - The database host url. If database is run locally, this should be: `localhost:5432`
 4. Use `COMPOSE_PROFILES = "dev-partial"` for the environment.
 5. Run `./gradlew bootRun` to start api locally.  

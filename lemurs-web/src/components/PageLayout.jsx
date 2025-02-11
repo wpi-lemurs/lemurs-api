@@ -6,7 +6,6 @@
 import React, { useContext } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 
-import { useIsAuthenticated } from '@azure/msal-react';
 import { SignInButton } from './SignInButton';
 import { SignOutButton } from './SignOutButton';
 import { TokenContext } from './token/TokenContext';
@@ -25,17 +24,12 @@ export const PageLayout = (props) => {
                     LEMURS
                 </a>
                 <div className="collapse navbar-collapse justify-content-end">
-                    {(token == "") ? <SignInButton setToken={props.setToken}/> : <SignOutButton setToken={props.setToken} />}
+                    {(token === "") ? <SignInButton setToken={props.setToken}/> : <SignOutButton setToken={props.setToken} />}
                 </div>
             </Navbar>
-                <div className="title">
-                    <h5>
-                        Welcome to the LEMURS web interface.
-                    </h5>
-                </div>
-                <div className="content">
-                    {props.children}
-                </div>
+            <div className="content">
+                {props.children}
+            </div>
         </>
     );
 };

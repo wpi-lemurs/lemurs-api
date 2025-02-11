@@ -125,3 +125,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Downloadables should be manually moved to the site.
+downloadables/

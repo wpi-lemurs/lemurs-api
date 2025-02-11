@@ -27,7 +27,7 @@ class RoleServiceTest implements TestConstants {
   void setup() {
     roleRepository = mock(RoleRepository.class);
     roleService = new RoleService(roleRepository);
-    user = new User(TEST_ID_0, TEST_UMASS_ID_0, false, false);
+    user = new User(TEST_ID_0, false, false);
     lemursRoles = new ArrayList<>();
     roles = new ArrayList<>();
     when(roleRepository.findByUserId(TEST_ID_0)).thenReturn(roles);

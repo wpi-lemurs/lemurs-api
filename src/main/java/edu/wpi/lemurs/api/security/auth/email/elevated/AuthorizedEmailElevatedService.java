@@ -48,8 +48,9 @@ public class AuthorizedEmailElevatedService {
     List<LemursRole> roles = new ArrayList<>();
     for (AuthorizedEmailElevated authEmail : authorizedEmails) {
       if (authEmail.getExpiration().before(new Date())) {
-        roles.add(authEmail.getLemursRole());
+        continue;
       }
+      roles.add(authEmail.getLemursRole());
     }
 
     return roles;

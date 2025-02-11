@@ -39,7 +39,7 @@ class SecurityServiceTest implements TestConstants {
     roleService = mock(RoleService.class);
     securityService = new SecurityService(roleService);
 
-    user = new User(TEST_ID_0, TEST_UMASS_ID_0, false, false);
+    user = new User(TEST_ID_0, false, false);
   }
 
   /** Tests the security service when there is no authenticated user. */

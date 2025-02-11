@@ -3,5 +3,5 @@ package edu.wpi.lemurs.api.endpoints.user;
 
 import org.springframework.data.repository.CrudRepository;
 
-/** A {@link CrudRepository} for a {@link UserRepository}. */
+/** A {@link CrudRepository} for a {@link User}. */
 public interface UserRepository extends CrudRepository<User, Integer> {}

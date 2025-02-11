@@ -31,6 +31,7 @@ public class UserAuthorizeAdminController {
   @PostMapping("/user/authorize/admin")
   public ResponseEntity<Void> authorize(@RequestBody AuthAdminEmailDto authEmailDto) {
     try {
+      // TODO: Check whether the email is in user info, and add directly if it is.
       authorizedEmailService.authorize(
           authEmailDto.getEmail(), LemursRole.valueOf(authEmailDto.getRole()));
 

@@ -6,6 +6,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.endpoints.user.UserService;
+import edu.wpi.lemurs.api.endpoints.user.info.UserInfoService;
+import edu.wpi.lemurs.api.endpoints.user.umass.UmassService;
 import edu.wpi.lemurs.api.exceptions.BadExternalCommunicationException;
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
 import edu.wpi.lemurs.api.exceptions.ImpossibleRuntimeException;
@@ -50,6 +52,8 @@ public class AuthMicrosoftService {
   private AuthorizedEmailElevatedService authorizedEmailElevatedService;
   private UserService userService;
   private RoleService roleService;
+  private UmassService umassService;
+  private UserInfoService userInfoService;
 
   /** Autowires an {@link AuthMicrosoftService}. */
   @Autowired
@@ -59,13 +63,17 @@ public class AuthMicrosoftService {
       UserService userService,
       AuthorizedEmailService authorizedEmailService,
       AuthorizedEmailElevatedService authorizedEmailElevatedService,
-      RoleService roleService) {
+      RoleService roleService,
+      UmassService umassService,
+      UserInfoService userInfoService) {
     this.env = env;
     this.authMicrosoftRepository = authMicrosoftRepository;
     this.userService = userService;
     this.authorizedEmailService = authorizedEmailService;
     this.authorizedEmailElevatedService = authorizedEmailElevatedService;
     this.roleService = roleService;
+    this.umassService = umassService;
+    this.userInfoService = userInfoService;
   }
 
   /**
@@ -238,14 +246,15 @@ public class AuthMicrosoftService {
 
     if (optionalUmassID.isPresent()) {
       String umassID = optionalUmassID.get();
-      // Add the umass id connection in the database.
-
+      umassService.setUmassIDWithoutAuthorization(user.getId(), umassID);
       authorizedEmailService.deauthorizeWithoutAuthCheck(microsoftID.getEmail());
       roleService.addRoleWithoutAuthCheck(user.getId(), LemursRole.USER);
     }
 
-    if (!roles.isEmpty()) {
-      // Add personal info to user.
+    if (!roles.isEmpty() && !userInfoService.doesIDExist(user.getId())) {
+      // TODO: Get names from microsoft.
+      userInfoService.setUserInfoWithoutAuthorization(
+          user.getId(), microsoftID.getEmail(), null, null);
     }
 
     for (LemursRole role : roles) {

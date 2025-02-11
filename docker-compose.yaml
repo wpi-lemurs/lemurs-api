@@ -43,7 +43,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - ${LEMURS_API_PORT}:8080
+      - 8080:${LEMURS_API_PORT}
     restart: always
     environment:
       LEMURS_POSTGRES_HOST: lemurs-db:5432
@@ -73,6 +73,28 @@ services:
     <<: *api
     depends_on:
       - db-prod
+  web: &web
+    profiles:
+      - base
+    container_name: lemurs-web
+    image: lemurs-web
+    restart: always
+    build:
+      context: ./lemurs-web/
+      dockerfile: Dockerfile
+    networks:
+      - lemurs-network
+    ports:
+      - 3000:80
+  web-dev: 
+    profiles:
+      - dev
+      - dev-partial
+    <<: *web
+  web-prod:
+    profiles:
+      - prod
+    <<: *web
 volumes:
   lemurs-data:
     driver: local

@@ -1,5 +1,5 @@
 {
-  "name": "ms-identity-javascript-react-spa",
+  "name": "lemurs-web",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -7,7 +7,7 @@
     "@azure/msal-react": "^1.5.2",
     "bootstrap": "^5.2.3",
     "dotenv": "^16.4.5",
-    "ms-identity-javascript-react-spa": "file:",
+    "lemurs-web": "file:",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.0",
     "react-dom": "^18.2.0",

@@ -43,6 +43,7 @@ CREATE TABLE survey_response (
 	app_user_id INT NOT NULL, 
 	survey_id INT NOT NULL,
 	timestamp TIMESTAMP NOT NULL,
+	notification_start TIMESTAMP,
   FOREIGN KEY(app_user_id) REFERENCES app_user(id),
 	FOREIGN KEY(survey_id) REFERENCES survey(id),
 	PRIMARY KEY (id)
@@ -99,4 +100,13 @@ CREATE TABLE goal_progress (
   FOREIGN KEY(app_user_id) REFERENCES app_user(id),
 	FOREIGN KEY(goal_id) REFERENCES goal(id),
 	PRIMARY KEY (app_user_id, goal_id)
-)
+);
+
+-- Table for survey opening times. 
+-- (Could, in the very distant future, be modified to be per date, or even per user.)
+CREATE TABLE survey_availability (
+	name VARCHAR NOT NULL,
+	open_time TIME NOT NULL,
+	close_time TIME NOT NULL,
+	PRIMARY KEY (name)
+);

@@ -183,3 +183,8 @@ INSERT INTO "goal" ("id", "name", "required_daily_surveys", "max_days", "reward"
 	('0', '80% Pariticipation Week 1-2', '23', '14', '10'),
 	('1', '80% Pariticipation Week 1-3', '34', '21', '15'),
 	('2', '80% Total Participation', '45', '28', '25');
+
+-- Survey Availability
+INSERT INTO "survey_availability" ("name", "open_time", "close_time") VALUES
+	('morning', '08:00:00', '13:00:00'),
+	('evening', '15:00:00', '20:00:00');

@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class AuthorizedEmailService {
 
-  /** Authorized email expiration length in ms. (7 days) */
-  private static final long AUTHORIZED_EMAIL_EXPIRATION_TIME = (long) 7 * 24 * 60 * 60 * 1000;
+  /** Authorized email expiration length in ms. (30 days) */
+  private static final long AUTHORIZED_EMAIL_EXPIRATION_TIME = (long) 30 * 24 * 60 * 60 * 1000;
 
   private SecurityService securityService;
   private AuthorizedEmailRepository authorizedEmailRepository;

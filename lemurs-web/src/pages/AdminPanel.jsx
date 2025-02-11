@@ -3,6 +3,7 @@ import React, { useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { TokenContext } from '../components/token/TokenContext';
+import {NotificationManager} from 'react-notifications';
 
 export default function AdminPanel() {
   const {token} = useContext(TokenContext)
@@ -10,6 +11,19 @@ export default function AdminPanel() {
   const [umassID, setUmassID] = useState("")
   const [adminEmail, setAdminEmail] = useState("")
   const [adminRole, setAdminRole] = useState(-1)
+
+  function adminRoleString() {
+    const role = Number(adminRole)
+    if (role === 1) {
+        return "Researcher"
+    } else if (role === 2) {
+        return "Staff"
+    } else if (role === 3) {
+        return "Owner"
+    } else {
+        return "Roleless"
+    }
+  }
 
   const authorizePariticipantEmail = () => {
       fetch(
@@ -23,6 +37,7 @@ export default function AdminPanel() {
           if (!response.ok) {
               throw response.status;
           }
+          NotificationManager.success("Successfully added \"" + participantEmail + "\" with Umass ID \"" + umassID + "\" to the LEMURS system.");
       });
   }
 
@@ -38,6 +53,7 @@ export default function AdminPanel() {
         if (!response.ok) {
             throw response.status;
         }
+        NotificationManager.success("Successfully gave \"" + adminEmail + "\" the \"" + adminRoleString() + "\" role in the LEMURS system.");
     });
 }
 

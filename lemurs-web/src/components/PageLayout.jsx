@@ -9,6 +9,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import { SignInButton } from './SignInButton';
 import { SignOutButton } from './SignOutButton';
 import { TokenContext } from './token/TokenContext';
+import { NotificationContainer } from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 
 /**
  * Renders the navbar component with a sign-in or sign-out button depending on whether or not a user is authenticated
@@ -28,6 +30,7 @@ export const PageLayout = (props) => {
                 </div>
             </Navbar>
             <div className="content">
+            <   NotificationContainer />
                 {props.children}
             </div>
         </>

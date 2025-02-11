@@ -3,6 +3,9 @@ package edu.wpi.lemurs.api.endpoints.alert.danger;
 
 import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.endpoints.user.UserService;
+import edu.wpi.lemurs.api.endpoints.user.info.UserInfo;
+import edu.wpi.lemurs.api.endpoints.user.info.UserInfoService;
+import edu.wpi.lemurs.api.endpoints.user.umass.UmassService;
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
@@ -13,6 +16,7 @@ import jakarta.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
@@ -24,17 +28,23 @@ public class DangerAlertEmailService {
   private DangerAlertEmailRepository dangerAlertEmailRepository;
   private EmailService emailService;
   private UserService userService;
+  private UmassService umassService;
+  private UserInfoService userInfoService;
 
   /** Autowires a {@link DangerAlertEmailService}. */
   public DangerAlertEmailService(
       SecurityService securityService,
       DangerAlertEmailRepository dangerAlertEmailRepository,
       EmailService emailService,
-      UserService userService) {
+      UserService userService,
+      UmassService umassService,
+      UserInfoService userInfoService) {
     this.securityService = securityService;
     this.dangerAlertEmailRepository = dangerAlertEmailRepository;
     this.emailService = emailService;
     this.userService = userService;
+    this.umassService = umassService;
+    this.userInfoService = userInfoService;
   }
 
   /**
@@ -99,11 +109,17 @@ public class DangerAlertEmailService {
           MailException,
           EntityDoesNotExistException {
 
-    User user = userService.getUserWithoutAuthCheck(userID);
+    Optional<String> umassID = umassService.getUmassID(userID);
+    // TODO: TBD the best solution for this.
+    Optional<UserInfo> userInfo = userInfoService.getUserInfo(userID);
+
+    if (umassID.isEmpty()) {
+      return;
+    }
 
     String out =
         "The student with UMass REDCap ID '"
-            + user.getUmassId()
+            + umassID.get()
             + "' is showing concerning signs."
             + "\n\nHere are the following concerning signs:\n";
 

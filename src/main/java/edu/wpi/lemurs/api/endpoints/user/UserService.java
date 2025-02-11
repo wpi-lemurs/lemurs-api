@@ -38,12 +38,11 @@ public class UserService {
   /**
    * Creates a {@link User} from a UMass id.
    *
-   * @param umassID The new user's umass id.
    * @return The create {@link User}.
    * @apiNote This user service does not check for authorization.
    */
-  public User createUserWithoutAuthCheck(String umassID) {
-    User user = new User(null, umassID, false, false);
+  public User createUserWithoutAuthCheck() {
+    User user = new User(null, false, false);
     return userRepository.save(user);
   }
 

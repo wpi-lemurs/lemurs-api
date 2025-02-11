@@ -1,7 +1,6 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.security.auth.email;
 
-import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
@@ -37,22 +36,21 @@ public class AuthorizedEmailService {
    *
    * @param email The user's email.
    * @return The {@link User}.
-   * @throws EntityDoesNotExistException Thrown if there is no user with the given email.
    */
-  public String getUmassID(String email) throws EntityDoesNotExistException {
+  public Optional<String> getUmassID(String email) {
     Optional<AuthorizedEmail> authorizedEmail = authorizedEmailRepository.findById(email);
 
     if (authorizedEmail.isEmpty()) {
-      throw new EntityDoesNotExistException();
+      return Optional.empty();
     }
 
     AuthorizedEmail toCheck = authorizedEmail.get();
 
     if (toCheck.getExpiration().before(new Date())) {
-      throw new EntityDoesNotExistException();
+      return Optional.empty();
     }
 
-    return toCheck.getUmassId();
+    return Optional.of(toCheck.getUmassId());
   }
 
   /**
@@ -65,7 +63,7 @@ public class AuthorizedEmailService {
    */
   public void authorize(String email, String umassID)
       throws UnauthenticatedException, UnauthorizedException {
-    securityService.assertHasPermission(LemursRole.OWNER);
+    securityService.assertHasPermission(LemursRole.RESEARCHER);
 
     Date expiration = new Date((new Date()).getTime() + AUTHORIZED_EMAIL_EXPIRATION_TIME);
     AuthorizedEmail authorizedEmail = new AuthorizedEmail(email, umassID, expiration);

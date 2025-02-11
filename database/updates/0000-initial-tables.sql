@@ -54,7 +54,7 @@ CREATE TABLE authorized_email_elevated (
 	email VARCHAR NOT NULL,
 	role INT NOT NULL,
 	expiration TIMESTAMP,
-	PRIMARY KEY (email)
+	PRIMARY KEY (email, role)
 );
 
 -- Table for roles.

@@ -12,6 +12,7 @@ import edu.wpi.lemurs.api.exceptions.ImpossibleRuntimeException;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.auth.email.AuthorizedEmailService;
+import edu.wpi.lemurs.api.security.auth.email.elevated.AuthorizedEmailElevatedService;
 import edu.wpi.lemurs.api.security.roles.LemursRole;
 import edu.wpi.lemurs.api.security.roles.RoleService;
 import edu.wpi.lemurs.api.services.EnvironmentService;
@@ -21,6 +22,7 @@ import io.jsonwebtoken.Locator;
 import jakarta.transaction.Transactional;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -45,6 +47,7 @@ public class AuthMicrosoftService {
   private EnvironmentService env;
   private AuthMicrosoftRepository authMicrosoftRepository;
   private AuthorizedEmailService authorizedEmailService;
+  private AuthorizedEmailElevatedService authorizedEmailElevatedService;
   private UserService userService;
   private RoleService roleService;
 
@@ -55,11 +58,13 @@ public class AuthMicrosoftService {
       AuthMicrosoftRepository authMicrosoftRepository,
       UserService userService,
       AuthorizedEmailService authorizedEmailService,
+      AuthorizedEmailElevatedService authorizedEmailElevatedService,
       RoleService roleService) {
     this.env = env;
     this.authMicrosoftRepository = authMicrosoftRepository;
     this.userService = userService;
     this.authorizedEmailService = authorizedEmailService;
+    this.authorizedEmailElevatedService = authorizedEmailElevatedService;
     this.roleService = roleService;
   }
 
@@ -75,23 +80,16 @@ public class AuthMicrosoftService {
     String idToken = accessToken;
     MicrosoftID microsoftID = getMicrosoftID(idToken);
 
-    User user;
     try {
-      user = getUser(microsoftID.getId());
-    } catch (BadCredentialsException e) {
-      try {
-        user = attemptAddUser(microsoftID);
-      } catch (BadCredentialsException
-          | EntityDoesNotExistException
-          | UnauthenticatedException
-          | UnauthorizedException e1) {
-        throw new BadCredentialsException("Invalid Microsoft Key");
-      }
+      User user = addUserPermissions(microsoftID);
+      userService.assertEnabledUser(user);
+      return new AuthMicrosoftAuthentication(idToken, user);
+    } catch (BadCredentialsException
+        | EntityDoesNotExistException
+        | UnauthenticatedException
+        | UnauthorizedException e1) {
+      throw new BadCredentialsException("Invalid Microsoft Key");
     }
-
-    userService.assertEnabledUser(user);
-
-    return new AuthMicrosoftAuthentication(idToken, user);
   }
 
   /**
@@ -185,28 +183,28 @@ public class AuthMicrosoftService {
    *
    * @param microsoftID The microsoft id.
    * @return The {@link User} linked to the microsoft id.
-   * @throws BadCredentialsException Thrown if there is no {@link User} linked to this microsoft id.
    */
-  private User getUser(String microsoftID) throws BadCredentialsException {
+  private Optional<User> getUser(String microsoftID) {
     Optional<AuthMicrosoft> optionalID = authMicrosoftRepository.findById(microsoftID);
     if (optionalID.isEmpty()) {
-      throw new BadCredentialsException("Microsoft token did not have an id.");
+      return Optional.empty();
     }
 
     Integer id = optionalID.get().getUserID();
     if (id == null) {
-      throw new BadCredentialsException("No user with this microsoft account.");
+      return Optional.empty();
     }
 
     try {
-      return userService.getUserWithoutAuthCheck(id);
+      return Optional.of(userService.getUserWithoutAuthCheck(id));
     } catch (EntityDoesNotExistException e) {
       throw new ImpossibleRuntimeException(e);
     }
   }
 
   /**
-   * Attempts to add a {@link User} based on if their email is in the system.
+   * Attempts to add permissions to a microsoft ID {@link User} based on if their email is in the
+   * system.
    *
    * @param microsoftID The microsoft id.
    * @return The {@link User} linked to the microsoft id.
@@ -216,18 +214,44 @@ public class AuthMicrosoftService {
    * @throws UnauthenticatedException
    */
   @Transactional
-  private User attemptAddUser(MicrosoftID microsoftID)
+  private User addUserPermissions(MicrosoftID microsoftID)
       throws BadCredentialsException,
           EntityDoesNotExistException,
           UnauthenticatedException,
           UnauthorizedException {
-    String umassID = authorizedEmailService.getUmassID(microsoftID.getEmail());
-    authorizedEmailService.deauthorizeWithoutAuthCheck(microsoftID.getEmail());
+    Optional<User> optionalUser = getUser(microsoftID.getId());
+    Optional<String> optionalUmassID = authorizedEmailService.getUmassID(microsoftID.getEmail());
+    List<LemursRole> roles = authorizedEmailElevatedService.getRoles(microsoftID.getEmail());
 
-    User user = userService.createUserWithoutAuthCheck(umassID);
-    authMicrosoftRepository.save(new AuthMicrosoft(microsoftID.getId(), user.getId(), new Date()));
-    roleService.addRoleWithoutAuthCheck(
-        user.getId(), LemursRole.USER); // TODO: This roles should be based on what the adder says.
+    if (optionalUser.isEmpty() && optionalUmassID.isEmpty() && roles.isEmpty()) {
+      throw new BadCredentialsException("No user account or permissions found.");
+    }
+
+    User user;
+    if (optionalUser.isPresent()) {
+      user = optionalUser.get();
+    } else {
+      user = userService.createUserWithoutAuthCheck();
+      authMicrosoftRepository.save(
+          new AuthMicrosoft(microsoftID.getId(), user.getId(), new Date()));
+    }
+
+    if (optionalUmassID.isPresent()) {
+      String umassID = optionalUmassID.get();
+      // Add the umass id connection in the database.
+
+      authorizedEmailService.deauthorizeWithoutAuthCheck(microsoftID.getEmail());
+      roleService.addRoleWithoutAuthCheck(user.getId(), LemursRole.USER);
+    }
+
+    if (!roles.isEmpty()) {
+      // Add personal info to user.
+    }
+
+    for (LemursRole role : roles) {
+      authorizedEmailElevatedService.deauthorizeWithoutAuthCheck(microsoftID.getEmail(), role);
+      roleService.addRoleWithoutAuthCheck(user.getId(), role);
+    }
 
     return user;
   }

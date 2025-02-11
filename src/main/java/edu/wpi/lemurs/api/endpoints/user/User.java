@@ -26,9 +26,6 @@ public class User {
   private Integer id;
 
   @Column(nullable = false)
-  private String umassId;
-
-  @Column(nullable = false)
   private boolean isDisabled;
 
   @Column(nullable = false)

@@ -30,7 +30,7 @@ services:
       - dev-partial
     <<: *db
     ports:
-      - 5432:5432
+      - ${LEMURS_EXPOSED_PORT_DB}:5432
 
   # Database Prod Config
   db-prod:
@@ -48,7 +48,7 @@ services:
       context: ./api/
       dockerfile: Dockerfile
     ports:
-      - 8080:8080
+      - ${LEMURS_EXPOSED_PORT_API}:8080
     restart: always
     environment:
       LEMURS_POSTGRES_HOST: lemurs-db:5432
@@ -104,7 +104,7 @@ services:
       - dev-partial
     <<: *web
     ports:
-      - 3000:80
+      - ${LEMURS_EXPOSED_WEB}:80
     depends_on:
       - db-dev
       - api-dev
@@ -131,7 +131,7 @@ services:
     networks:
       - lemurs-network
     ports:
-      - 80:80
+      - ${LEMURS_EXPOSED_PROXY}:80
 
   # Proxy Dev Config
   proxy-dev:

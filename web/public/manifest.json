@@ -1,6 +1,6 @@
 {
-  "short_name": "Microsoft Entra React App",
-  "name": "Microsoft Entra React App",
+  "short_name": "LEMURS React App",
+  "name": "LEMURS React App",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",

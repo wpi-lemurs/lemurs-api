@@ -1,0 +1,4 @@
+# Secrets and Development
+.env
+.git
+.vscode

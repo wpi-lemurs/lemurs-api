@@ -127,4 +127,4 @@ dist
 .tern-port
 
 # Downloadables should be manually moved to the site.
-downloadables/
+src/downloadables/lemurs*.apk

@@ -1,9 +1,10 @@
 services:
+  # === Database Config ===
   db: &db
     profiles:
       - base
     container_name: lemurs-db
-    image: lemurs-db
+    image: lemurs-db-image
     restart: always
     build:
       context: ./database/
@@ -21,6 +22,8 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
+
+  # Database Dev Config
   db-dev: 
     profiles:
       - dev
@@ -28,29 +31,30 @@ services:
     <<: *db
     ports:
       - 5432:5432
+
+  # Database Prod Config
   db-prod:
     profiles:
       - prod
     <<: *db
-    ports:
-      - 5432:5432
+
+  # === API Config ===
   api: &api
     profiles:
       - base
     container_name: lemurs-api
     image: lemurs-api-image
     build:
-      context: .
+      context: ./api/
       dockerfile: Dockerfile
     ports:
-      - 8080:${LEMURS_API_PORT}
+      - 8080:8080
     restart: always
     environment:
       LEMURS_POSTGRES_HOST: lemurs-db:5432
       LEMURS_POSTGRES_USERNAME: ${LEMURS_POSTGRES_USERNAME}
       LEMURS_POSTGRES_PASSWORD: ${LEMURS_POSTGRES_PASSWORD}
       LEMURS_SIGNATURE: ${LEMURS_SIGNATURE}
-      LEMURS_API_PORT: 8080
       LEMURS_MICROSOFT_TENANT_ID: ${LEMURS_MICROSOFT_TENANT_ID}
       LEMURS_MICROSOFT_APP_ID: ${LEMURS_MICROSOFT_APP_ID}
       LEMURS_MICROSOFT_SECRET: ${LEMURS_MICROSOFT_SECRET}
@@ -61,43 +65,101 @@ services:
       LEMURS_EMAIL_PASSWORD: ${LEMURS_EMAIL_PASSWORD}
     networks:
       - lemurs-network
+
+  # API Dev Config
   api-dev: 
     profiles:
       - dev
     <<: *api
     depends_on:
       - db-dev
+
+  # API Prod Config
   api-prod:
     profiles:
       - prod
     <<: *api
     depends_on:
       - db-prod
+
+  # === Web Config ===
   web: &web
     profiles:
       - base
     container_name: lemurs-web
-    image: lemurs-web
+    image: lemurs-web-image
     restart: always
     build:
-      context: ./lemurs-web/
+      context: ./web/
       dockerfile: Dockerfile
+      args:
+        REACT_APP_LEMURS_API_HOST: ${REACT_APP_LEMURS_API_HOST}
     networks:
       - lemurs-network
-    ports:
-      - 3000:80
+
+  # Web Dev Config
   web-dev: 
     profiles:
       - dev
       - dev-partial
     <<: *web
+    ports:
+      - 3000:80
+    depends_on:
+      - db-dev
+      - api-dev
+
+  # Web Prod Config
   web-prod:
     profiles:
       - prod
     <<: *web
+    depends_on:
+      - db-prod
+      - api-prod
+
+  # === Proxy Config ===
+  proxy: &proxy
+    profiles:
+      - base
+    container_name: lemurs-proxy
+    image: lemurs-proxy-image
+    restart: always
+    build:
+      context: ./proxy/
+      dockerfile: Dockerfile
+    networks:
+      - lemurs-network
+    ports:
+      - 80:80
+
+  # Proxy Dev Config
+  proxy-dev:
+    profiles:
+      - dev
+      - dev-partial
+    <<: *proxy
+    depends_on:
+      - db-dev
+      - api-dev
+      - web-dev
+  
+  # Proxy Prod Config
+  proxy-prod:
+    profiles:
+      - prod
+    <<: *proxy
+    depends_on:
+      - db-prod
+      - api-prod
+      - web-prod
+
+# Volumes
 volumes:
   lemurs-data:
     driver: local
+
+# Networks
 networks:
   lemurs-network:
     driver: bridge

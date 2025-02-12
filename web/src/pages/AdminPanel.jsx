@@ -27,7 +27,7 @@ export default function AdminPanel() {
 
   const authorizePariticipantEmail = () => {
       fetch(
-          `${process.env.REACT_APP_LEMURS_SERVER_HOST}/user/authorize`,
+          `${process.env.REACT_APP_LEMURS_API_HOST}/user/authorize`,
           {
               method: "POST",
               headers: new Headers({ Authorization: token, "content-type": "application/json"}),
@@ -43,7 +43,7 @@ export default function AdminPanel() {
 
   const authorizeAdminRole = () => {
     fetch(
-        `${process.env.REACT_APP_LEMURS_SERVER_HOST}/user/authorize/admin`,
+        `${process.env.REACT_APP_LEMURS_API_HOST}/user/authorize/admin`,
         {
             method: "POST",
             headers: new Headers({ Authorization: token, "content-type": "application/json"}),

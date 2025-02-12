@@ -22,7 +22,7 @@ export const SignInButton = ({setToken}) => {
 async function loginUser(accessToken) {
 
     return fetch(
-      `${process.env.REACT_APP_LEMURS_SERVER_HOST}/auth/login`,
+      `${process.env.REACT_APP_LEMURS_API_HOST}/auth/login`,
       {
         method: "POST",
         headers: new Headers({ "content-type": "application/json" }),

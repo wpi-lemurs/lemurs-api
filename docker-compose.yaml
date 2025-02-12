@@ -3,7 +3,7 @@ services:
     profiles:
       - base
     container_name: lemurs-db
-    image: lemurs-db
+    image: lemurs-db-image
     restart: always
     build:
       context: ./database/
@@ -33,17 +33,17 @@ services:
       - prod
     <<: *db
     ports:
-      - 5432:5432
+      - 5432:5432 # This should be disabled in the future.
   api: &api
     profiles:
       - base
     container_name: lemurs-api
     image: lemurs-api-image
     build:
-      context: .
+      context: ./api/
       dockerfile: Dockerfile
     ports:
-      - 8080:${LEMURS_API_PORT}
+      - 8080:8080
     restart: always
     environment:
       LEMURS_POSTGRES_HOST: lemurs-db:5432
@@ -77,11 +77,13 @@ services:
     profiles:
       - base
     container_name: lemurs-web
-    image: lemurs-web
+    image: lemurs-web-image
     restart: always
     build:
-      context: ./lemurs-web/
+      context: ./web/
       dockerfile: Dockerfile
+      args:
+        REACT_APP_LEMURS_API_HOST: ${REACT_APP_LEMURS_API_HOST}
     networks:
       - lemurs-network
     ports:

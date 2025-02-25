@@ -94,6 +94,7 @@ services:
       dockerfile: Dockerfile
       args:
         REACT_APP_LEMURS_API_HOST: ${REACT_APP_LEMURS_API_HOST}
+        REACT_APP_LEMURS_WEB_HOST: ${REACT_APP_LEMURS_WEB_HOST}
     networks:
       - lemurs-network
 

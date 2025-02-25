@@ -1,9 +1,6 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.security.auth.microsoft;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.endpoints.user.UserService;
 import edu.wpi.lemurs.api.endpoints.user.info.UserInfoService;
@@ -31,16 +28,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 /** The {@link AuthService} for microsoft authentication. */
 @Service
@@ -134,7 +124,7 @@ public class AuthMicrosoftService {
 
     // TODO: Make this code better: return better error codes, only grab data once per day, maybe
     // seperate into smaller methods. Also figure out how to check wpi / umass issuer.
-    
+
     // String url =
     //     "https://login.microsoftonline.com/"
     //         + env.getWPIMicrosoftTenantID()
@@ -160,8 +150,10 @@ public class AuthMicrosoftService {
     // }
     // String issuer = jsonObject.get("issuer").getAsString();
 
-    String wpiIssuer = "https://login.microsoftonline.com/" + env.getWPIMicrosoftTenantID() + "/v2.0";
-    String umassIssuer = "https://login.microsoftonline.com/" + env.getUMassMicrosoftTenantID() + "/v2.0";
+    String wpiIssuer =
+        "https://login.microsoftonline.com/" + env.getWPIMicrosoftTenantID() + "/v2.0";
+    String umassIssuer =
+        "https://login.microsoftonline.com/" + env.getUMassMicrosoftTenantID() + "/v2.0";
 
     Locator<Key> locator = new MicrosoftKeyLocator(env);
 

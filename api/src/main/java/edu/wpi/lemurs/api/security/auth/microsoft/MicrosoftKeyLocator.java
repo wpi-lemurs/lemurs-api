@@ -40,7 +40,7 @@ public class MicrosoftKeyLocator extends LocatorAdapter<Key> {
 
     String url =
         "https://login.microsoftonline.com/"
-            + env.getMicrosoftTenantID()
+            + env.getWPIMicrosoftTenantID()
             + "/discovery/v2.0/keys?appId="
             + env.getMicrosoftAppID();
     String urlTemplate = UriComponentsBuilder.fromHttpUrl(url).encode().toUriString();

@@ -34,4 +34,7 @@ public class SurveyResponse {
 
   @Column(nullable = false)
   private Date timestamp;
+
+  @Column(nullable = false)
+  private Date notificationStart;
 }

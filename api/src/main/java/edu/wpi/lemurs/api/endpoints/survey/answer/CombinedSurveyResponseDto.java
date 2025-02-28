@@ -15,4 +15,5 @@ import lombok.Setter;
 public class CombinedSurveyResponseDto {
   private Date timestamp;
   private List<SurveyResponseDto> surveys;
+  private Date notificationStart;
 }

@@ -1,6 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey;
 
+import edu.wpi.lemurs.api.data.availability.SurveyAvailabilityService;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
@@ -19,16 +20,23 @@ public class SurveyService {
   private SecurityService securityService;
   private SurveyRepository surveyRepository;
   private SurveyQuestionViewRepository surveyQuestionViewRepository;
+  private SurveyAvailabilityService surveyAvailabilityService;
+
+  public static final Integer MORNING_SURVEY_ID = 0;
+  public static final Integer AFTERNOON_SURVEY_ID = 1;
+  public static final Integer WEEKLY_SURVEY_ID = 2;
 
   /** Autowires a {@link SurveyService}. */
   @Autowired
   public SurveyService(
       SecurityService securityService,
       SurveyRepository surveyRepository,
-      SurveyQuestionViewRepository surveyQuestionViewRepository) {
+      SurveyQuestionViewRepository surveyQuestionViewRepository,
+      SurveyAvailabilityService surveyAvailabilityService) {
     this.securityService = securityService;
     this.surveyRepository = surveyRepository;
     this.surveyQuestionViewRepository = surveyQuestionViewRepository;
+    this.surveyAvailabilityService = surveyAvailabilityService;
   }
 
   /**
@@ -42,23 +50,31 @@ public class SurveyService {
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
-    Survey survey = surveyRepository.findById(0).get();
-
     List<SurveyApiResponse> surveys = new ArrayList<>();
-    List<QuestionResponse> questions = new ArrayList<>();
-    SurveyApiResponse surveyResponse =
-        new SurveyApiResponse(survey.getId(), survey.getName(), questions);
-    for (SurveyQuestionView question :
-        surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
-      questions.add(
-          new QuestionResponse(
-              question.getId(),
-              question.getQuestion(),
-              question.getStyle(),
-              question.getOptions(),
-              question.getParentQuestionId(),
-              question.getPrerequisiteQuestionId(),
-              question.getPrerequisiteAnswer()));
+
+    for (String surveyGroup : surveyAvailabilityService.getAvailableSurveyGroups()) {
+      // TODO: Create a table matchin the group names to surveys, and fetching them appropriately.
+      Survey survey = null;
+      if (surveyGroup.equals("morning")) {
+        survey = surveyRepository.findById(MORNING_SURVEY_ID).get();
+      } else {
+        survey = surveyRepository.findById(AFTERNOON_SURVEY_ID).get();
+      }
+      List<QuestionResponse> questions = new ArrayList<>();
+      SurveyApiResponse surveyResponse =
+          new SurveyApiResponse(survey.getId(), survey.getName(), questions);
+      for (SurveyQuestionView question :
+          surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
+        questions.add(
+            new QuestionResponse(
+                question.getId(),
+                question.getQuestion(),
+                question.getStyle(),
+                question.getOptions(),
+                question.getParentQuestionId(),
+                question.getPrerequisiteQuestionId(),
+                question.getPrerequisiteAnswer()));
+      }
       surveys.add(surveyResponse);
     }
 
@@ -76,8 +92,9 @@ public class SurveyService {
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
+    // TOOD: Find a better way to find the weekly survey.
     List<SurveyApiResponse> surveys = new ArrayList<>();
-    Survey survey = surveyRepository.findById(2).get();
+    Survey survey = surveyRepository.findById(WEEKLY_SURVEY_ID).get();
     List<QuestionResponse> questions = new ArrayList<>();
     SurveyApiResponse surveyResponse =
         new SurveyApiResponse(survey.getId(), survey.getName(), questions);

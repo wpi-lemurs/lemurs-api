@@ -42,23 +42,23 @@ public class SurveyService {
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
+    Survey survey = surveyRepository.findById(0).get();
+
     List<SurveyApiResponse> surveys = new ArrayList<>();
-    for (Survey survey : surveyRepository.findByIsDailyTrue()) {
-      List<QuestionResponse> questions = new ArrayList<>();
-      SurveyApiResponse surveyResponse =
-          new SurveyApiResponse(survey.getId(), survey.getName(), questions);
-      for (SurveyQuestionView question :
-          surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
-        questions.add(
-            new QuestionResponse(
-                question.getId(),
-                question.getQuestion(),
-                question.getStyle(),
-                question.getOptions(),
-                question.getParentQuestionId(),
-                question.getPrerequisiteQuestionId(),
-                question.getPrerequisiteAnswer()));
-      }
+    List<QuestionResponse> questions = new ArrayList<>();
+    SurveyApiResponse surveyResponse =
+        new SurveyApiResponse(survey.getId(), survey.getName(), questions);
+    for (SurveyQuestionView question :
+        surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
+      questions.add(
+          new QuestionResponse(
+              question.getId(),
+              question.getQuestion(),
+              question.getStyle(),
+              question.getOptions(),
+              question.getParentQuestionId(),
+              question.getPrerequisiteQuestionId(),
+              question.getPrerequisiteAnswer()));
       surveys.add(surveyResponse);
     }
 
@@ -77,24 +77,23 @@ public class SurveyService {
     securityService.assertHasRole(LemursRole.USER);
 
     List<SurveyApiResponse> surveys = new ArrayList<>();
-    for (Survey survey : surveyRepository.findByIsWeeklyTrue()) {
-      List<QuestionResponse> questions = new ArrayList<>();
-      SurveyApiResponse surveyResponse =
-          new SurveyApiResponse(survey.getId(), survey.getName(), questions);
-      for (SurveyQuestionView question :
-          surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
-        questions.add(
-            new QuestionResponse(
-                question.getId(),
-                question.getQuestion(),
-                question.getStyle(),
-                question.getOptions(),
-                question.getParentQuestionId(),
-                question.getPrerequisiteQuestionId(),
-                question.getPrerequisiteAnswer()));
-      }
-      surveys.add(surveyResponse);
+    Survey survey = surveyRepository.findById(2).get();
+    List<QuestionResponse> questions = new ArrayList<>();
+    SurveyApiResponse surveyResponse =
+        new SurveyApiResponse(survey.getId(), survey.getName(), questions);
+    for (SurveyQuestionView question :
+        surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
+      questions.add(
+          new QuestionResponse(
+              question.getId(),
+              question.getQuestion(),
+              question.getStyle(),
+              question.getOptions(),
+              question.getParentQuestionId(),
+              question.getPrerequisiteQuestionId(),
+              question.getPrerequisiteAnswer()));
     }
+    surveys.add(surveyResponse);
 
     return surveys;
   }

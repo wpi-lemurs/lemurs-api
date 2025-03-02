@@ -27,10 +27,4 @@ public class Survey {
 
   @Column(nullable = false)
   private String name;
-
-  @Column(nullable = false)
-  private boolean isDaily;
-
-  @Column(nullable = false)
-  private boolean isWeekly;
 }

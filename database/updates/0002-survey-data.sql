@@ -218,4 +218,4 @@ INSERT INTO "goal" ("id", "name", "required_daily_surveys", "max_days", "reward"
 -- Survey Availability
 INSERT INTO "survey_availability" ("name", "open_time", "close_time") VALUES
 	('morning', '08:00:00', '13:00:00'),
-	('evening', '15:00:00', '20:00:00');
+	('afternoon', '15:00:00', '20:00:00');

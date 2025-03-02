@@ -49,14 +49,34 @@ public class SurveyAvailabilityService {
     LocalTime now = LocalTime.now();
 
     for (SurveyAvailability availability : surveyAvailabilityRepository.findAll()) {
-      if (now.isBefore(availability.getOpenTime().toLocalTime())
-          || now.isAfter(availability.getCloseTime().toLocalTime())) {
+      if (!now.isAfter(availability.getOpenTime().toLocalTime())
+          || !now.isBefore(availability.getCloseTime().toLocalTime())) {
         continue;
       }
       surveyGroups.add(availability.getName());
     }
 
     return surveyGroups;
+  }
+
+  public Date getEndOfCurrentAvailableSurvey(Date current) {
+    LocalTime now = LocalTime.ofInstant(current.toInstant(), ZoneId.systemDefault());
+    LocalDate today = LocalDate.ofInstant(current.toInstant(), ZoneId.systemDefault());
+
+    LocalTime latest = now;
+
+    for (SurveyAvailability availability : surveyAvailabilityRepository.findAll()) {
+      if (!now.isAfter(availability.getOpenTime().toLocalTime())
+          || !now.isBefore(availability.getCloseTime().toLocalTime())) {
+        continue;
+      }
+
+      if (!latest.isAfter(availability.getCloseTime().toLocalTime())) {
+        latest = availability.getCloseTime().toLocalTime();
+      }
+    }
+
+    return Date.from(latest.atDate(today).atZone(ZoneId.systemDefault()).toInstant());
   }
 
   /**
@@ -79,8 +99,8 @@ public class SurveyAvailabilityService {
     Duration minDiff = Duration.ofDays(99);
 
     for (SurveyAvailability availability : surveyAvailabilityRepository.findAll()) {
-      if (now.isBefore(availability.getOpenTime().toLocalTime())
-          || now.isAfter(availability.getCloseTime().toLocalTime())) {
+      if (!now.isAfter(availability.getOpenTime().toLocalTime())
+          || !now.isBefore(availability.getCloseTime().toLocalTime())) {
         Duration diff = Duration.between(now, availability.getOpenTime().toLocalTime());
         if (diff.isNegative()) {
           diff = diff.plusDays(1);
@@ -88,7 +108,7 @@ public class SurveyAvailabilityService {
 
         if (diff.toSeconds() < minDiff.toSeconds()) {
           minDiff = diff;
-          if (now.isBefore(availability.getOpenTime().toLocalTime())) {
+          if (!now.isAfter(availability.getOpenTime().toLocalTime())) {
             earliest = availability.getOpenTime().toLocalTime().atDate(today);
           } else {
             earliest = availability.getOpenTime().toLocalTime().atDate(today.plusDays(1));

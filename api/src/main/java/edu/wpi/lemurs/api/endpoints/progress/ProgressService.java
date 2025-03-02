@@ -194,8 +194,7 @@ public class ProgressService {
       }
     }
 
-    progress.setNextDailySurvey(
-        new Date(now.getTime() + 1000 * 60 * 60 * 12)); // TODO: Improve the logic.
+    progress.setNextDailySurvey(surveyAvailabilityService.getEndOfCurrentAvailableSurvey(now));
     progress.setDailySurveysCompleted(progress.getDailySurveysCompleted() + 1);
     progress.setEarned(totalEarned);
   }

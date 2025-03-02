@@ -13,6 +13,7 @@ services:
       POSTGRES_USER: ${LEMURS_POSTGRES_USERNAME}
       POSTGRES_PASSWORD: ${LEMURS_POSTGRES_PASSWORD}
       POSTGRES_DB: lemurs
+      LEMURS_OWNER_EMAIL: ${LEMURS_OWNER_EMAIL}
     volumes:
       - lemurs-data:/var/lib/postgresql/data 
     networks:

@@ -19,6 +19,7 @@ if [ ! -e /var/lib/postgresql/data/schema.version ]; then
   echo "-0001" > /var/lib/postgresql/data/schema.version
 fi
 
+/usr/config/starting-owner.sh
 current=`cat /var/lib/postgresql/data/schema.version`
 for entry in /usr/config/updates/*
 do

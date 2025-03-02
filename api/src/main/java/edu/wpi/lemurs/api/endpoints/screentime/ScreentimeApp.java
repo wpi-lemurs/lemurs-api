@@ -1,5 +1,5 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.endpoints.survey.answer;
+package edu.wpi.lemurs.api.endpoints.screentime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,28 +13,28 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** A {@link SurveyResponse} represents a response to a survey. */
+/** A {@link ScreentimeApp} represents a answer. */
 @Table
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class SurveyResponse {
+public class ScreentimeApp {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
   private Integer id;
 
-  @Column(nullable = false, name = "app_user_id")
-  private Integer userID;
+  @Column(nullable = false)
+  private Integer screentimeId;
 
   @Column(nullable = false)
-  private Integer surveyId;
+  private String appName;
 
   @Column(nullable = false)
-  private Date timestamp;
+  private Integer totalTimeMs;
 
   @Column(nullable = false)
-  private Date notificationStart;
+  private Date lastTimeUsed;
 }

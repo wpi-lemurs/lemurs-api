@@ -1,5 +1,5 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.endpoints.survey.answer;
+package edu.wpi.lemurs.api.endpoints.screentime;
 
 import java.util.Date;
 import java.util.List;
@@ -12,8 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class CombinedSurveyResponseDto {
-  private Date timestamp;
-  private List<SurveyResponseDto> surveys;
-  private Date notificationStart;
+public class ScreentimeDto {
+  private Integer id;
+  private List<ScreentimeAppDto> usageData;
+  private Date startTime;
+  private Date endTime;
 }

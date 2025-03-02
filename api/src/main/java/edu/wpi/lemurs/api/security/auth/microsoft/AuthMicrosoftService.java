@@ -1,9 +1,6 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.security.auth.microsoft;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import edu.wpi.lemurs.api.endpoints.user.User;
 import edu.wpi.lemurs.api.endpoints.user.UserService;
 import edu.wpi.lemurs.api.endpoints.user.info.UserInfoService;
@@ -31,16 +28,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 /** The {@link AuthService} for microsoft authentication. */
 @Service
@@ -133,31 +123,37 @@ public class AuthMicrosoftService {
   private MicrosoftID getMicrosoftID(String idToken) throws BadCredentialsException {
 
     // TODO: Make this code better: return better error codes, only grab data once per day, maybe
-    // seperate into smaller methods.
-    String url =
-        "https://login.microsoftonline.com/"
-            + System.getenv("LEMURS_MICROSOFT_TENANT_ID")
-            + "/v2.0/.well-known/openid-configuration";
-    HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
-    String urlTemplate = UriComponentsBuilder.fromHttpUrl(url).encode().toUriString();
-    ResponseEntity<String> response;
-    try {
-      response =
-          new RestTemplate().exchange(urlTemplate, HttpMethod.GET, requestEntity, String.class);
-    } catch (RestClientException e) {
-      throw new BadCredentialsException("");
-    }
-    if (!response.getStatusCode().is2xxSuccessful()) {
-      throw new BadCredentialsException("");
-    }
-    String info = response.getBody();
-    JsonObject jsonObject;
-    try {
-      jsonObject = JsonParser.parseString(info).getAsJsonObject();
-    } catch (JsonParseException | IllegalStateException e) {
-      throw new BadCredentialsException("");
-    }
-    String issuer = jsonObject.get("issuer").getAsString();
+    // seperate into smaller methods. Also figure out how to check wpi / umass issuer.
+
+    // String url =
+    //     "https://login.microsoftonline.com/"
+    //         + env.getWPIMicrosoftTenantID()
+    //         + "/v2.0/.well-known/openid-configuration";
+    // HttpEntity<String> requestEntity = new HttpEntity<>(new HttpHeaders());
+    // String urlTemplate = UriComponentsBuilder.fromHttpUrl(url).encode().toUriString();
+    // ResponseEntity<String> response;
+    // try {
+    //   response =
+    //       new RestTemplate().exchange(urlTemplate, HttpMethod.GET, requestEntity, String.class);
+    // } catch (RestClientException e) {
+    //   throw new BadCredentialsException("");
+    // }
+    // if (!response.getStatusCode().is2xxSuccessful()) {
+    //   throw new BadCredentialsException("");
+    // }
+    // String info = response.getBody();
+    // JsonObject jsonObject;
+    // try {
+    //   jsonObject = JsonParser.parseString(info).getAsJsonObject();
+    // } catch (JsonParseException | IllegalStateException e) {
+    //   throw new BadCredentialsException("");
+    // }
+    // String issuer = jsonObject.get("issuer").getAsString();
+
+    String wpiIssuer =
+        "https://login.microsoftonline.com/" + env.getWPIMicrosoftTenantID() + "/v2.0";
+    String umassIssuer =
+        "https://login.microsoftonline.com/" + env.getUMassMicrosoftTenantID() + "/v2.0";
 
     Locator<Key> locator = new MicrosoftKeyLocator(env);
 
@@ -165,12 +161,12 @@ public class AuthMicrosoftService {
         Jwts.parser().keyLocator(locator).build().parseSignedClaims(idToken).getPayload();
 
     Set<String> aud = claims.getAudience();
-    if (!aud.contains(System.getenv("LEMURS_MICROSOFT_APP_ID"))) {
+    if (!aud.contains(env.getMicrosoftAppID())) {
       throw new BadCredentialsException("Invalid client authenticator.");
     }
 
     String iss = claims.getIssuer();
-    if (!iss.equals(issuer)) {
+    if (!iss.equals(wpiIssuer) && !iss.equals(umassIssuer)) {
       throw new BadCredentialsException("Wrong issuer.");
     }
 

@@ -64,7 +64,8 @@ public class AnswerService {
               null,
               securityService.getUser().getId(),
               surveyResponseDto.getId(),
-              combinedSurveyResponseDto.getTimestamp());
+              combinedSurveyResponseDto.getTimestamp(),
+              combinedSurveyResponseDto.getNotificationStart());
       survey = surveyResponseRepository.save(survey);
 
       List<Answer> answers = new ArrayList<>();

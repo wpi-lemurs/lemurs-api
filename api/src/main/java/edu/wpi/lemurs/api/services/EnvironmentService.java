@@ -16,9 +16,14 @@ public class EnvironmentService {
     return System.getenv("LEMURS_SIGNATURE");
   }
 
-  /** Gets the Microsoft tenant ID. */
-  public String getMicrosoftTenantID() {
-    return System.getenv("LEMURS_MICROSOFT_TENANT_ID");
+  /** Gets the WPI Microsoft tenant ID. */
+  public String getWPIMicrosoftTenantID() {
+    return System.getenv("LEMURS_MICROSOFT_TENANT_ID_WPI");
+  }
+
+  /** Gets the UMass Microsoft tenant ID. */
+  public String getUMassMicrosoftTenantID() {
+    return System.getenv("LEMURS_MICROSOFT_TENANT_ID_UMASS");
   }
 
   /** Gets the Microsoft app ID. */

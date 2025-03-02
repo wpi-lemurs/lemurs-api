@@ -1,5 +1,5 @@
-/* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.endpoints.survey.answer;
+/* Copyright (C) 2025 Worcester Polytechnic University */
+package edu.wpi.lemurs.api.endpoints.screentime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,14 +13,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** A {@link SurveyResponse} represents a response to a survey. */
+/** A {@link Screentime} represents a screentime data point. */
 @Table
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class SurveyResponse {
+public class Screentime {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
@@ -30,11 +30,9 @@ public class SurveyResponse {
   private Integer userID;
 
   @Column(nullable = false)
-  private Integer surveyId;
-
-  @Column(nullable = false)
   private Date timestamp;
 
-  @Column(nullable = false)
-  private Date notificationStart;
+  @Column private Date startTime;
+
+  @Column private Date endTime;
 }

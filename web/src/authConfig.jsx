@@ -15,7 +15,7 @@ export const msalConfig = {
     auth: {
         clientId: "b00e7cc0-f93d-4caf-9f9c-c97d8d6f6a0d",
         authority: "https://login.microsoftonline.com/589c76f5-ca15-41f9-884b-55ec15a0672a",
-        redirectUri: window.location.origin,
+        redirectUri: `${process.env.REACT_APP_LEMURS_WEB_HOST}`,
     },
     cache: {
         cacheLocation: "sessionStorage", // This configures where your cache will be stored
@@ -55,5 +55,5 @@ export const msalConfig = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-    scopes: ["b00e7cc0-f93d-4caf-9f9c-c97d8d6f6a0d/profile"]
+    scopes: ["b00e7cc0-f93d-4caf-9f9c-c97d8d6f6a0d/lemurs"]
 };

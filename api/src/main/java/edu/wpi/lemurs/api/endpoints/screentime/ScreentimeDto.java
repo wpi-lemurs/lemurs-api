@@ -13,7 +13,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ScreentimeDto {
-  private Integer id;
   private List<ScreentimeAppDto> usageData;
   private Date startTime;
   private Date endTime;

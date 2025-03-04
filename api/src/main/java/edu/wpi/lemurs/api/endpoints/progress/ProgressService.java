@@ -103,11 +103,11 @@ public class ProgressService {
               false,
               new Date(now.getTime() + 1000 * 60 * 60 * goal.getMaxDays())));
     }
-    goals = new ArrayList<>();
+    List<GoalProgress> out = new ArrayList<>();
     for (GoalProgress goal : goalProgressRepository.saveAll(goals)) {
-      goals.add(goal);
+      out.add(goal);
     }
-    return goals;
+    return out;
   }
 
   /**

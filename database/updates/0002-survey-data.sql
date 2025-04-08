@@ -38,7 +38,7 @@ Since the last prompt, I felt:', 'parent-question', NULL, NULL, NULL, NULL, NULL
     (27, 'Like I might as well give up because there is nothing I can do about making things better for myself', '5-scale-much', NULL, '20', NULL, NULL, NULL),
     (28, 'Like people usually do not understand my experiences', '5-scale-much', NULL, '20', NULL, NULL, NULL),
     (29, 'Daily Context', 'category', NULL, NULL, NULL, NULL, NULL),
-    (30, 'Please rate each item on a 5-point scale (1 = Not at all; 5 = Very much).
+    (30, 'Please rate each item on a 5-point scale (1 = Not at all; 5 = All the time).
 
 Since the last prompt, I have:', 'parent-question', NULL, NULL, NULL, NULL, NULL),
     (31, 'Gotten into an argument or disagreement with a friend, significant other or family member', '5-scale-time', NULL, '30', NULL, NULL, NULL),

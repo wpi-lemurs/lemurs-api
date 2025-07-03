@@ -25,12 +25,12 @@ public class AnswerController {
 
   /** The <code>/data</code> {@code POST} endpoint saves the sent data. */
   @PostMapping("/survey/daily")
-  public ResponseEntity<Void> recordAnswersDaily(
+  public ResponseEntity<AnswerSubmissionResponse> recordAnswersDaily(
       @RequestBody CombinedSurveyResponseDto combinedSurveyResponseDto) {
     try {
-      answerService.recordAnswersDaily(combinedSurveyResponseDto);
+      boolean alertTriggered = answerService.recordAnswersDaily(combinedSurveyResponseDto);
 
-      return new ResponseEntity<>(HttpStatus.CREATED);
+      return new ResponseEntity<>(new AnswerSubmissionResponse(alertTriggered), HttpStatus.CREATED);
     } catch (UnauthenticatedException e) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     } catch (UnauthorizedException e) {
@@ -42,12 +42,12 @@ public class AnswerController {
 
   /** The <code>/data</code> {@code POST} endpoint saves the sent data. */
   @PostMapping("/survey/weekly")
-  public ResponseEntity<Void> recordAnswersWeekly(
+  public ResponseEntity<AnswerSubmissionResponse> recordAnswersWeekly(
       @RequestBody CombinedSurveyResponseDto combinedSurveyResponseDto) {
     try {
-      answerService.recordAnswersWeekly(combinedSurveyResponseDto);
+      boolean alertTriggered = answerService.recordAnswersWeekly(combinedSurveyResponseDto);
 
-      return new ResponseEntity<>(HttpStatus.CREATED);
+      return new ResponseEntity<>(new AnswerSubmissionResponse(alertTriggered), HttpStatus.CREATED);
     } catch (UnauthenticatedException e) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     } catch (UnauthorizedException e) {

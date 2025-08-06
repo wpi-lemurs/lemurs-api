@@ -70,6 +70,17 @@ services:
     networks:
       - lemurs-network
 
+  # DEBUGGING API Config
+  debug-api:
+    <<: *api
+    container_name: lemurs-api-debug
+    ports:
+      - "8082:8080"  # Use a different host port to avoid conflict
+    profiles:
+      - debug
+    depends_on:
+      - db-dev
+
   # API Dev Config
   api-dev: 
     profiles:

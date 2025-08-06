@@ -1,30 +1,31 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.endpoints.survey;
+package edu.wpi.lemurs.api.data.availability;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.sql.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/** A {@link Survey} represents a survey. */
+/** A {@link SurveyAvailability} represents survey availability. */
 @Table
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class Survey {
+public class SurveyAvailability {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(nullable = false)
-  private Integer id;
-
   @Column(nullable = false)
   private String name;
+
+  @Column(nullable = false)
+  private Time openTime;
+
+  @Column(nullable = false)
+  private Time closeTime;
 }

@@ -1,8 +1,6 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
-package edu.wpi.lemurs.api.endpoints.screentime;
+package edu.wpi.lemurs.api.endpoints.demographic;
 
-import java.util.Date;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ScreentimeDto {
-  private List<ScreentimeAppDto> usageData;
-  private Date startTime;
-  private Date endTime;
+public class DemographicDto {
+  private String keyword;
+  private String value;
 }

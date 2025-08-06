@@ -1,6 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.progress;
 
+import edu.wpi.lemurs.api.data.availability.SurveyAvailabilityService;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
@@ -31,6 +32,7 @@ public class ProgressService {
   private GoalRepository goalRepository;
   private GoalProgressRepository goalProgressRepository;
   private IncentiveRepository incentiveRepository;
+  private SurveyAvailabilityService surveyAvailabilityService;
 
   @Autowired
   public ProgressService(
@@ -38,12 +40,14 @@ public class ProgressService {
       ProgressRepository progressRepository,
       GoalRepository goalRepository,
       GoalProgressRepository goalProgressRepository,
-      IncentiveRepository incentiveRepository) {
+      IncentiveRepository incentiveRepository,
+      SurveyAvailabilityService surveyAvailabilityService) {
     this.securityService = securityService;
     this.progressRepository = progressRepository;
     this.goalRepository = goalRepository;
     this.goalProgressRepository = goalProgressRepository;
     this.incentiveRepository = incentiveRepository;
+    this.surveyAvailabilityService = surveyAvailabilityService;
   }
 
   /**
@@ -99,11 +103,11 @@ public class ProgressService {
               false,
               new Date(now.getTime() + 1000 * 60 * 60 * goal.getMaxDays())));
     }
-    goals = new ArrayList<>();
+    List<GoalProgress> out = new ArrayList<>();
     for (GoalProgress goal : goalProgressRepository.saveAll(goals)) {
-      goals.add(goal);
+      out.add(goal);
     }
-    return goals;
+    return out;
   }
 
   /**
@@ -157,7 +161,10 @@ public class ProgressService {
     Progress progress = getProgress();
 
     List<AvailableResponse> availability = new ArrayList<>();
-    AvailableResponse daily = new AvailableResponse("daily", progress.getNextDailySurvey());
+    AvailableResponse daily =
+        new AvailableResponse(
+            "daily",
+            surveyAvailabilityService.getNextAvailableSurveyOpen(progress.getNextDailySurvey()));
     AvailableResponse weekly = new AvailableResponse("weekly", progress.getNextWeeklySurvey());
     availability.add(daily);
     availability.add(weekly);
@@ -187,8 +194,7 @@ public class ProgressService {
       }
     }
 
-    progress.setNextDailySurvey(
-        new Date(now.getTime() + 1000 * 60 * 60 * 12)); // TODO: Improve the logic.
+    progress.setNextDailySurvey(surveyAvailabilityService.getEndOfCurrentAvailableSurvey(now));
     progress.setDailySurveysCompleted(progress.getDailySurveysCompleted() + 1);
     progress.setEarned(totalEarned);
   }

@@ -13,8 +13,6 @@ services:
       POSTGRES_USER: ${LEMURS_POSTGRES_USERNAME}
       POSTGRES_PASSWORD: ${LEMURS_POSTGRES_PASSWORD}
       POSTGRES_DB: lemurs
-      LEMURS_OWNER_EMAIL: ${LEMURS_OWNER_EMAIL}
-      TZ: "America/New_York"
     volumes:
       - lemurs-data:/var/lib/postgresql/data 
     networks:
@@ -66,7 +64,6 @@ services:
       LEMURS_EMAIL_PORT: ${LEMURS_EMAIL_PORT}
       LEMURS_EMAIL_USERNAME: ${LEMURS_EMAIL_USERNAME}
       LEMURS_EMAIL_PASSWORD: ${LEMURS_EMAIL_PASSWORD}
-      TZ: "America/New_York"
     networks:
       - lemurs-network
 
@@ -99,8 +96,6 @@ services:
       args:
         REACT_APP_LEMURS_API_HOST: ${REACT_APP_LEMURS_API_HOST}
         REACT_APP_LEMURS_WEB_HOST: ${REACT_APP_LEMURS_WEB_HOST}
-    environment:
-      TZ: "America/New_York"
     networks:
       - lemurs-network
 
@@ -135,8 +130,6 @@ services:
     build:
       context: ./proxy/
       dockerfile: Dockerfile
-    environment:
-      TZ: "America/New_York"
     networks:
       - lemurs-network
     ports:

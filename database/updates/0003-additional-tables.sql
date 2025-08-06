@@ -15,7 +15,7 @@ CREATE TABLE screentime_app (
 	screentime_id INT NOT NULL,
 	app_name VARCHAR NOT NULL,
   total_time_ms INT NOT NULL,
-  last_time_used TIMESTAMP NOT NULL,
+  last_used TIMESTAMP NOT NULL,
 	FOREIGN KEY(screentime_id) REFERENCES screentime(id),
 	PRIMARY KEY (id)
 );

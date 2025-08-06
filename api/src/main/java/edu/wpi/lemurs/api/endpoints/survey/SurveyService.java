@@ -1,15 +1,12 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey;
 
-import edu.wpi.lemurs.api.data.availability.SurveyAvailabilityService;
-import edu.wpi.lemurs.api.endpoints.demographic.DemographicService;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
 import edu.wpi.lemurs.api.security.roles.LemursRole;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,26 +19,16 @@ public class SurveyService {
   private SecurityService securityService;
   private SurveyRepository surveyRepository;
   private SurveyQuestionViewRepository surveyQuestionViewRepository;
-  private SurveyAvailabilityService surveyAvailabilityService;
-  private DemographicService demographicService;
-
-  public static final Integer MORNING_SURVEY_ID = 0;
-  public static final Integer AFTERNOON_SURVEY_ID = 1;
-  public static final Integer WEEKLY_SURVEY_ID = 2;
 
   /** Autowires a {@link SurveyService}. */
   @Autowired
   public SurveyService(
       SecurityService securityService,
       SurveyRepository surveyRepository,
-      SurveyQuestionViewRepository surveyQuestionViewRepository,
-      SurveyAvailabilityService surveyAvailabilityService,
-      DemographicService demographicService) {
+      SurveyQuestionViewRepository surveyQuestionViewRepository) {
     this.securityService = securityService;
     this.surveyRepository = surveyRepository;
     this.surveyQuestionViewRepository = surveyQuestionViewRepository;
-    this.surveyAvailabilityService = surveyAvailabilityService;
-    this.demographicService = demographicService;
   }
 
   /**
@@ -56,37 +43,12 @@ public class SurveyService {
     securityService.assertHasRole(LemursRole.USER);
 
     List<SurveyApiResponse> surveys = new ArrayList<>();
-    Map<String, String> demographics = demographicService.getDemographicMap();
-
-    for (String surveyGroup : surveyAvailabilityService.getAvailableSurveyGroups()) {
-      // TODO: Create a table matchin the group names to surveys, and fetching them appropriately.
-      Survey survey = null;
-      if (surveyGroup.equals("morning")) {
-        survey = surveyRepository.findById(MORNING_SURVEY_ID).get();
-      } else {
-        survey = surveyRepository.findById(AFTERNOON_SURVEY_ID).get();
-      }
+    for (Survey survey : surveyRepository.findByIsDailyTrue()) {
       List<QuestionResponse> questions = new ArrayList<>();
       SurveyApiResponse surveyResponse =
           new SurveyApiResponse(survey.getId(), survey.getName(), questions);
       for (SurveyQuestionView question :
           surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
-
-        if (question.getRequirements() != null) {
-          boolean meetsRequirements = true;
-          for (String requirement : question.getRequirements()) {
-            String r = requirement.toLowerCase();
-            if (!demographics.containsKey(r) || !demographics.get(r).equalsIgnoreCase("true")) {
-              meetsRequirements = false;
-              break;
-            }
-          }
-
-          if (!meetsRequirements) {
-            continue;
-          }
-        }
-
         questions.add(
             new QuestionResponse(
                 question.getId(),
@@ -114,42 +76,25 @@ public class SurveyService {
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
-    // TOOD: Find a better way to find the weekly survey.
     List<SurveyApiResponse> surveys = new ArrayList<>();
-    Map<String, String> demographics = demographicService.getDemographicMap();
-    Survey survey = surveyRepository.findById(WEEKLY_SURVEY_ID).get();
-    List<QuestionResponse> questions = new ArrayList<>();
-    SurveyApiResponse surveyResponse =
-        new SurveyApiResponse(survey.getId(), survey.getName(), questions);
-    for (SurveyQuestionView question :
-        surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
-
-      if (question.getRequirements() != null) {
-        boolean meetsRequirements = true;
-        for (String requirement : question.getRequirements()) {
-          String r = requirement.toLowerCase();
-          if (!demographics.containsKey(r) || !demographics.get(r).equalsIgnoreCase("true")) {
-            meetsRequirements = false;
-            break;
-          }
-        }
-
-        if (!meetsRequirements) {
-          continue;
-        }
+    for (Survey survey : surveyRepository.findByIsWeeklyTrue()) {
+      List<QuestionResponse> questions = new ArrayList<>();
+      SurveyApiResponse surveyResponse =
+          new SurveyApiResponse(survey.getId(), survey.getName(), questions);
+      for (SurveyQuestionView question :
+          surveyQuestionViewRepository.findBySurveyIdOrderByPosition(survey.getId())) {
+        questions.add(
+            new QuestionResponse(
+                question.getId(),
+                question.getQuestion(),
+                question.getStyle(),
+                question.getOptions(),
+                question.getParentQuestionId(),
+                question.getPrerequisiteQuestionId(),
+                question.getPrerequisiteAnswer()));
       }
-
-      questions.add(
-          new QuestionResponse(
-              question.getId(),
-              question.getQuestion(),
-              question.getStyle(),
-              question.getOptions(),
-              question.getParentQuestionId(),
-              question.getPrerequisiteQuestionId(),
-              question.getPrerequisiteAnswer()));
+      surveys.add(surveyResponse);
     }
-    surveys.add(surveyResponse);
 
     return surveys;
   }

@@ -2,6 +2,7 @@
 package edu.wpi.lemurs.api.endpoints.alert.trigger;
 
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
+import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
 import edu.wpi.lemurs.api.security.roles.LemursRole;
 import java.util.List;
@@ -28,8 +29,18 @@ public class DangerAlertTriggerManagementService {
     this.securityService = securityService;
   }
 
+  private void assertIsStaffOrOwner() {
+    try {
+      securityService.assertHasPermission(LemursRole.STAFF);
+    } catch (UnauthorizedException e) {
+      // If not staff, check if owner. If not owner either, this will throw and bubble up.
+      // An UnauthenticatedException would have been thrown and passed up already, which is correct.
+      securityService.assertHasPermission(LemursRole.OWNER);
+    }
+  }
+
   public List<DangerAlertTriggerDto> getAllTriggers() {
-    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.OWNER);
+    assertIsStaffOrOwner();
     
     return triggerRepository.findAll()
         .stream()
@@ -38,7 +49,7 @@ public class DangerAlertTriggerManagementService {
   }
 
   public DangerAlertTriggerDto getTrigger(Integer id) throws EntityDoesNotExistException {
-    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.OWNER);
+    assertIsStaffOrOwner();
     
     Optional<DangerAlertTrigger> triggerOpt = triggerRepository.findById(id);
     if (!triggerOpt.isPresent()) {
@@ -50,7 +61,7 @@ public class DangerAlertTriggerManagementService {
 
   @Transactional
   public DangerAlertTriggerDto createTrigger(DangerAlertTriggerDto dto) {
-    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.OWNER);
+    assertIsStaffOrOwner();
     
     DangerAlertTrigger entity = new DangerAlertTrigger(
         null,
@@ -68,7 +79,7 @@ public class DangerAlertTriggerManagementService {
 
   @Transactional
   public DangerAlertTriggerDto updateTrigger(Integer id, DangerAlertTriggerDto dto) throws EntityDoesNotExistException {
-    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.OWNER);
+    assertIsStaffOrOwner();
     
     Optional<DangerAlertTrigger> triggerOpt = triggerRepository.findById(id);
     if (!triggerOpt.isPresent()) {
@@ -91,8 +102,8 @@ public class DangerAlertTriggerManagementService {
 
   @Transactional
   public void deleteTrigger(Integer id) throws EntityDoesNotExistException {
-    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.OWNER);
-    
+    assertIsStaffOrOwner();
+
     if (!triggerRepository.existsById(id)) {
       throw new EntityDoesNotExistException("Danger alert trigger with ID " + id + " does not exist.");
     }

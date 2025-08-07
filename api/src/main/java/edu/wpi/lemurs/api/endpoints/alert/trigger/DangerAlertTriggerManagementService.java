@@ -29,7 +29,7 @@ public class DangerAlertTriggerManagementService {
   }
 
   public List<DangerAlertTriggerDto> getAllTriggers() {
-    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.ADMIN);
+    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.OWNER);
     
     return triggerRepository.findAll()
         .stream()
@@ -38,7 +38,7 @@ public class DangerAlertTriggerManagementService {
   }
 
   public DangerAlertTriggerDto getTrigger(Integer id) throws EntityDoesNotExistException {
-    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.ADMIN);
+    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.OWNER);
     
     Optional<DangerAlertTrigger> triggerOpt = triggerRepository.findById(id);
     if (!triggerOpt.isPresent()) {
@@ -50,7 +50,7 @@ public class DangerAlertTriggerManagementService {
 
   @Transactional
   public DangerAlertTriggerDto createTrigger(DangerAlertTriggerDto dto) {
-    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.ADMIN);
+    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.OWNER);
     
     DangerAlertTrigger entity = new DangerAlertTrigger(
         null,
@@ -68,7 +68,7 @@ public class DangerAlertTriggerManagementService {
 
   @Transactional
   public DangerAlertTriggerDto updateTrigger(Integer id, DangerAlertTriggerDto dto) throws EntityDoesNotExistException {
-    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.ADMIN);
+    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.OWNER);
     
     Optional<DangerAlertTrigger> triggerOpt = triggerRepository.findById(id);
     if (!triggerOpt.isPresent()) {
@@ -91,7 +91,7 @@ public class DangerAlertTriggerManagementService {
 
   @Transactional
   public void deleteTrigger(Integer id) throws EntityDoesNotExistException {
-    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.ADMIN);
+    securityService.assertHasPermission(LemursRole.STAFF, LemursRole.OWNER);
     
     if (!triggerRepository.existsById(id)) {
       throw new EntityDoesNotExistException("Danger alert trigger with ID " + id + " does not exist.");

@@ -2,6 +2,7 @@
 package edu.wpi.lemurs.api.endpoints.alert.trigger;
 
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
+import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
 import edu.wpi.lemurs.api.security.roles.LemursRole;
@@ -29,7 +30,7 @@ public class DangerAlertTriggerManagementService {
     this.securityService = securityService;
   }
 
-  private void assertIsStaffOrOwner() {
+  private void assertIsStaffOrOwner() throws UnauthenticatedException, UnauthorizedException {
     try {
       securityService.assertHasPermission(LemursRole.STAFF);
     } catch (UnauthorizedException e) {
@@ -39,7 +40,8 @@ public class DangerAlertTriggerManagementService {
     }
   }
 
-  public List<DangerAlertTriggerDto> getAllTriggers() {
+  public List<DangerAlertTriggerDto> getAllTriggers()
+      throws UnauthenticatedException, UnauthorizedException {
     assertIsStaffOrOwner();
     
     return triggerRepository.findAll()
@@ -48,7 +50,8 @@ public class DangerAlertTriggerManagementService {
         .collect(Collectors.toList());
   }
 
-  public DangerAlertTriggerDto getTrigger(Integer id) throws EntityDoesNotExistException {
+  public DangerAlertTriggerDto getTrigger(Integer id) 
+      throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
     assertIsStaffOrOwner();
     
     Optional<DangerAlertTrigger> triggerOpt = triggerRepository.findById(id);
@@ -60,7 +63,8 @@ public class DangerAlertTriggerManagementService {
   }
 
   @Transactional
-  public DangerAlertTriggerDto createTrigger(DangerAlertTriggerDto dto) {
+  public DangerAlertTriggerDto createTrigger(DangerAlertTriggerDto dto) 
+      throws UnauthenticatedException, UnauthorizedException {
     assertIsStaffOrOwner();
     
     DangerAlertTrigger entity = new DangerAlertTrigger(
@@ -78,7 +82,8 @@ public class DangerAlertTriggerManagementService {
   }
 
   @Transactional
-  public DangerAlertTriggerDto updateTrigger(Integer id, DangerAlertTriggerDto dto) throws EntityDoesNotExistException {
+  public DangerAlertTriggerDto updateTrigger(Integer id, DangerAlertTriggerDto dto) 
+      throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
     assertIsStaffOrOwner();
     
     Optional<DangerAlertTrigger> triggerOpt = triggerRepository.findById(id);
@@ -101,7 +106,8 @@ public class DangerAlertTriggerManagementService {
   }
 
   @Transactional
-  public void deleteTrigger(Integer id) throws EntityDoesNotExistException {
+  public void deleteTrigger(Integer id) 
+      throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
     assertIsStaffOrOwner();
 
     if (!triggerRepository.existsById(id)) {

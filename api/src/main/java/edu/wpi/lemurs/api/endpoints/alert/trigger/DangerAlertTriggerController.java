@@ -2,6 +2,8 @@
 package edu.wpi.lemurs.api.endpoints.alert.trigger;
 
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
+import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
+import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/danger-alert-triggers")
+@RequestMapping("/api/danger-alert-triggers")
 public class DangerAlertTriggerController {
 
   private final DangerAlertTriggerManagementService service;
@@ -20,28 +22,33 @@ public class DangerAlertTriggerController {
   }
 
   @GetMapping
-  public ResponseEntity<List<DangerAlertTriggerDto>> getAllTriggers() {
+  public ResponseEntity<List<DangerAlertTriggerDto>> getAllTriggers() 
+      throws UnauthenticatedException, UnauthorizedException {
     return ResponseEntity.ok(service.getAllTriggers());
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<DangerAlertTriggerDto> getTrigger(@PathVariable Integer id) throws EntityDoesNotExistException {
+  public ResponseEntity<DangerAlertTriggerDto> getTrigger(@PathVariable Integer id) 
+      throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
     return ResponseEntity.ok(service.getTrigger(id));
   }
 
   @PostMapping
-  public ResponseEntity<DangerAlertTriggerDto> createTrigger(@RequestBody DangerAlertTriggerDto dto) {
+  public ResponseEntity<DangerAlertTriggerDto> createTrigger(@RequestBody DangerAlertTriggerDto dto) 
+      throws UnauthenticatedException, UnauthorizedException {
     return new ResponseEntity<>(service.createTrigger(dto), HttpStatus.CREATED);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<DangerAlertTriggerDto> updateTrigger(
-      @PathVariable Integer id, @RequestBody DangerAlertTriggerDto dto) throws EntityDoesNotExistException {
+      @PathVariable Integer id, @RequestBody DangerAlertTriggerDto dto) 
+      throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
     return ResponseEntity.ok(service.updateTrigger(id, dto));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteTrigger(@PathVariable Integer id) throws EntityDoesNotExistException {
+  public ResponseEntity<Void> deleteTrigger(@PathVariable Integer id) 
+      throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
     service.deleteTrigger(id);
     return ResponseEntity.noContent().build();
   }

@@ -33,7 +33,8 @@ public class DangerAlertTrigger {
 
   public DangerAlertTrigger() {}
 
-  public DangerAlertTrigger(Integer id, Integer questionId, Integer threshold, String alertMessage, Boolean isActive) {
+  public DangerAlertTrigger(
+      Integer id, Integer questionId, Integer threshold, String alertMessage, Boolean isActive) {
     this.id = id;
     this.questionId = questionId;
     this.threshold = threshold;

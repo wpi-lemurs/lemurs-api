@@ -11,8 +11,8 @@ public class DangerAlertTriggerDto {
   // Constructors
   public DangerAlertTriggerDto() {}
 
-  public DangerAlertTriggerDto(Integer id, Integer questionId, Integer threshold, 
-                              String alertMessage, Boolean isActive) {
+  public DangerAlertTriggerDto(
+      Integer id, Integer questionId, Integer threshold, String alertMessage, Boolean isActive) {
     this.id = id;
     this.questionId = questionId;
     this.threshold = threshold;

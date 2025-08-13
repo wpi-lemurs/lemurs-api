@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class DangerAlertTriggerService {
 
   private static final Logger logger = LogManager.getLogger(DangerAlertTriggerService.class);
-  
+
   // Cache of active triggers for performance
   private Map<Integer, DangerAlertTrigger> activeTriggers = new HashMap<>();
   private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -40,7 +40,7 @@ public class DangerAlertTriggerService {
     this.dangerAlertEmailService = dangerAlertEmailService;
     this.triggerRepository = triggerRepository;
   }
-  
+
   @PostConstruct
   public void init() {
     loadActiveTriggers();
@@ -49,19 +49,19 @@ public class DangerAlertTriggerService {
   }
 
   /**
-   * Loads active triggers from the database into memory cache.
-   * This improves performance by avoiding database lookups on every answer check.
+   * Loads active triggers from the database into memory cache. This improves performance by
+   * avoiding database lookups on every answer check.
    */
   private synchronized void loadActiveTriggers() {
     try {
       logger.info("Loading active danger alert triggers from database");
       Map<Integer, DangerAlertTrigger> newTriggers = new HashMap<>();
       List<DangerAlertTrigger> triggers = triggerRepository.findAllActive();
-      
+
       for (DangerAlertTrigger trigger : triggers) {
         newTriggers.put(trigger.getQuestionId(), trigger);
       }
-      
+
       this.activeTriggers = newTriggers;
       logger.info("Loaded {} active danger alert triggers", newTriggers.size());
     } catch (Exception e) {
@@ -81,7 +81,7 @@ public class DangerAlertTriggerService {
 
     for (AnswerDto answerDto : answers) {
       DangerAlertTrigger trigger = activeTriggers.get(answerDto.getId());
-      
+
       if (trigger != null) {
         try {
           int score = Integer.parseInt(answerDto.getAnswer());
@@ -111,7 +111,7 @@ public class DangerAlertTriggerService {
       }
     }
   }
-  
+
   // For manual trigger refresh (can be called from an admin controller)
   public void refreshTriggers() {
     loadActiveTriggers();

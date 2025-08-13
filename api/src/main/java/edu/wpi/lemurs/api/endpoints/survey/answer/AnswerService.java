@@ -1,8 +1,8 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey.answer;
 
-import edu.wpi.lemurs.api.endpoints.progress.ProgressService;
 import edu.wpi.lemurs.api.endpoints.alert.trigger.DangerAlertTriggerService;
+import edu.wpi.lemurs.api.endpoints.progress.ProgressService;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
@@ -62,7 +62,7 @@ public class AnswerService {
   private void recordAnswers(CombinedSurveyResponseDto combinedSurveyResponseDto)
       throws UnauthenticatedException, UnauthorizedException {
     Integer userId = securityService.getUser().getId();
-    
+
     for (SurveyResponseDto surveyResponseDto : combinedSurveyResponseDto.getSurveys()) {
       SurveyResponse survey =
           new SurveyResponse(
@@ -78,7 +78,7 @@ public class AnswerService {
         answers.add(new Answer(null, survey.getId(), answerDto.getId(), answerDto.getAnswer()));
       }
       answerRepository.saveAll(answers);
-      
+
       // Check for danger alerts in this survey's answers
       dangerAlertTriggerService.checkAnswersForDangerAlerts(userId, surveyResponseDto.getAnswers());
     }

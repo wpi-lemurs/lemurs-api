@@ -43,54 +43,55 @@ public class DangerAlertTriggerManagementService {
   public List<DangerAlertTriggerDto> getAllTriggers()
       throws UnauthenticatedException, UnauthorizedException {
     assertIsStaffOrOwner();
-    
-    return triggerRepository.findAll()
-        .stream()
+
+    return triggerRepository.findAll().stream()
         .map(this::convertToDto)
         .collect(Collectors.toList());
   }
 
-  public DangerAlertTriggerDto getTrigger(Integer id) 
+  public DangerAlertTriggerDto getTrigger(Integer id)
       throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
     assertIsStaffOrOwner();
-    
+
     Optional<DangerAlertTrigger> triggerOpt = triggerRepository.findById(id);
     if (!triggerOpt.isPresent()) {
-      throw new EntityDoesNotExistException("Danger alert trigger with ID " + id + " does not exist.");
+      throw new EntityDoesNotExistException(
+          "Danger alert trigger with ID " + id + " does not exist.");
     }
-    
+
     return convertToDto(triggerOpt.get());
   }
 
   @Transactional
-  public DangerAlertTriggerDto createTrigger(DangerAlertTriggerDto dto) 
+  public DangerAlertTriggerDto createTrigger(DangerAlertTriggerDto dto)
       throws UnauthenticatedException, UnauthorizedException {
     assertIsStaffOrOwner();
-    
-    DangerAlertTrigger entity = new DangerAlertTrigger(
-        null,
-        dto.getQuestionId(),
-        dto.getThreshold(),
-        dto.getAlertMessage(),
-        dto.getIsActive() != null ? dto.getIsActive() : true
-    );
-    
+
+    DangerAlertTrigger entity =
+        new DangerAlertTrigger(
+            null,
+            dto.getQuestionId(),
+            dto.getThreshold(),
+            dto.getAlertMessage(),
+            dto.getIsActive() != null ? dto.getIsActive() : true);
+
     entity = triggerRepository.save(entity);
     triggerService.refreshTriggers(); // Refresh cached triggers
-    
+
     return convertToDto(entity);
   }
 
   @Transactional
-  public DangerAlertTriggerDto updateTrigger(Integer id, DangerAlertTriggerDto dto) 
+  public DangerAlertTriggerDto updateTrigger(Integer id, DangerAlertTriggerDto dto)
       throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
     assertIsStaffOrOwner();
-    
+
     Optional<DangerAlertTrigger> triggerOpt = triggerRepository.findById(id);
     if (!triggerOpt.isPresent()) {
-      throw new EntityDoesNotExistException("Danger alert trigger with ID " + id + " does not exist.");
+      throw new EntityDoesNotExistException(
+          "Danger alert trigger with ID " + id + " does not exist.");
     }
-    
+
     DangerAlertTrigger entity = triggerOpt.get();
     entity.setQuestionId(dto.getQuestionId());
     entity.setThreshold(dto.getThreshold());
@@ -98,36 +99,36 @@ public class DangerAlertTriggerManagementService {
     if (dto.getIsActive() != null) {
       entity.setIsActive(dto.getIsActive());
     }
-    
+
     entity = triggerRepository.save(entity);
     triggerService.refreshTriggers(); // Refresh cached triggers
-    
+
     return convertToDto(entity);
   }
 
   @Transactional
-  public void deleteTrigger(Integer id) 
+  public void deleteTrigger(Integer id)
       throws EntityDoesNotExistException, UnauthenticatedException, UnauthorizedException {
     assertIsStaffOrOwner();
 
     if (!triggerRepository.existsById(id)) {
-      throw new EntityDoesNotExistException("Danger alert trigger with ID " + id + " does not exist.");
+      throw new EntityDoesNotExistException(
+          "Danger alert trigger with ID " + id + " does not exist.");
     }
-    
+
     triggerRepository.deleteById(id);
     triggerService.refreshTriggers(); // Refresh cached triggers
   }
-  
+
   private DangerAlertTriggerDto convertToDto(DangerAlertTrigger entity) {
     return new DangerAlertTriggerDto(
         entity.getId(),
         entity.getQuestionId(),
         entity.getThreshold(),
         entity.getAlertMessage(),
-        entity.getIsActive()
-    );
+        entity.getIsActive());
   }
-  
+
   // For dependency injection
   public DangerAlertTriggerService getTriggerService() {
     return triggerService;

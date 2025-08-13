@@ -80,7 +80,7 @@ public class DangerAlertTriggerService {
     List<String> dangerReasons = new ArrayList<>();
 
     for (AnswerDto answerDto : answers) {
-      DangerAlertTrigger trigger = activeTriggers.get(answerDto.getId());
+      DangerAlertTrigger trigger = activeTriggers.get(answerDto.getQuestionId());
 
       if (trigger != null) {
         try {
@@ -93,7 +93,7 @@ public class DangerAlertTriggerService {
         } catch (NumberFormatException e) {
           logger.warn(
               "Could not parse answer for question id {} for user id {}. Answer was: {}",
-              answerDto.getId(),
+              answerDto.getQuestionId(),
               userId,
               answerDto.getAnswer());
         }

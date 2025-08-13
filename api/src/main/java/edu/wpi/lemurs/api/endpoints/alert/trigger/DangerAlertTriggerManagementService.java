@@ -69,11 +69,14 @@ public class DangerAlertTriggerManagementService {
 
     DangerAlertTrigger entity =
         new DangerAlertTrigger(
-            null,
+            null, // id
             dto.getQuestionId(),
             dto.getThreshold(),
             dto.getAlertMessage(),
-            dto.getIsActive() != null ? dto.getIsActive() : true);
+            dto.getIsActive() != null ? dto.getIsActive() : true,
+            null, // createdAt - will be set by database default
+            null // updatedAt - will be set by database default
+            );
 
     entity = triggerRepository.save(entity);
     triggerService.refreshTriggers(); // Refresh cached triggers
@@ -118,6 +121,13 @@ public class DangerAlertTriggerManagementService {
 
     triggerRepository.deleteById(id);
     triggerService.refreshTriggers(); // Refresh cached triggers
+  }
+
+  @Transactional
+  public void refreshTriggers() throws UnauthenticatedException, UnauthorizedException {
+    assertIsStaffOrOwner();
+
+    triggerService.refreshTriggers();
   }
 
   private DangerAlertTriggerDto convertToDto(DangerAlertTrigger entity) {

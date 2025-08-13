@@ -1,0 +1,39 @@
+1. use safari dev tools (icognito browser, command option/alt i )
+2. login, look at login panel, copy paste accessToken (include string)
+3. make env variable JWT export JTW = long-string
+4. remove any docker containers existing.
+    docker stop {container id}
+    docker compose down -v 
+
+5. start up docker debug-api container 
+    docker-compose up -d --build debug-api
+
+6. simple curl request 
+    curl localhost:8082/status
+
+check surveys:
+    curl -X GET http://localhost:8082/survey/available   -H "Authorization: Bearer $JWT" -v
+
+
+posting a survey response:
+curl -X POST http://localhost:8082/survey/daily \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $JWT" \
+  -d '{
+    "timestamp": "2025-08-12T10:00:00.000Z",
+    "surveys": [
+      {
+        "id": 1, # 0 is daily moring, 1 is daily evening, 2 is pqp9
+        "answers": [
+          {
+            "questionId": 2, # question table 
+            "answer": "4" # response to question
+          }
+        ]
+      }
+    ],
+    "notificationStart": "2025-08-12T09:00:00.000Z"
+  }'
+  daily survey question can belong to 0 or 1. 
+  eg. question id=2 (i want to die) belongs to both 0 and 1,
+  so first id can be 0 or 1

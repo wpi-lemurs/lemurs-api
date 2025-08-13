@@ -3,9 +3,17 @@ package edu.wpi.lemurs.api.endpoints.alert.trigger;
 
 import jakarta.persistence.*;
 import java.time.ZonedDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "danger_alert_trigger")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class DangerAlertTrigger {
 
   @Id
@@ -30,64 +38,4 @@ public class DangerAlertTrigger {
 
   @Column(name = "updated_at", insertable = false)
   private ZonedDateTime updatedAt;
-
-  public DangerAlertTrigger() {}
-
-  public DangerAlertTrigger(
-      Integer id, Integer questionId, Integer threshold, String alertMessage, Boolean isActive) {
-    this.id = id;
-    this.questionId = questionId;
-    this.threshold = threshold;
-    this.alertMessage = alertMessage;
-    this.isActive = isActive;
-  }
-
-  // Getters and setters
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public Integer getQuestionId() {
-    return questionId;
-  }
-
-  public void setQuestionId(Integer questionId) {
-    this.questionId = questionId;
-  }
-
-  public Integer getThreshold() {
-    return threshold;
-  }
-
-  public void setThreshold(Integer threshold) {
-    this.threshold = threshold;
-  }
-
-  public String getAlertMessage() {
-    return alertMessage;
-  }
-
-  public void setAlertMessage(String alertMessage) {
-    this.alertMessage = alertMessage;
-  }
-
-  public Boolean getIsActive() {
-    return isActive;
-  }
-
-  public void setIsActive(Boolean isActive) {
-    this.isActive = isActive;
-  }
-
-  public ZonedDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public ZonedDateTime getUpdatedAt() {
-    return updatedAt;
-  }
 }

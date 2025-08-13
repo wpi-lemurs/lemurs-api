@@ -62,7 +62,11 @@ public class DangerAlertTriggerController {
 
   @PostMapping("/refresh")
   public ResponseEntity<Void> refreshTriggers() {
-    service.getTriggerService().refreshTriggers();
-    return ResponseEntity.noContent().build();
+    try {
+      service.refreshTriggers();
+      return ResponseEntity.noContent().build();
+    } catch (UnauthenticatedException | UnauthorizedException e) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
   }
 }

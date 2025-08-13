@@ -75,7 +75,8 @@ public class AnswerService {
 
       List<Answer> answers = new ArrayList<>();
       for (AnswerDto answerDto : surveyResponseDto.getAnswers()) {
-        answers.add(new Answer(null, survey.getId(), answerDto.getId(), answerDto.getAnswer()));
+        answers.add(
+            new Answer(null, survey.getId(), answerDto.getQuestionId(), answerDto.getAnswer()));
       }
       answerRepository.saveAll(answers);
 

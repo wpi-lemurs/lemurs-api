@@ -1,7 +1,7 @@
 -- Add table for configurable danger alert triggers
 CREATE TABLE IF NOT EXISTS "danger_alert_trigger" (
   "id" SERIAL PRIMARY KEY,
-  "question_id" INTEGER NOT NULL REFERENCES "survey" ("id"),
+  "question_id" INTEGER NOT NULL REFERENCES "question" ("id"),
   "threshold" INTEGER NOT NULL,
   "alert_message" TEXT NOT NULL,
   "is_active" BOOLEAN NOT NULL DEFAULT TRUE,

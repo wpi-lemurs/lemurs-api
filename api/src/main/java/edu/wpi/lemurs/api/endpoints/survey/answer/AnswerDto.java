@@ -13,11 +13,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnswerDto {
-    @JsonProperty("questionId")
-    @JsonAlias({"id", "question_id"})
-    private Integer questionId;
-    
-    @JsonProperty("answer")
-    @JsonAlias({"response", "value"})
-    private String answer;
+  @JsonProperty("questionId")
+  @JsonAlias({"id", "question_id"})
+  private Integer questionId;
+
+  @JsonProperty("answer")
+  @JsonAlias({"response", "value"})
+  private String answer;
 }

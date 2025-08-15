@@ -2,6 +2,8 @@
 package edu.wpi.lemurs.api.endpoints.survey;
 
 import edu.wpi.lemurs.api.data.availability.SurveyAvailabilityService;
+import edu.wpi.lemurs.api.endpoints.alert.trigger.DangerAlertTrigger;
+import edu.wpi.lemurs.api.endpoints.alert.trigger.DangerAlertTriggerService;
 import edu.wpi.lemurs.api.endpoints.demographic.DemographicService;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
@@ -24,6 +26,7 @@ public class SurveyService {
   private SurveyQuestionViewRepository surveyQuestionViewRepository;
   private SurveyAvailabilityService surveyAvailabilityService;
   private DemographicService demographicService;
+  private DangerAlertTriggerService dangerAlertTriggerService;
 
   public static final Integer MORNING_SURVEY_ID = 0;
   public static final Integer AFTERNOON_SURVEY_ID = 1;
@@ -36,12 +39,14 @@ public class SurveyService {
       SurveyRepository surveyRepository,
       SurveyQuestionViewRepository surveyQuestionViewRepository,
       SurveyAvailabilityService surveyAvailabilityService,
-      DemographicService demographicService) {
+      DemographicService demographicService,
+      DangerAlertTriggerService dangerAlertTriggerService) {
     this.securityService = securityService;
     this.surveyRepository = surveyRepository;
     this.surveyQuestionViewRepository = surveyQuestionViewRepository;
     this.surveyAvailabilityService = surveyAvailabilityService;
     this.demographicService = demographicService;
+    this.dangerAlertTriggerService = dangerAlertTriggerService;
   }
 
   /**
@@ -57,6 +62,8 @@ public class SurveyService {
 
     List<SurveyApiResponse> surveys = new ArrayList<>();
     Map<String, String> demographics = demographicService.getDemographicMap();
+    Map<Integer, DangerAlertTrigger> activeTriggers =
+        dangerAlertTriggerService.getActiveTriggersMap();
 
     for (String surveyGroup : surveyAvailabilityService.getAvailableSurveyGroups()) {
       // TODO: Create a table matchin the group names to surveys, and fetching them appropriately.
@@ -87,6 +94,9 @@ public class SurveyService {
           }
         }
 
+        DangerAlertTrigger trigger = activeTriggers.get(question.getId());
+        boolean isTriggerQuestion = trigger != null;
+        Integer triggerThreshold = isTriggerQuestion ? trigger.getThreshold() : null;
         questions.add(
             new QuestionResponse(
                 question.getId(),
@@ -95,7 +105,9 @@ public class SurveyService {
                 question.getOptions(),
                 question.getParentQuestionId(),
                 question.getPrerequisiteQuestionId(),
-                question.getPrerequisiteAnswer()));
+                question.getPrerequisiteAnswer(),
+                isTriggerQuestion,
+                triggerThreshold));
       }
       surveys.add(surveyResponse);
     }
@@ -117,6 +129,8 @@ public class SurveyService {
     // TOOD: Find a better way to find the weekly survey.
     List<SurveyApiResponse> surveys = new ArrayList<>();
     Map<String, String> demographics = demographicService.getDemographicMap();
+    Map<Integer, DangerAlertTrigger> activeTriggers =
+        dangerAlertTriggerService.getActiveTriggersMap();
     Survey survey = surveyRepository.findById(WEEKLY_SURVEY_ID).get();
     List<QuestionResponse> questions = new ArrayList<>();
     SurveyApiResponse surveyResponse =
@@ -139,6 +153,9 @@ public class SurveyService {
         }
       }
 
+      DangerAlertTrigger trigger = activeTriggers.get(question.getId());
+      boolean isTriggerQuestion = trigger != null;
+      Integer triggerThreshold = isTriggerQuestion ? trigger.getThreshold() : null;
       questions.add(
           new QuestionResponse(
               question.getId(),
@@ -147,7 +164,9 @@ public class SurveyService {
               question.getOptions(),
               question.getParentQuestionId(),
               question.getPrerequisiteQuestionId(),
-              question.getPrerequisiteAnswer()));
+              question.getPrerequisiteAnswer(),
+              isTriggerQuestion,
+              triggerThreshold));
     }
     surveys.add(surveyResponse);
 

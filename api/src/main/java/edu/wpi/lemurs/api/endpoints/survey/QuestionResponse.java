@@ -19,4 +19,6 @@ public class QuestionResponse {
   private Integer parentQuestionId;
   private Integer prerequisiteQuestionId;
   private String prerequisiteAnswer;
+  private Boolean isTriggerQuestion;
+  private Integer triggerThreshold;
 }

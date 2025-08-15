@@ -17,7 +17,7 @@ import java.util.List;
 public class SurveyResponseDto {
     @JsonProperty("id")
     @JsonAlias({"surveyId", "survey_id"})
-    private Long id;
+    private Integer id;
     
     @JsonProperty("answers")
     @JsonAlias({"responses"})

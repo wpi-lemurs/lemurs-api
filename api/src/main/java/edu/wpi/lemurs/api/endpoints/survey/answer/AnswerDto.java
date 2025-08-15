@@ -15,7 +15,7 @@ import lombok.Setter;
 public class AnswerDto {
     @JsonProperty("questionId")
     @JsonAlias({"id", "question_id"})
-    private Long questionId;
+    private Integer questionId;
     
     @JsonProperty("answer")
     @JsonAlias({"response", "value"})

@@ -117,12 +117,12 @@ public class DangerAlertTriggerService {
     loadActiveTriggers();
   }
 
-  /**
-   * Returns a map of active danger alert triggers, keyed by question ID.
-   *
-   * @return A map of question IDs to their corresponding active {@link DangerAlertTrigger}.
-   */
-  public Map<Integer, DangerAlertTrigger> getActiveTriggersMap() {
-    return activeTriggers;
-  }
+  // /**
+  //  * Returns a map of active danger alert triggers, keyed by question ID.
+  //  *
+  //  * @return A map of question IDs to their corresponding active {@link DangerAlertTrigger}.
+  //  */
+  // public Map<Integer, DangerAlertTrigger> getActiveTriggersMap() {
+  //   return activeTriggers;
+  // }
 }

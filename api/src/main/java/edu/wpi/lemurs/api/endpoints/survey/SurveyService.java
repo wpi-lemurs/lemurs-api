@@ -1,4 +1,4 @@
-/* Copyright (C) 2024 Worcester Polytechnic University */
+/*.  Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey;
 
 import edu.wpi.lemurs.api.data.availability.SurveyAvailabilityService;

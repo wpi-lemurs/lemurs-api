@@ -2,8 +2,6 @@
 package edu.wpi.lemurs.api.endpoints.survey;
 
 import edu.wpi.lemurs.api.data.availability.SurveyAvailabilityService;
-// import edu.wpi.lemurs.api.endpoints.alert.trigger.DangerAlertTrigger;
-// import edu.wpi.lemurs.api.endpoints.alert.trigger.DangerAlertTriggerService;
 import edu.wpi.lemurs.api.endpoints.demographic.DemographicService;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
@@ -40,7 +38,7 @@ public class SurveyService {
       SurveyQuestionViewRepository surveyQuestionViewRepository,
       SurveyAvailabilityService surveyAvailabilityService,
       DemographicService demographicService) {
-      // DangerAlertTriggerService dangerAlertTriggerService) {
+    // DangerAlertTriggerService dangerAlertTriggerService) {
     this.securityService = securityService;
     this.surveyRepository = surveyRepository;
     this.surveyQuestionViewRepository = surveyQuestionViewRepository;
@@ -106,8 +104,8 @@ public class SurveyService {
                 question.getParentQuestionId(),
                 question.getPrerequisiteQuestionId(),
                 question.getPrerequisiteAnswer()));
-                // isTriggerQuestion,
-                // triggerThreshold));
+        // isTriggerQuestion,
+        // triggerThreshold));
       }
       surveys.add(surveyResponse);
     }
@@ -165,8 +163,8 @@ public class SurveyService {
               question.getParentQuestionId(),
               question.getPrerequisiteQuestionId(),
               question.getPrerequisiteAnswer()));
-              // isTriggerQuestion,
-              // triggerThreshold));
+      // isTriggerQuestion,
+      // triggerThreshold));
     }
     surveys.add(surveyResponse);
 

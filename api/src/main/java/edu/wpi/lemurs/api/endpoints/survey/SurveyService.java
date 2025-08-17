@@ -1,7 +1,9 @@
-/*.  Copyright (C) 2024 Worcester Polytechnic University */
+/* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey;
 
 import edu.wpi.lemurs.api.data.availability.SurveyAvailabilityService;
+import edu.wpi.lemurs.api.endpoints.alert.trigger.DangerAlertTrigger;
+import edu.wpi.lemurs.api.endpoints.alert.trigger.DangerAlertTriggerService;
 import edu.wpi.lemurs.api.endpoints.demographic.DemographicService;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
@@ -24,7 +26,7 @@ public class SurveyService {
   private SurveyQuestionViewRepository surveyQuestionViewRepository;
   private SurveyAvailabilityService surveyAvailabilityService;
   private DemographicService demographicService;
-  // private DangerAlertTriggerService dangerAlertTriggerService;
+  private DangerAlertTriggerService dangerAlertTriggerService;
 
   public static final Integer MORNING_SURVEY_ID = 0;
   public static final Integer AFTERNOON_SURVEY_ID = 1;
@@ -37,34 +39,26 @@ public class SurveyService {
       SurveyRepository surveyRepository,
       SurveyQuestionViewRepository surveyQuestionViewRepository,
       SurveyAvailabilityService surveyAvailabilityService,
-      DemographicService demographicService) {
-    // DangerAlertTriggerService dangerAlertTriggerService) {
+      DemographicService demographicService,
+      DangerAlertTriggerService dangerAlertTriggerService) {
     this.securityService = securityService;
     this.surveyRepository = surveyRepository;
     this.surveyQuestionViewRepository = surveyQuestionViewRepository;
     this.surveyAvailabilityService = surveyAvailabilityService;
     this.demographicService = demographicService;
-    // this.dangerAlertTriggerService = dangerAlertTriggerService;
+    this.dangerAlertTriggerService = dangerAlertTriggerService;
   }
 
-  /**
-   * Gets all of the daily surveys for the user.
-   *
-   * @return A list of {@link SurveyApiResponse}s with each daily survey.
-   * @throws UnauthenticatedException Thrown if the user is not authenticated.
-   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
-   */
   public List<SurveyApiResponse> getDailySurveys()
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
     List<SurveyApiResponse> surveys = new ArrayList<>();
     Map<String, String> demographics = demographicService.getDemographicMap();
-    // Map<Integer, DangerAlertTrigger> activeTriggers =
-    //     dangerAlertTriggerService.getActiveTriggersMap();
+    Map<Integer, DangerAlertTrigger> activeTriggers =
+        dangerAlertTriggerService.getActiveTriggersMap();
 
     for (String surveyGroup : surveyAvailabilityService.getAvailableSurveyGroups()) {
-      // TODO: Create a table matchin the group names to surveys, and fetching them appropriately.
       Survey survey = null;
       if (surveyGroup.equals("morning")) {
         survey = surveyRepository.findById(MORNING_SURVEY_ID).get();
@@ -86,15 +80,15 @@ public class SurveyService {
               break;
             }
           }
-
           if (!meetsRequirements) {
             continue;
           }
         }
 
-        // DangerAlertTrigger trigger = activeTriggers.get(question.getId());
-        // boolean isTriggerQuestion = trigger != null;
-        // Integer triggerThreshold = isTriggerQuestion ? trigger.getThreshold() : null;
+        DangerAlertTrigger trigger = activeTriggers.get(question.getId());
+        boolean isTriggerQuestion = trigger != null;
+        Integer triggerThreshold = isTriggerQuestion ? trigger.getThreshold() : null;
+
         questions.add(
             new QuestionResponse(
                 question.getId(),
@@ -103,9 +97,9 @@ public class SurveyService {
                 question.getOptions(),
                 question.getParentQuestionId(),
                 question.getPrerequisiteQuestionId(),
-                question.getPrerequisiteAnswer()));
-        // isTriggerQuestion,
-        // triggerThreshold));
+                question.getPrerequisiteAnswer(),
+                isTriggerQuestion,
+                triggerThreshold));
       }
       surveys.add(surveyResponse);
     }
@@ -113,22 +107,15 @@ public class SurveyService {
     return surveys;
   }
 
-  /**
-   * Gets all of the daily surveys for the user.
-   *
-   * @return A list of {@link SurveyApiResponse}s with each daily survey.
-   * @throws UnauthenticatedException Thrown if the user is not authenticated.
-   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
-   */
   public List<SurveyApiResponse> getWeeklySurveys()
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
-    // TOOD: Find a better way to find the weekly survey.
     List<SurveyApiResponse> surveys = new ArrayList<>();
     Map<String, String> demographics = demographicService.getDemographicMap();
-    // Map<Integer, DangerAlertTrigger> activeTriggers =
-    // //     dangerAlertTriggerService.getActiveTriggersMap();
+    Map<Integer, DangerAlertTrigger> activeTriggers =
+        dangerAlertTriggerService.getActiveTriggersMap();
+
     Survey survey = surveyRepository.findById(WEEKLY_SURVEY_ID).get();
     List<QuestionResponse> questions = new ArrayList<>();
     SurveyApiResponse surveyResponse =
@@ -145,15 +132,15 @@ public class SurveyService {
             break;
           }
         }
-
         if (!meetsRequirements) {
           continue;
         }
       }
 
-      // DangerAlertTrigger trigger = activeTriggers.get(question.getId());
-      // boolean isTriggerQuestion = trigger != null;
-      // Integer triggerThreshold = isTriggerQuestion ? trigger.getThreshold() : null;
+      DangerAlertTrigger trigger = activeTriggers.get(question.getId());
+      boolean isTriggerQuestion = trigger != null;
+      Integer triggerThreshold = isTriggerQuestion ? trigger.getThreshold() : null;
+
       questions.add(
           new QuestionResponse(
               question.getId(),
@@ -162,9 +149,9 @@ public class SurveyService {
               question.getOptions(),
               question.getParentQuestionId(),
               question.getPrerequisiteQuestionId(),
-              question.getPrerequisiteAnswer()));
-      // isTriggerQuestion,
-      // triggerThreshold));
+              question.getPrerequisiteAnswer(),
+              isTriggerQuestion,
+              triggerThreshold));
     }
     surveys.add(surveyResponse);
 

@@ -48,10 +48,6 @@ public class DangerAlertTriggerService {
     scheduler.scheduleAtFixedRate(this::loadActiveTriggers, 1, 60, TimeUnit.MINUTES);
   }
 
-  /**
-   * Loads active triggers from the database into memory cache. This improves performance by
-   * avoiding database lookups on every answer check.
-   */
   private synchronized void loadActiveTriggers() {
     try {
       logger.info("Loading active danger alert triggers from database");
@@ -69,13 +65,6 @@ public class DangerAlertTriggerService {
     }
   }
 
-  /**
-   * Checks a list of survey answers for any that trigger a danger alert. If any triggers are found,
-   * it sends an alert.
-   *
-   * @param userId The ID of the user who submitted the answers.
-   * @param answers The list of answers to check.
-   */
   public void checkAnswersForDangerAlerts(Integer userId, List<AnswerDto> answers) {
     List<String> dangerReasons = new ArrayList<>();
 
@@ -86,7 +75,6 @@ public class DangerAlertTriggerService {
         try {
           int score = Integer.parseInt(answerDto.getAnswer());
           if (score >= trigger.getThreshold()) {
-            // Replace {score} placeholder with actual score
             String message = trigger.getAlertMessage().replace("{score}", String.valueOf(score));
             dangerReasons.add(message);
           }
@@ -112,17 +100,12 @@ public class DangerAlertTriggerService {
     }
   }
 
-  // For manual trigger refresh (can be called from an admin controller)
   public void refreshTriggers() {
     loadActiveTriggers();
   }
 
-  // /**
-  //  * Returns a map of active danger alert triggers, keyed by question ID.
-  //  *
-  //  * @return A map of question IDs to their corresponding active {@link DangerAlertTrigger}.
-  //  */
-  // public Map<Integer, DangerAlertTrigger> getActiveTriggersMap() {
-  //   return activeTriggers;
-  // }
+  // Expose active triggers to other services (read-only usage)
+  public Map<Integer, DangerAlertTrigger> getActiveTriggersMap() {
+    return activeTriggers;
+  }
 }

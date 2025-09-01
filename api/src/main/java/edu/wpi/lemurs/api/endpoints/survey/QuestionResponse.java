@@ -1,6 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,4 +20,10 @@ public class QuestionResponse {
   private Integer parentQuestionId;
   private Integer prerequisiteQuestionId;
   private String prerequisiteAnswer;
+
+  // Use @JsonProperty to ensure the JSON key is exactly "isTriggerQuestion"
+  @JsonProperty("isTriggerQuestion")
+  private Boolean isTriggerQuestion;
+
+  private Integer triggerThreshold;
 }

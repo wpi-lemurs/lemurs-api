@@ -14,9 +14,10 @@ import edu.wpi.lemurs.api.security.roles.LemursRole;
 import edu.wpi.lemurs.api.services.email.EmailService;
 import jakarta.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
@@ -57,13 +58,8 @@ public class DangerAlertEmailService {
   public List<DangerAlertEmail> getEmails() throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasPermission(LemursRole.STAFF);
 
-    ArrayList<DangerAlertEmail> emails = new ArrayList<>();
-
-    for (DangerAlertEmail email : dangerAlertEmailRepository.findAll()) {
-      emails.add(email);
-    }
-
-    return emails;
+    return StreamSupport.stream(dangerAlertEmailRepository.findAll().spliterator(), false)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -117,21 +113,21 @@ public class DangerAlertEmailService {
       return;
     }
 
-    String out =
-        "The student with UMass REDCap ID '"
-            + umassID.get()
-            + "' is showing concerning signs."
-            + "\n\nHere are the following concerning signs:\n";
+    StringBuilder out =
+        new StringBuilder("The student with UMass REDCap ID '")
+            .append(umassID.get())
+            .append("' is showing concerning signs.")
+            .append("\n\nHere are the following concerning signs:\n");
 
     for (String reason : reasons) {
-      out += "\n - " + reason;
+      out.append("\n - ").append(reason);
     }
 
-    out += "\n\nLEMURS Team";
+    out.append("\n\nLEMURS Team");
 
     for (DangerAlertEmail address : dangerAlertEmailRepository.findAll()) {
       emailService.sendEmailWithoutAuthorization(
-          address.getEmail(), "Danger Alert for Student", out);
+          address.getEmail(), "Danger Alert for Student", out.toString());
     }
   }
 }

@@ -1,6 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey.answer;
 
+import edu.wpi.lemurs.api.endpoints.alert.trigger.DangerAlertTriggerService;
 import edu.wpi.lemurs.api.endpoints.progress.ProgressService;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
@@ -20,17 +21,20 @@ public class AnswerService {
   private AnswerRepository answerRepository;
   private SurveyResponseRepository surveyResponseRepository;
   private ProgressService progressService;
+  private DangerAlertTriggerService dangerAlertTriggerService;
 
   @Autowired
   public AnswerService(
       SecurityService securityService,
       AnswerRepository answerRepository,
       SurveyResponseRepository surveyResponseRepository,
-      ProgressService progressService) {
+      ProgressService progressService,
+      DangerAlertTriggerService dangerAlertTriggerService) {
     this.securityService = securityService;
     this.answerRepository = answerRepository;
     this.surveyResponseRepository = surveyResponseRepository;
     this.progressService = progressService;
+    this.dangerAlertTriggerService = dangerAlertTriggerService;
   }
 
   public void recordAnswersDaily(CombinedSurveyResponseDto combinedSurveyResponseDto)
@@ -57,12 +61,13 @@ public class AnswerService {
 
   private void recordAnswers(CombinedSurveyResponseDto combinedSurveyResponseDto)
       throws UnauthenticatedException, UnauthorizedException {
+    Integer userId = securityService.getUser().getId();
 
     for (SurveyResponseDto surveyResponseDto : combinedSurveyResponseDto.getSurveys()) {
       SurveyResponse survey =
           new SurveyResponse(
               null,
-              securityService.getUser().getId(),
+              userId,
               surveyResponseDto.getId(),
               combinedSurveyResponseDto.getTimestamp(),
               combinedSurveyResponseDto.getNotificationStart());
@@ -70,9 +75,13 @@ public class AnswerService {
 
       List<Answer> answers = new ArrayList<>();
       for (AnswerDto answerDto : surveyResponseDto.getAnswers()) {
-        answers.add(new Answer(null, survey.getId(), answerDto.getId(), answerDto.getAnswer()));
+        answers.add(
+            new Answer(null, survey.getId(), answerDto.getQuestionId(), answerDto.getAnswer()));
       }
       answerRepository.saveAll(answers);
+
+      // Check for danger alerts in this survey's answers
+      dangerAlertTriggerService.checkAnswersForDangerAlerts(userId, surveyResponseDto.getAnswers());
     }
   }
 }

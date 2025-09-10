@@ -1,6 +1,4 @@
 #!/bin/bash
-
-/usr/config/update-schema.sh &
-
-# Start PostgreSQL Server.
-/usr/local/bin/docker-entrypoint.sh postgres
+# Deprecated: now using official Postgres init mechanism (/docker-entrypoint-initdb.d).
+# This script is no longer used and intentionally does nothing.
+exit 0

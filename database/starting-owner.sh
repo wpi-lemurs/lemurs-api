@@ -1,1 +1,3 @@
-echo "INSERT INTO \"authorized_email_elevated\" (\"email\", \"role\", \"expiration\") VALUES ('$LEMURS_OWNER_EMAIL', '3', '3000-01-01 00:00:00.000');" > /usr/config/updates/0004-starting-owner.sql
+#!/bin/bash
+# Deprecated: starting-owner.sh is no longer used. Owner insert happens via Postgres init script.
+exit 0

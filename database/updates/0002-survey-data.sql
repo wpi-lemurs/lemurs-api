@@ -48,13 +48,13 @@ Since the last prompt, I have:', 'parent-question', NULL, NULL, NULL, NULL, NULL
     (35, 'Felt you were wanted or included', '5-scale-time', NULL, '30', NULL, NULL, NULL),
     (36, 'Failed or performed poorly at something', '5-scale-time', NULL, '30', NULL, NULL, NULL),
     (37, 'Performed well or succeeded at something', '5-scale-time', NULL, '30', NULL, NULL, NULL),
-    (38, 'Minority Stress Contexts', 'category', NULL, NULL, NULL, NULL, {"LGBT"}),
-    (39, 'Today, I have:', 'parent-question', NULL, NULL, NULL, NULL, {"LGBT"}),
-    (40, 'Avoided the subjects of sex, love, attraction, or relationships to conceal my sexual orientation  ', '5-scale-time', NULL, '39', NULL, NULL, {"LGBT"}),
-    (41, 'Felt alienated from myself because of my LGBT identity', '5-scale-time', NULL, '39', NULL, NULL, {"LGBT"}),
-    (42, 'Worried that people will reject me or treat me unfavorably because I’m LGBT', '5-scale-time', NULL, '39', NULL, NULL, {"LGBT"}),
-    (43, 'Been treated unfairly by others because I am LGBT', '5-scale-time', NULL, '39', NULL, NULL, {"LGBT"}),
-    (44, 'Been exposed to anti-LGBT media/social media content (e.g., online hate speech, news of policy that would reduce LGBT civil rights, etc.)', '5-scale-time', NULL, '39', NULL, NULL, {"LGBT"}),
+    (38, 'Minority Stress Contexts', 'category', NULL, NULL, NULL, NULL, '{"LGBT"}'),
+    (39, 'Today, I have:', 'parent-question', NULL, NULL, NULL, NULL, '{"LGBT"}'),
+    (40, 'Avoided the subjects of sex, love, attraction, or relationships to conceal my sexual orientation  ', '5-scale-time', NULL, '39', NULL, NULL, '{"LGBT"}'),
+    (41, 'Felt alienated from myself because of my LGBT identity', '5-scale-time', NULL, '39', NULL, NULL, '{"LGBT"}'),
+    (42, 'Worried that people will reject me or treat me unfavorably because I’m LGBT', '5-scale-time', NULL, '39', NULL, NULL, '{"LGBT"}'),
+    (43, 'Been treated unfairly by others because I am LGBT', '5-scale-time', NULL, '39', NULL, NULL, '{"LGBT"}'),
+    (44, 'Been exposed to anti-LGBT media/social media content (e.g., online hate speech, news of policy that would reduce LGBT civil rights, etc.)', '5-scale-time', NULL, '39', NULL, NULL, '{"LGBT"}'),
     (45, 'Daily Emotion Regulation', 'category', NULL, NULL, NULL, NULL, NULL),
     (46, 'Please rate the following based on how you felt since you last prompt when you felt negative emotions: ', 'parent-question', NULL, NULL, NULL, NULL, NULL),
     (47, 'When I felt negative emotions, I had difficulty focusing on other things', '4-scale-true', NULL, '46', NULL, NULL, NULL),
@@ -78,8 +78,7 @@ Since the last prompt, I have:', 'parent-question', NULL, NULL, NULL, NULL, NULL
     (65, 'Trouble concentrating on things such as reading the newspaper or watching television', '4-scale-zero', NULL, '58', NULL, NULL, NULL),
     (66, 'Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual', '4-scale-zero', NULL, '58', NULL, NULL, NULL),
     (67, 'Thoughts that you would be better off dead, or thoughts of hurting yourself in some way', '4-scale-zero', NULL, '58', NULL, NULL, NULL),
-    (68, ' Do you intend to kill yourself right now?', 'yes-no', NULL, '58', '67', '1,2,3,4', NULL),
-    (69, 'If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people? ', '4-scale-difficult', NULL, '58', NULL, NULL, NULL)
+    (69, 'If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people? ', '4-scale-difficult', NULL, '58', NULL, NULL, NULL);
 
 --- Data for linking questions with surveys.
 INSERT INTO "survey_question" ("survey_id", "question_id", "position") OVERRIDING SYSTEM VALUE VALUES
@@ -197,7 +196,6 @@ INSERT INTO "survey_question" ("survey_id", "question_id", "position") OVERRIDIN
 	('2', '65', '64'),
 	('2', '66', '72'),
 	('2', '67', '80'),
-	('2', '68', '88'),
 	('2', '69', '96');
 
 --- Incentive Constants

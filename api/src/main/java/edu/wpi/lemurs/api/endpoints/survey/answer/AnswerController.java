@@ -24,8 +24,7 @@ public class AnswerController {
   /** Autowires a {@link DataController} */
   @Autowired
   public AnswerController(AnswerService answerService) {
-    this.answerService = answerService;
-  }
+    this.answerService = answerService;}
 
   /** The <code>/data</code> {@code POST} endpoint saves the sent data. */
   @PostMapping("/survey/daily")

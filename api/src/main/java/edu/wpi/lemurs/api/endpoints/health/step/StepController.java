@@ -1,4 +1,4 @@
-/* Copyright (C) 2024 Worcester Polytechnic University */
+/* Copyright (C) 2025 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.health.step;
 
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
@@ -23,7 +23,7 @@ public class StepController {
   }
 
   /** The <code>/steps</code> {@code POST} endpoint saves the sent step data. */
-  @PostMapping("/health/steps")
+  @PostMapping("/data/steps")
   public ResponseEntity<Void> saveSteps(@RequestBody StepDto stepDto) {
     try {
       stepService.recordSteps(stepDto);

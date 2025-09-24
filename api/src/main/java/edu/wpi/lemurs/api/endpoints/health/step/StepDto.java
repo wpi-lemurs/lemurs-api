@@ -15,7 +15,7 @@ public class StepDto {
   private String userId;
   private String type;
   private Long steps;
-  private LocalDateTime startTimestamp;
-  private LocalDateTime endTimestamp;
+  private LocalDateTime start_timestamp;
+  private LocalDateTime end_timestamp;
   private String appSource;
 }

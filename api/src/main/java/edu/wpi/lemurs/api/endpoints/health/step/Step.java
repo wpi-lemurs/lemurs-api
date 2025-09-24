@@ -32,10 +32,10 @@ public class Step {
   private Long steps;
 
   @Column(nullable = false)
-  private LocalDateTime startTimestamp;
+  private LocalDateTime start_timestamp;
 
   @Column(nullable = false)
-  private LocalDateTime endTimestamp;
+  private LocalDateTime end_timestamp;
 
   @Column(nullable = false)
   private String appSource;

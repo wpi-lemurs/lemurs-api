@@ -4,15 +4,14 @@ package edu.wpi.lemurs.api.endpoints.health.distance;
 import edu.wpi.lemurs.api.endpoints.data.DataStatus;
 import edu.wpi.lemurs.api.endpoints.data.DataStatusConverter;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Table
 @Entity

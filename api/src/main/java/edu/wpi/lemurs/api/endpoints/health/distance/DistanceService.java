@@ -7,10 +7,9 @@ import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
 import edu.wpi.lemurs.api.security.roles.LemursRole;
 import jakarta.transaction.Transactional;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 @Service
 @Transactional
@@ -32,7 +31,8 @@ public class DistanceService {
    * @throws UnauthenticatedException Thrown if the user is not authenticated.
    * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
    */
-  public void recordDistance(DistanceDto distanceDto) throws UnauthenticatedException, UnauthorizedException {
+  public void recordDistance(DistanceDto distanceDto)
+      throws UnauthenticatedException, UnauthorizedException {
 
     securityService.assertHasRole(LemursRole.USER);
 

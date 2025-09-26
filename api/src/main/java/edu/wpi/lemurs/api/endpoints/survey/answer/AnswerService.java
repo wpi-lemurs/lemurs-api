@@ -10,12 +10,16 @@ import edu.wpi.lemurs.api.security.roles.LemursRole;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 public class AnswerService {
+
+  private static final Logger logger = LoggerFactory.getLogger(AnswerService.class);
 
   private SecurityService securityService;
   private AnswerRepository answerRepository;
@@ -48,20 +52,40 @@ public class AnswerService {
     progressService.recordDaily(combinedSurveyResponseDto.getTimestamp());
   }
 
-  public void recordAnswersWeekly(CombinedSurveyResponseDto combinedSurveyResponseDto)
+  public Integer recordAnswersWeekly(CombinedSurveyResponseDto combinedSurveyResponseDto)
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasPermission(LemursRole.USER);
 
     // TODO: Check that the survey are all weekly surveys.
 
-    recordAnswers(combinedSurveyResponseDto);
+    Integer userId = securityService.getUser().getId();
+    logger.info(
+        "Recording weekly survey answers for user {} at {}",
+        userId,
+        combinedSurveyResponseDto.getTimestamp());
+
+    List<Integer> surveyResponseIds = recordAnswers(combinedSurveyResponseDto);
 
     progressService.recordWeekly(combinedSurveyResponseDto.getTimestamp());
+
+    // Return the first survey response ID (primary survey for linking)
+    if (!surveyResponseIds.isEmpty()) {
+      Integer primarySurveyResponseId = surveyResponseIds.get(0);
+      logger.info(
+          "Weekly survey submission completed for user {} - primary survey response ID: {}",
+          userId,
+          primarySurveyResponseId);
+      return primarySurveyResponseId;
+    } else {
+      logger.warn("No survey responses created for user {}", userId);
+      throw new RuntimeException("No survey responses were created");
+    }
   }
 
-  private void recordAnswers(CombinedSurveyResponseDto combinedSurveyResponseDto)
+  private List<Integer> recordAnswers(CombinedSurveyResponseDto combinedSurveyResponseDto)
       throws UnauthenticatedException, UnauthorizedException {
     Integer userId = securityService.getUser().getId();
+    List<Integer> surveyResponseIds = new ArrayList<>();
 
     for (SurveyResponseDto surveyResponseDto : combinedSurveyResponseDto.getSurveys()) {
       SurveyResponse survey =
@@ -72,6 +96,7 @@ public class AnswerService {
               combinedSurveyResponseDto.getTimestamp(),
               combinedSurveyResponseDto.getNotificationStart());
       survey = surveyResponseRepository.save(survey);
+      surveyResponseIds.add(survey.getId());
 
       List<Answer> answers = new ArrayList<>();
       for (AnswerDto answerDto : surveyResponseDto.getAnswers()) {
@@ -83,5 +108,7 @@ public class AnswerService {
       // Check for danger alerts in this survey's answers
       dangerAlertTriggerService.checkAnswersForDangerAlerts(userId, surveyResponseDto.getAnswers());
     }
+
+    return surveyResponseIds;
   }
 }

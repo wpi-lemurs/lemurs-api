@@ -11,11 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class LoginController {
 
   private JwtService jwtService;
@@ -35,7 +35,6 @@ public class LoginController {
   @PostMapping("/auth/login")
   public ResponseEntity<JwtResponse> loginUserAccount(
       @RequestBody MicrosoftLoginDto microsoftLoginDto) {
-
     try {
       Authentication tempAuthentication =
           authMicrosoftService.login(microsoftLoginDto.getAccessToken());

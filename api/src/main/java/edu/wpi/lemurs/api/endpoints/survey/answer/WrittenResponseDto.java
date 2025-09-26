@@ -14,26 +14,22 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class WritingResponseDto {
+public class WrittenResponseDto {
 
   @JsonProperty("id")
   private Integer id;
 
   @JsonProperty("survey_response_id")
   @JsonAlias({"surveyResponseId"})
-  private Integer surveyResponseId;
+  private Integer survey_response_id;
 
   @JsonProperty("written_question_id")
   @JsonAlias({"writtenQuestionId"})
-  private Integer writtenQuestionId;
+  private Integer written_question_id;
 
-  @JsonProperty("data")
-  private String data;
+  @JsonProperty("written_data")
+  private String written_data;
 
   @JsonProperty("timestamp")
   private Date timestamp;
-
-  @JsonProperty("notification_start")
-  @JsonAlias({"notificationStart"})
-  private Date notificationStart;
 }

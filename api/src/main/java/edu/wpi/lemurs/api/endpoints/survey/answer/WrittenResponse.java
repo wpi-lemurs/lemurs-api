@@ -20,7 +20,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class WritingResponse {
+public class WrittenResponse {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false)
@@ -33,11 +33,8 @@ public class WritingResponse {
   private Integer written_question_id;
 
   @Column(nullable = false)
-  private String data;
+  private String written_data;
 
   @Column(nullable = false)
   private Date timestamp;
-
-  @Column(nullable = false)
-  private Date notificationStart;
 }

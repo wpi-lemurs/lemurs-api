@@ -18,19 +18,21 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
-public class WritingResponseService {
+public class WrittenResponseService {
 
-  private static final Logger logger = LoggerFactory.getLogger(WritingResponseService.class);
+  private static final Logger logger = LoggerFactory.getLogger(WrittenResponseService.class);
 
   private final SecurityService securityService;
+  private final WrittenResponseRepository writingResponseRepository;
 
 
   @Autowired
-  public WritingResponseService(SecurityService securityService) {
+  public WrittenResponseService(SecurityService securityService, WrittenResponseRepository writingResponseRepository) {
     this.securityService = securityService;
+    this.writingResponseRepository = writingResponseRepository;
   }
 
-  public void saveWritingData(WritingResponseDto request)
+  public void saveWritingData(WrittenResponseDto request)
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
@@ -39,25 +41,22 @@ public class WritingResponseService {
     logger.info(
         "Saving audio data for user {} - survey response {} question {} at {}",
         userId,
-        request.getSurveyResponseId(),
-        request.getWrittenQuestionId(),
+        request.getSurvey_response_id(),
+        request.getWritten_question_id(),
+        request.getWritten_data(),
         request.getTimestamp());
 
     try {
 
       // Create and save the writing response
-      WritingResponse writingResponse = new WritingResponse();
-      writingResponse.setSurvey_response_id(request.getSurveyResponseId());
-      writingResponse.setWritten_question_id(request.getWrittenQuestionId());
-      writingResponse.setData(request.getData());
+      WrittenResponse writingResponse = new WrittenResponse();
+      writingResponse.setSurvey_response_id(request.getSurvey_response_id());
+      writingResponse.setWritten_question_id(request.getWritten_question_id());
+      writingResponse.setWritten_data(request.getWritten_data());
       writingResponse.setTimestamp(
           request.getTimestamp() != null ? request.getTimestamp() : new Date());
-      writingResponse.setNotificationStart(
-          request.getNotificationStart() != null ? request.getNotificationStart() : new Date());
-      writingResponse.setNotificationStart(new Date());
 
-      WritingResponseRepository writingResponseRepository = null;
-      WritingResponse savedResponse = writingResponseRepository.save(writingResponse);
+      WrittenResponse savedResponse = writingResponseRepository.save(writingResponse);
 
       logger.info(
           "Successfully saved writing response {} for user {}", savedResponse.getId(), userId);
@@ -65,7 +64,7 @@ public class WritingResponseService {
       logger.error(
           "Failed to save writing response for user {} survey response {}: {}",
           userId,
-          request.getSurveyResponseId(),
+          request.getSurvey_response_id(),
           e.getMessage(),
           e);
       throw new RuntimeException("Error saving writing response", e);

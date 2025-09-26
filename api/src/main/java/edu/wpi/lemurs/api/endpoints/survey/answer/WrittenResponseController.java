@@ -15,23 +15,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Creates an endpoint for posting data. */
 @RestController
-public class WritingResponseController {
+public class WrittenResponseController {
 
-  private static final Logger logger = LoggerFactory.getLogger(WritingResponseController.class);
+  private static final Logger logger = LoggerFactory.getLogger(WrittenResponseController.class);
 
-  private WritingResponseService writingResponseService;
+  private WrittenResponseService writingResponseService;
 
   /** Autowires a {@link DataController} */
   // constructor to autowire the service
   @Autowired
-  public WritingResponseController(WritingResponseService writingResponseService) {
+  public WrittenResponseController(WrittenResponseService writingResponseService) {
     this.writingResponseService = writingResponseService;
   }
 
   /** The <code>/data</code> {@code POST} endpoint saves the sent data. */
   @PostMapping("/data/text")
   public ResponseEntity<Void> recordWritingData(
-      @RequestBody WritingResponseDto writingResponseDto) {
+      @RequestBody WrittenResponseDto writingResponseDto) {
     try {
       writingResponseService.saveWritingData(writingResponseDto);
       return new ResponseEntity<>(HttpStatus.CREATED);

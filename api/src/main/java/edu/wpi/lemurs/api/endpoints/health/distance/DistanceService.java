@@ -25,7 +25,7 @@ public class DistanceService {
   }
 
   /**
-   * Records step data for a user.
+   * Records distance data for a user.
    *
    * @param distanceDto The {@link DistanceDto}.
    * @throws UnauthenticatedException Thrown if the user is not authenticated.

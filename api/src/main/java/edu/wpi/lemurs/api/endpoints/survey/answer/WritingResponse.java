@@ -20,25 +20,24 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-
 public class WritingResponse {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(nullable = false)
+  private Integer id;
 
-    @Column(nullable = false, name = "survey_response_id")
-    private Integer survey_response_id;
+  @Column(nullable = false, name = "survey_response_id")
+  private Integer survey_response_id;
 
-    @Column(nullable = false, name = "written_question_id")
-    private Integer written_question_id;
+  @Column(nullable = false, name = "written_question_id")
+  private Integer written_question_id;
 
-    @Column(nullable = false)
-    private String data;
+  @Column(nullable = false)
+  private String data;
 
-    @Column(nullable = false)
-    private Date timestamp;
+  @Column(nullable = false)
+  private Date timestamp;
 
-    @Column(nullable = false)
-    private Date notificationStart;
+  @Column(nullable = false)
+  private Date notificationStart;
 }

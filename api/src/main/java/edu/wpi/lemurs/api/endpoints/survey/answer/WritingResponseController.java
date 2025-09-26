@@ -17,32 +17,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WritingResponseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(WritingResponseController.class);
+  private static final Logger logger = LoggerFactory.getLogger(WritingResponseController.class);
 
-    private WritingResponse writingResponseService;
+  private WritingResponseService writingResponseService;
 
-    /**
-     * Autowires a {@link DataController}
-     */
-    @Autowired
-    public WritingResponseController(WritingResponseService writingResponseService) {
-        this.writingResponseService = writingResponseService;
+  /** Autowires a {@link DataController} */
+  // constructor to autowire the service
+  @Autowired
+  public WritingResponseController(WritingResponseService writingResponseService) {
+    this.writingResponseService = writingResponseService;
+  }
+
+  /** The <code>/data</code> {@code POST} endpoint saves the sent data. */
+  @PostMapping("/data/text")
+  public ResponseEntity<Void> recordWritingData(
+      @RequestBody WritingResponseDto writingResponseDto) {
+    try {
+      writingResponseService.saveWritingData(writingResponseDto);
+      return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (UnauthenticatedException e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    } catch (UnauthorizedException e) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    /**
-     * The <code>/data</code> {@code POST} endpoint saves the sent data.
-     */
-    @PostMapping("/data/text")
-    public ResponseEntity<Void> recordWritingData(@RequestBody WritingResponseDto writingResponseDto) {
-        try {
-            writingResponseService.saveWritingData(writingResponseDto);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (UnauthenticatedException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch (UnauthorizedException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+  }
 }

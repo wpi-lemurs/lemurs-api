@@ -12,12 +12,12 @@ plugins {
 def env = [:]
 def envFile = file('../../.env')
 if (envFile.exists()) {
-    envFile.eachLine { line ->
-        def parts = line.split('=')
-        if (parts.length == 2) {
-            env[parts[0].trim()] = parts[1].trim()
-        }
-    }
+	envFile.eachLine { line ->
+		def parts = line.split('=')
+		if (parts.length == 2) {
+			env[parts[0].trim()] = parts[1].trim()
+		}
+	}
 }
 
 group = 'edu.wpi.lemurs'
@@ -40,8 +40,8 @@ repositories {
 bootRun {
 	environment "LEMURS_EMAIL_HOST", env['LEMURS_EMAIL_HOST']
 	environment "LEMURS_EMAIL_PORT", env['LEMURS_EMAIL_PORT']
-    environment "LEMURS_POSTGRES_USERNAME", env['LEMURS_POSTGRES_USERNAME']
-    environment "LEMURS_POSTGRES_PASSWORD", env['LEMURS_POSTGRES_PASSWORD']
+	environment "LEMURS_POSTGRES_USERNAME", env['LEMURS_POSTGRES_USERNAME']
+	environment "LEMURS_POSTGRES_PASSWORD", env['LEMURS_POSTGRES_PASSWORD']
 }
 
 dependencies {

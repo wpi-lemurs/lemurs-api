@@ -25,9 +25,9 @@ public class WrittenResponseService {
   private final SecurityService securityService;
   private final WrittenResponseRepository writingResponseRepository;
 
-
   @Autowired
-  public WrittenResponseService(SecurityService securityService, WrittenResponseRepository writingResponseRepository) {
+  public WrittenResponseService(
+      SecurityService securityService, WrittenResponseRepository writingResponseRepository) {
     this.securityService = securityService;
     this.writingResponseRepository = writingResponseRepository;
   }

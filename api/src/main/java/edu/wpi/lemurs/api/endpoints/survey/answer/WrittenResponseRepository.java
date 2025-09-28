@@ -1,7 +1,6 @@
 /* Copyright (C) 2025 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey.answer;
 
-
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

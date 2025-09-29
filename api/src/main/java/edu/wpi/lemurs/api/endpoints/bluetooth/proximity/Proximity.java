@@ -16,8 +16,8 @@ public class Proximity {
   @Column(nullable = false)
   private Integer id;
 
-    @Column(nullable = false, name = "app_user_id")
-    private Integer appUserId;
+  @Column(nullable = false, name = "app_user_id")
+  private Integer appUserId;
 
   @Column(nullable = false)
   private LocalDateTime timestamp;

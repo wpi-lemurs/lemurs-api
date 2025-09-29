@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ProximityDto {
-    private Integer id;
     private LocalDateTime timestamp;
     private Integer numberOfDevices;
 }

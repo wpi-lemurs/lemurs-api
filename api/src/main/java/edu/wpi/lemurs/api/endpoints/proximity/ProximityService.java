@@ -1,3 +1,4 @@
+/* Copyright (C) 2025 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.proximity;
 
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
@@ -11,24 +12,25 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 public class ProximityService {
-    private final SecurityService securityService;
-    private final ProximityRepository proximityRepository;
+  private final SecurityService securityService;
+  private final ProximityRepository proximityRepository;
 
-    @Autowired
-    public ProximityService(ProximityRepository proximityRepository, SecurityService securityService) {
-        this.proximityRepository = proximityRepository;
-        this.securityService = securityService;
-    }
+  @Autowired
+  public ProximityService(
+      ProximityRepository proximityRepository, SecurityService securityService) {
+    this.proximityRepository = proximityRepository;
+    this.securityService = securityService;
+  }
 
-    public void recordProximity(ProximityDto proximityDto)
-        throws UnauthenticatedException, UnauthorizedException {
-        securityService.assertHasRole(LemursRole.USER);
-        Proximity proximity = new Proximity(
+  public void recordProximity(ProximityDto proximityDto)
+      throws UnauthenticatedException, UnauthorizedException {
+    securityService.assertHasRole(LemursRole.USER);
+    Proximity proximity =
+        new Proximity(
             null,
             securityService.getUser().getId(),
             proximityDto.getTimestamp(),
-            proximityDto.getNumberOfDevices()
-        );
-        proximityRepository.save(proximity);
-    }
+            proximityDto.getNumberOfDevices());
+    proximityRepository.save(proximity);
+  }
 }

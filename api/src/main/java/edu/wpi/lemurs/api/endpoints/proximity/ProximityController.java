@@ -1,3 +1,4 @@
+/* Copyright (C) 2025 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.proximity;
 
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
@@ -11,23 +12,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProximityController {
-    private ProximityService proximityService;
+  private ProximityService proximityService;
 
-    @Autowired
-    public ProximityController(ProximityService proximityService) {this.proximityService = proximityService;}
+  @Autowired
+  public ProximityController(ProximityService proximityService) {
+    this.proximityService = proximityService;
+  }
 
-    @PostMapping("/data/proximity")
-    public ResponseEntity<Void> saveProximity(@RequestBody ProximityDto proximityDto) {
-        try {
-            proximityService.recordProximity(proximityDto);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (UnauthenticatedException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch (UnauthorizedException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+  @PostMapping("/data/proximity")
+  public ResponseEntity<Void> saveProximity(@RequestBody ProximityDto proximityDto) {
+    try {
+      proximityService.recordProximity(proximityDto);
+      return new ResponseEntity<>(HttpStatus.CREATED);
+    } catch (UnauthenticatedException e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    } catch (UnauthorizedException e) {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
 }

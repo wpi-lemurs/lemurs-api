@@ -1,4 +1,4 @@
-package edu.wpi.lemurs.api.endpoints.bluetooth.proximity;
+package edu.wpi.lemurs.api.endpoints.proximity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

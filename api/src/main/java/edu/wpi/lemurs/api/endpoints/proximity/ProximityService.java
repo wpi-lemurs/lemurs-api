@@ -1,4 +1,4 @@
-package edu.wpi.lemurs.api.endpoints.bluetooth.proximity;
+package edu.wpi.lemurs.api.endpoints.proximity;
 
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;

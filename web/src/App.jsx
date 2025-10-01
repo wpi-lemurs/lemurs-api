@@ -15,7 +15,8 @@ export default function App() {
 
     return (
         <TokenContext.Provider value={tokenProvider}>
-            <BrowserRouter basename="/web">
+            <BrowserRouter basename="/">
+                {/*TODO change back basename*/}
                 <PageLayout setToken={setToken}> 
                     <Routes>
                         <Route path="/" element={<HomePage />} />

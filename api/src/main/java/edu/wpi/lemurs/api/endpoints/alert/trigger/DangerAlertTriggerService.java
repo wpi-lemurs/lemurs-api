@@ -72,8 +72,16 @@ public class DangerAlertTriggerService {
       DangerAlertTrigger trigger = activeTriggers.get(answerDto.getQuestionId());
 
       if (trigger != null) {
+        String answer = answerDto.getAnswer();
+        int score;
         try {
-          int score = Integer.parseInt(answerDto.getAnswer());
+          if ("yes".equalsIgnoreCase(answer)) {
+            score = 1;
+          } else if ("no".equalsIgnoreCase(answer)) {
+            score = 0;
+          } else {
+            score = Integer.parseInt(answer);
+          }
           if (score >= trigger.getThreshold()) {
             String message = trigger.getAlertMessage().replace("{score}", String.valueOf(score));
             dangerReasons.add(message);
@@ -83,7 +91,7 @@ public class DangerAlertTriggerService {
               "Could not parse answer for question id {} for user id {}. Answer was: {}",
               answerDto.getQuestionId(),
               userId,
-              answerDto.getAnswer());
+              answer);
         }
       }
     }

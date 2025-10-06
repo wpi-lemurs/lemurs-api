@@ -16,7 +16,7 @@ export default function App() {
     return (
         <TokenContext.Provider value={tokenProvider}>
             <BrowserRouter basename="/web">
-                <PageLayout setToken={setToken}> 
+                <PageLayout setToken={setToken}>
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/admin" element={<AdminPanel />} />

@@ -39,7 +39,7 @@ public class WrittenResponseService {
     Integer userId = securityService.getUser().getId();
 
     logger.info(
-        "Saving audio data for user {} - survey response {} question {} at {}",
+        "Saving written data for user {} - Survey Response: {} Question: {} Data: {} At: {}",
         userId,
         request.getSurvey_response_id(),
         request.getWritten_question_id(),
@@ -62,7 +62,7 @@ public class WrittenResponseService {
           "Successfully saved writing response {} for user {}", savedResponse.getId(), userId);
     } catch (Exception e) {
       logger.error(
-          "Failed to save writing response for user {} survey response {}: {}",
+          "Failed to save writing response for user {} survey response {}: Error: {}",
           userId,
           request.getSurvey_response_id(),
           e.getMessage(),

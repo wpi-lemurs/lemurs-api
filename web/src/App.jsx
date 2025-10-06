@@ -8,6 +8,7 @@ import useToken from './components/token/useToken';
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AdminPanel from './pages/AdminPanel';
 import HomePage from './pages/HomePage';
+import Dashboard from './pages/Dashboard';
 
 export default function App() {
      const {token, setToken} = useToken()
@@ -20,6 +21,7 @@ export default function App() {
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/admin" element={<AdminPanel />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </PageLayout>

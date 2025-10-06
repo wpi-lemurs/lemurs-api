@@ -38,6 +38,7 @@ public class WrittenResponseService {
 
     Integer userId = securityService.getUser().getId();
 
+    // MESSAGE FIXED: Added logging for incoming request data
     logger.info(
         "Saving written data for user {} - Survey Response: {} Question: {} Data: {} At: {}",
         userId,

@@ -1,16 +1,19 @@
-const { createProxyMiddleware } = require("http-proxy-middleware");
+// setupProxy.js
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
-console.log("setupProxy.js is being loaded...");  // add this line
-
-module.exports = function (app) {
-  console.log("setupProxy.js is configuring proxy...");  // add this too
+module.exports = function(app) {
   app.use(
-    "/dash/lemurs",
+    '/dash/lemurs',
     createProxyMiddleware({
-      target: "http://127.0.0.1:5433",
+      target: 'http://127.0.0.1:5433',
       changeOrigin: true,
-      ws: true,
-      logLevel: "debug",
+      xfwd: true, // adds X-Forwarded-* headers for ProxyFix
+      // keep the path as-is so Dash sees /dash/lemurs/...
+      pathRewrite: { }, 
+      // Optional but helpful if you ever front this behind another prefix:
+      onProxyReq: (proxyReq, req) => {
+        proxyReq.setHeader('X-Forwarded-Prefix', '/dash/lemurs');
+      },
     })
   );
 };

@@ -1,5 +1,6 @@
 import os
 from typing import Optional, Dict, List, Any
+from dotenv import load_dotenv
 
 import dash
 from dash import Dash, html, dcc, Input, Output, State, dash_table
@@ -13,11 +14,12 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 # --- Database Configuration ---
+load_dotenv()
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = int(os.getenv("DB_PORT", "5432"))
 DB_NAME = os.getenv("DB_NAME", "lemurs")
-DB_USER = os.getenv("DB_USER", "lemurs")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "x3a-aJs-12M-Bah")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 # --- Table Names ---
 USERS_TABLE = os.getenv("USERS_TABLE", "umass_id")

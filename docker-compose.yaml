@@ -188,8 +188,10 @@ services:
       DB_HOST: lemurs-db
       DB_PORT: 5432
       DB_NAME: lemurs
-      DB_USER: ${LEMURS_POSTGRES_USERNAME:-lemurs}
-      DB_PASSWORD: ${LEMURS_POSTGRES_PASSWORD:-x3a-aJs-12M-Bah}
+      DB_USER: ${LEMURS_POSTGRES_USERNAME}
+      DB_PASSWORD: ${LEMURS_POSTGRES_PASSWORD}
+    env_file:
+      - .env
     networks:
       - lemurs-network
 

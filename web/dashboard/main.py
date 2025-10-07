@@ -15,11 +15,12 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from flask import Flask
 
+load_dotenv()
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = int(os.getenv("DB_PORT", "5432"))
 DB_NAME = os.getenv("DB_NAME", "lemurs")
-DB_USER = os.getenv("DB_USER", "lemurs")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "x3a-aJs-12M-Bah")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 # Table names
 USERS_TABLE = os.getenv("USERS_TABLE", "umass_id")

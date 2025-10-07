@@ -21,7 +21,9 @@ export default function App() {
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/admin" element={<AdminPanel />} />
+                        <Route path="/admin/" element={<Navigate to="/admin" replace />} />
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/dashboard/" element={<Navigate to="/dashboard" replace />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                 </PageLayout>

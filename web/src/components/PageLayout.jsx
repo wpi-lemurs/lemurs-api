@@ -28,8 +28,8 @@ export const PageLayout = (props) => {
                 <div className="collapse navbar-collapse justify-content-end">
                     {token !== "" &&
                         <>
-                            <a className="nav-link text-white" href="/admin" style={{marginRight: "10px"}}>Admin Panel</a>
-                            <a className="nav-link text-white" href="/dashboard" style={{marginRight: "10px"}}>Dashboard</a>
+                            <a className="nav-link text-white" href="admin" style={{marginRight: "10px"}}>Admin Panel</a>
+                            <a className="nav-link text-white" href="dashboard" style={{marginRight: "10px"}}>Dashboard</a>
                         </>
                     }
                     {(token === "") ? <SignInButton setToken={props.setToken}/> : <SignOutButton setToken={props.setToken} />}

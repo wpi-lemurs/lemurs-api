@@ -38,7 +38,7 @@ out/
 .vscode/
 
 ### Environment File ###
-../.env
+.env
 
 ### Java ###
 *.log

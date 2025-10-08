@@ -88,7 +88,7 @@ The deployed lemurs-api is hosted on a WPI server. To work with it, set up an SS
    Share your public key with the administrator.
 3. SSH to the server: `ssh lemurs-dev.wpi.edu`
 
-**Updating Docker Containers:**
+**Updating Specific Docker Containers:**
 1. Log in as the `lemurs` user: `su lemurs` (ask admin for password)
 2. Navigate to repo: `cd /opt/lemurs/lemurs-api`
 3. List containers: `docker ps`

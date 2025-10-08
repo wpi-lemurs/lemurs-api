@@ -10,7 +10,7 @@
 > - `.env`: This file contains environment variables used for configuration. It should not be committed to version control for security reasons.
 
 ## api
-> This directory contains the backend code for the application. It is defined using Spring Boot, a popular framework for building Java-based web applications. The backend handles the core logic, data processing, and interactions with the database.:
+> This directory contains the backend code for the application. It is defined using Spring Boot, a popular framework for building Java-based web applications. The backend handles the core logic, data processing, and interactions with the database.
 > ### Key Files and Directories
 > - `Dockerfile`: This file is used to build the Docker image for the backend service.
 > - `src/`: This directory contains the source code for the backend application, including controllers, services, repositories, and models.

@@ -65,7 +65,7 @@
 
 
 ## web
-> > Deployed at: https://lemurs-dev.wpi.edu/web
+> Deployed at: https://lemurs-dev.wpi.edu/web
 > 
 >This directory contains the frontend code for the application. It's made with React and currently serves as a site where users are able to download an apk file to their Android devices. Administrators have a special endpoint `/admin` where they can manage users and assign roles. Functionality is being added by the 2025-2026 Lemurs MQP Dashboard team to provide a dashboard to view data collected from the Android app in a streamlined way.
 

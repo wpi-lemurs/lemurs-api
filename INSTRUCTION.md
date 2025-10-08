@@ -15,7 +15,7 @@
 > - `Dockerfile`: This file is used to build the Docker image for the backend service.
 > - `src/`: This directory contains the source code for the backend application, including controllers, services, repositories, and models.
 > - `/src/main/java/edu/wpi/lemurs/api/LemursApiApplication.java`: This is the main entry point for the Spring Boot application.
-> - `src/main/java/edu/wpi/lemurs/api/endpoints/`: This directory contains the REST API endpoint definitions with .
+> - `src/main/java/edu/wpi/lemurs/api/endpoints/`: This directory contains the REST API endpoint definitions, implemented as controller classes in Spring Boot.
 > - `application.properties`: This file contains configuration settings for the Spring Boot application, such as database connection details and server settings.
 > - `tests/`: This directory contains unit and integration tests for the backend application to ensure code quality and functionality.
 > ### Setup and Usage

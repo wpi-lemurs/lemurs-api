@@ -20,20 +20,22 @@ if [ ! -e /var/lib/postgresql/data/schema.version ]; then
 fi
 
 /usr/config/starting-owner.sh
-current=`cat /var/lib/postgresql/data/schema.version`
+current=$(cat /var/lib/postgresql/data/schema.version)
 for entry in /usr/config/updates/*
 do
-	index=${entry:20:4}
-	test=${entry:25:4}
-	if [[ $index -gt $current ]]; then
-		if [[ $test != "TEST" || $POPULATE_TEST_DATA = "Y" ]]; then
-			echo "Running update: $index"
-			psql -U $POSTGRES_USER -d $POSTGRES_DB -f $entry
-		else
-			echo "Skipping test update: $index"
-		fi
-		current=$index
-	fi
+    index=${entry:20:4}
+    test=${entry:25:4}
+
+    # Compare as decimal numbers to avoid octal errors
+    if [[ $((10#$index)) -gt $((10#$current)) ]]; then
+        if [[ $test != "TEST" || $POPULATE_TEST_DATA = "Y" ]]; then
+            echo "Running update: $index"
+            psql -U $POSTGRES_USER -d $POSTGRES_DB -f $entry
+        else
+            echo "Skipping test update: $index"
+        fi
+        current=$index
+    fi
 done
 
 echo $current > /var/lib/postgresql/data/schema.version

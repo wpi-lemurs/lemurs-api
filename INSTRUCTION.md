@@ -48,7 +48,7 @@
 > - **starting-owner.sh**: Script for setting up the initial database owner and permissions.
 > - **update-schema.sh**: Script to apply schema updates from the `updates/` folder to the database.
 > - **updates/**: Contains ordered SQL migration files. Each file represents a change to the database schema (tables, columns, constraints, etc.).
->### Migration Workflow
+> ### Migration Workflow
 > 1. **Schema Updates**: Place new migration scripts in the `updates/` folder, following the numeric naming convention (e.g., `0010-new-feature.sql`).
 > 2. **Applying Updates**: Use `update-schema.sh` to apply all pending migrations to the database. This script ensures migrations are run in order.
 > 3. **Initial Setup**: When starting from scratch, the container will run `entrypoint.sh` and `starting-owner.sh` to initialize the database and set up permissions.

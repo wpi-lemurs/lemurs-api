@@ -7,7 +7,7 @@
   - [Web](#web)
 - [Working with the Deployed Version](#working-with-the-deployed-version)
   - [Updating Specific Docker Containers](#updating-specific-docker-containers)
-  - [Common Container Operations](#common-container-operations)
+- [Common Container Operations](#common-container-operations-as-lemurs-user)
   - [How to Deploy New Release APK to Server and Update Download Link](#how-to-deploy-new-release-apk-to-server-and-update-download-link)
   - [Additional Resources](#additional-resources)
 
@@ -90,6 +90,7 @@ Use a PostgreSQL client (e.g., DBeaver) with the following details:
 - Migration scripts should be idempotent and ordered.
 - Review and test migrations before production.
 - Manage database credentials securely.
+- If using a Mac, you may have to turn off the Private Wi-Fi address for WPI-wireless to connect to the server.
 
 **Contact:**
 For database setup questions/issues, contact the backend development team.

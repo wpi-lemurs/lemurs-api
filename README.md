@@ -10,6 +10,7 @@ The API and database for the LEMURS project.
 - [Setup](#setup)
 - [Run](#run)
 - [Quick Development](#quick-development)
+- [Repository Structure & Directory Documentation](#repository-structure--directory-documentation)
 
 ## Links
 
@@ -69,4 +70,12 @@ To do this:
 3. Add the following environment variable: \
 `LEMURS_POSTGRES_HOST` - The database host url. If database is run locally, this should be: `localhost:5432`
 4. Use `COMPOSE_PROFILES = "dev-partial"` for the environment.
-5. Run `./gradlew bootRun` to start api locally.  
+5. Run `./gradlew bootRun` to start api locally.
+
+## Repository Structure & Directory Documentation
+
+For detailed instructions on repository structure, setup, deployment, and operational notes, please refer to [INSTRUCTION.md](./INSTRUCTION.md).
+
+## Documentation
+
+For detailed documentation about the repository structure, setup, and usage, please refer to [INSTRUCTION.md](./INSTRUCTION.md).

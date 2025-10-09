@@ -164,7 +164,7 @@ The deployed lemurs-api is hosted on a WPI server. To work with it, set up an SS
    docker compose up -d --no-deps <service-name>
    ```
 
-### Common Container Operations
+### Common Container Operations (as `lemurs` user)
 
 **Database Re-creation (with no data loss):**
 ```bash
@@ -190,13 +190,13 @@ docker compose up -d --no-deps web-dev
    scp "/path/to/app-release.apk" your_username@lemurs-dev.wpi.edu:/tmp/
    ```
 
-2. **Log in as lemurs user and confirm the app-release.apk exists in the /tmp directory:**
+2. **Log in as `lemurs` user and confirm the `app-release.apk` exists in the `/tmp` directory:**
    ```bash
    lemurs@lemurs-dev:/tmp$ ls
    app-release.apk
    ```
 
-3. **Run the two commands below:**
+3. **Get a person with `sudo` permissions to run the two commands below:**
    ```bash
    sudo -u lemurs cp /tmp/app-release.apk /opt/lemurs/lemurs-api/web/src/downloadables/lemurs.apk.<version_number>
    ```
@@ -204,13 +204,13 @@ docker compose up -d --no-deps web-dev
    sudo -u lemurs cp /opt/lemurs/lemurs-api/web/src/downloadables/lemurs.apk.<version_number> /opt/lemurs/lemurs-api/web/src/downloadables/lemurs.apk
    ```
    
-   These commands should:
+   These commands will:
    - Move the file into the correct folder
    - Set the correct ownership (lemurs) through the `sudo -u lemurs` running the command as the lemurs user
    - Make file `lemurs.apk.<version_number>` for version tracking (e.g., `lemurs.apk.13`)
    - Replace the old `lemurs.apk` with the new one cleanly, ensuring we display the latest build
 
-4. **Clean tmp directory** (The below command works best if you are logged in as your own user, not lemurs):
+4. **Clean the `tmp` directory** (The below command works best if you are logged in as your own user, not lemurs):
    ```bash
    rm /tmp/app-release.apk
    ```

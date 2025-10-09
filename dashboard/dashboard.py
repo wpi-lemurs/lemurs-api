@@ -163,7 +163,7 @@ def process_records_for_display(records: List[Dict[str, Any]]):
 
 
 # --- Dash App Initialization ---
-app = Dash(__name__, requests_pathname_prefix='/dashboard')
+app = Dash(__name__, requests_pathname_prefix='/dashboard/')
 app.title = "Lemurs User Display"
 
 app.layout = html.Div(

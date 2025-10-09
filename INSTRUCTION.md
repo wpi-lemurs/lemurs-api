@@ -1,3 +1,16 @@
+# Table of Contents
+- [Repository Structure](#repository-structure)
+  - [Root](#root)
+  - [API](#api)
+  - [Proxy](#proxy)
+  - [Database](#database)
+  - [Web](#web)
+- [Working with the Deployed Version](#working-with-the-deployed-version)
+  - [Updating Specific Docker Containers](#updating-specific-docker-containers)
+  - [Common Container Operations](#common-container-operations)
+  - [How to Deploy New Release APK to Server and Update Download Link](#how-to-deploy-new-release-apk-to-server-and-update-download-link)
+  - [Additional Resources](#additional-resources)
+
 # Repository Structure
 
 ## Root
@@ -87,7 +100,7 @@ For database setup questions/issues, contact the backend development team.
 
 This directory contains the frontend code, built with React. It serves as a site for users to download the Android APK. Administrators can manage users and assign roles at `/admin`. The dashboard is being developed to visualize app data.
 
-## Working with the Deployed Version
+# Working with the Deployed Version
 
 The deployed lemurs-api is hosted on a WPI server. To work with it, set up an SSH tunnel:
 
@@ -97,21 +110,59 @@ The deployed lemurs-api is hosted on a WPI server. To work with it, set up an SS
    ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
    ```
    Share your public key with the administrator.
-3. **SSH to the server:** `ssh lemurs-dev.wpi.edu`
-4. The api code is running at the `/opt/lemurs/lemurs-api` folder, and there are docker containers there `docker ps` as well.
-5. There is a user `lemurs` that has many read/write permissions. You can switch to that user with `su lemurs` and make changes as neccessary (ask admin for password).
+3. **SSH to the server:**
+   ```bash
+   ssh lemurs-dev.wpi.edu
+   ```
+4. The api code is running at the `/opt/lemurs/lemurs-api` folder, and there are docker containers there:
+   ```bash
+   docker ps
+   ```
+5. There is a user `lemurs` that has many read/write permissions. You can switch to that user with:
+   ```bash
+   su lemurs
+   ```
+   (ask admin for password)
 
 ### Updating Specific Docker Containers
 
-1. Log in as the `lemurs` user: `su lemurs` (ask admin for password)
-2. Navigate to repo: `cd /opt/lemurs/lemurs-api`
-3. List containers: `docker ps`
-4. Stop container: `docker stop <ID>`
-5. Remove container: `docker rm <ID>`
-6. Switch branch: `git checkout <branch-name>`
-7. Pull latest: `git pull`
-8. Rebuild service: `docker compose up -d --build <service-name>`
-9. Restart service: `docker compose up -d --no-deps <service-name>`
+1. Log in as the `lemurs` user:
+   ```bash
+   su lemurs
+   ```
+   (ask admin for password)
+2. Navigate to repo:
+   ```bash
+   cd /opt/lemurs/lemurs-api
+   ```
+3. List containers:
+   ```bash
+   docker ps
+   ```
+4. Stop container:
+   ```bash
+   docker stop <ID>
+   ```
+5. Remove container:
+   ```bash
+   docker rm <ID>
+   ```
+6. Switch branch:
+   ```bash
+   git checkout <branch-name>
+   ```
+7. Pull latest:
+   ```bash
+   git pull
+   ```
+8. Rebuild service:
+   ```bash
+   docker compose up -d --build <service-name>
+   ```
+9. Restart service:
+   ```bash
+   docker compose up -d --no-deps <service-name>
+   ```
 
 ### Common Container Operations
 
@@ -159,7 +210,7 @@ docker compose up -d --no-deps web-dev
    - Make file `lemurs.apk.<version_number>` for version tracking (e.g., `lemurs.apk.13`)
    - Replace the old `lemurs.apk` with the new one cleanly, ensuring we display the latest build
 
-4. **Clean tmp directory** (Use sudo if necessary):
+4. **Clean tmp directory** (The below command works best if you are logged in as your own user, not lemurs):
    ```bash
    rm /tmp/app-release.apk
    ```

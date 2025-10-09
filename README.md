@@ -74,7 +74,7 @@ To do this:
 
 ## Repository Structure & Directory Documentation
 
-For detailed documentation on the repository structure and explanations of each major directory (including `api`, `database`, `proxy`, and `web`), please refer to [INSTRUCTION.md](./INSTRUCTION.md).
+For detailed instructions on repository structure, setup, deployment, and operational notes, please refer to [INSTRUCTION.md](./INSTRUCTION.md).
 
 ## Documentation
 

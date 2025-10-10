@@ -35,6 +35,24 @@ This directory contains the backend code for the application, built with Spring 
 - `application.properties`: Configuration settings (database connection, server settings, etc.).
 - `tests/`: Unit and integration tests for backend code quality and functionality.
 
+**Endpoint Structure:**
+
+**Key Classes:**
+- `EndpointNameController.java`: Handles HTTP requests for a specific resource, defining routes and methods (GET, POST, PUT, DELETE), and delegates to the service layer. Returns appropriate HTTP responses.
+- `EndpointNameService.java`: Contains business logic for the resource, processes data, turns DTO into EndpointName entity and saves to the database. Handles validation and complex operations.
+- `EndpointNameRepository.java`: Interface for database operations related to the resource, extending CrudRepository. Provides methods for CRUD operations and custom queries.
+- `EndpointName.java`: Entity class representing the resource, with fields, getters/setters, names and types should mirror database tables.
+- `EndpointNameDTO.java`: Data Transfer Object for transferring data between client and server, used in controller methods for request/response bodies. The fields specified here should match those sent from the client.
+
+**Flow of a Request:**
+1. Client sends an HTTP request to a specific endpoint (e.g., `/api/endpoint-name`).
+2. The request is routed to the corresponding controller method in `EndpointNameController.java.`
+3. The controller method processes the request with the correct DTO fields, extracts parameters or body data, and calls the appropriate method in `EndpointNameService.java`.
+4. The service method contains the business logic, processes the data to turn DTO input into entity output, and interacts with the database through `EndpointNameRepository.java`.
+5. The repository performs the necessary database operations (e.g., fetching, saving, updating data).
+6. The service method returns the result to the controller.
+7. The controller constructs an HTTP response (e.g., JSON) and sends it back to the client.
+
 **Setup and Usage:**
 1. Ensure Java (JDK 17+) is installed.
 2. Open the `api` directory in your IDE (IntelliJ recommended) and run `LemursApiApplication`.

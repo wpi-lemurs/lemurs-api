@@ -1,5 +1,6 @@
 # Use the latest MS SQL Server 2022 image.
-FROM postgres:alpine
+# TODO: Change to a specific version for production.
+FROM postgres:17
 
 # Create a config directory.
 RUN mkdir -p /usr/config

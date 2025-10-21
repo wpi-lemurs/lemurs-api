@@ -39,6 +39,8 @@ services:
     profiles:
       - prod
     <<: *db
+    ports:
+      - ${LEMURS_EXPOSED_PORT_DB}:5432
 
   # === API Config ===
   api: &api
@@ -132,6 +134,8 @@ services:
     profiles:
       - prod
     <<: *web
+    ports:
+      - ${LEMURS_EXPOSED_WEB}:80
     depends_on:
       - db-prod
       - api-prod

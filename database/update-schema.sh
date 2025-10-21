@@ -16,12 +16,16 @@ if [[ "$DBSTATUS" != "0" ]]; then
   exit 1
 fi
 
+/usr/config/starting-owner.sh
+
+# Run 0000-initial-tables.sql first unconditionally
+echo "Running initial tables update: 0000-initial-tables.sql"
+psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "/usr/config/updates/0000-initial-tables.sql"
+
 # Initialize schema version file if it doesn't exist
 if [ ! -e /var/lib/postgresql/data/schema.version ]; then
   echo "0000" > /var/lib/postgresql/data/schema.version
 fi
-
-/usr/config/starting-owner.sh
 
 current=$(cat /var/lib/postgresql/data/schema.version)
 
@@ -29,6 +33,11 @@ for entry in /usr/config/updates/*.sql; do
   filename=$(basename "$entry")
   index=${filename:0:4}
   test_tag=${filename:5:4}
+
+  # Skip 0000 as we already ran it
+  if [[ "$index" == "0000" ]]; then
+    continue
+  fi
 
   # String comparison is fine since we always use 4-digit zero-padded numbers
   if [[ "$index" > "$current" ]]; then

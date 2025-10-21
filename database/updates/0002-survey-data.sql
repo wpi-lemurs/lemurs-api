@@ -79,7 +79,7 @@ Since the last prompt, I have:', 'parent-question', NULL, NULL, NULL, NULL, NULL
     (66, 'Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual', '4-scale-zero', NULL, '58', NULL, NULL, NULL),
     (67, 'Thoughts that you would be better off dead, or thoughts of hurting yourself in some way', '4-scale-zero', NULL, '58', NULL, NULL, NULL),
     (68, ' Do you intend to kill yourself right now?', 'yes-no', NULL, '58', '67', '1,2,3,4', NULL),
-    (69, 'If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people? ', '4-scale-difficult', NULL, '58', NULL, NULL, NULL)
+    (69, 'If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people? ', '4-scale-difficult', NULL, '58', NULL, NULL, NULL);
 
 --- Data for linking questions with surveys.
 INSERT INTO "survey_question" ("survey_id", "question_id", "position") OVERRIDING SYSTEM VALUE VALUES

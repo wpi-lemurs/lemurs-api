@@ -28,7 +28,7 @@ CREATE TABLE distance (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE calories (
+CREATE TABLE calorie (
    id INT GENERATED ALWAYS AS IDENTITY,
    app_user_id INT NOT NULL,
    calories BIGINT NOT NULL,

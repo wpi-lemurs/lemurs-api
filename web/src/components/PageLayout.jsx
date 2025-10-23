@@ -17,7 +17,7 @@ import 'react-notifications/lib/notifications.css';
  * @param props
  */
 export const PageLayout = (props) => {
-    const { token } = useContext(TokenContext)    
+    const { token } = useContext(TokenContext)
 
     return (
         <>
@@ -30,7 +30,7 @@ export const PageLayout = (props) => {
                 </div>
             </Navbar>
             <div className="content">
-            <   NotificationContainer />
+                <   NotificationContainer />
                 {props.children}
             </div>
         </>

@@ -1,29 +1,24 @@
-import { useMsal, useAccount } from "@azure/msal-react";
-import { useEffect, useState } from "react";
-import { loginRequest } from "../../authConfig";
+import { useState } from "react";
 
 export default function useToken() {
-  const { instance, accounts } = useMsal();
-  const account = useAccount(accounts[0] || {});
-  const [token, setToken] = useState("");
+    const getToken = () => {
+        const tokenString = localStorage.getItem("token");
+        if (tokenString == null) {
+            return "";
+        }
+        const tokenJson = JSON.parse(tokenString);
+        return tokenJson;
+    };
 
-  useEffect(() => {
-    if (account) {
-      instance
-        .acquireTokenSilent({
-          ...loginRequest,
-          account: account,
-        })
-        .then((response) => {
-          setToken(response.accessToken);
-        })
-        .catch(() => {
-          setToken("");
-        });
-    } else {
-      setToken("");
-    }
-  }, [account, instance]);
+    const [token, setToken] = useState(getToken());
 
-  return { token, setToken };
+    const saveToken = (userToken) => {
+        localStorage.setItem("token", JSON.stringify(userToken));
+        setToken(userToken);
+    };
+
+    return {
+        token,
+        setToken: saveToken,
+    };
 }

@@ -10,8 +10,8 @@ import AdminPanel from './pages/AdminPanel';
 import HomePage from './pages/HomePage';
 
 export default function App() {
-     const {token, setToken} = useToken()
-     const tokenProvider = useMemo(() => ({token: token, setToken: setToken}), [token, setToken])
+    const {token, setToken} = useToken()
+    const tokenProvider = useMemo(() => ({token: token, setToken: setToken}), [token, setToken])
 
     return (
         <TokenContext.Provider value={tokenProvider}>

@@ -1,3 +1,4 @@
+-- Written response data (links directly to corresponding survey_response)
 CREATE TABLE written_response (
   id INT GENERATED ALWAYS AS IDENTITY,
   survey_response_id INT NOT NULL,

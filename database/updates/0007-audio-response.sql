@@ -1,7 +1,7 @@
 -- Migration for audio response table
 -- This table stores audio responses from weekly surveys, linked directly to survey_response records
 
--- Table for audio responses (links directly to survey_response)
+-- Table for audio responses (links directly to corresponding survey_response)
 CREATE TABLE audio_response (
     id INT GENERATED ALWAYS AS IDENTITY,
     survey_response_id INT NOT NULL,

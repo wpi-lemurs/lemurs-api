@@ -1,4 +1,4 @@
--- Table for capturing screentime response.
+-- Table for capturing overall phone screentime.
 CREATE TABLE screentime (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	app_user_id INT NOT NULL, 
@@ -9,7 +9,7 @@ CREATE TABLE screentime (
 	PRIMARY KEY (id)
 );
 
--- Table for capturing screentime data on each app.
+-- Table for capturing screentime for each app.
 CREATE TABLE screentime_app (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	screentime_id INT NOT NULL,

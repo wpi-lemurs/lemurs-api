@@ -1,11 +1,11 @@
--- Table for surveys.
+-- Assigns each survey type (morning, afternoon, phq-9, etc.) an integer ID
 CREATE TABLE survey (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	name VARCHAR(255) NOT NULL,
 	PRIMARY KEY (id)
 );
 
--- Table for questions.
+-- Lists all survey questions
 CREATE TABLE question (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	question TEXT NOT NULL,
@@ -32,10 +32,10 @@ CREATE TABLE survey_question (
 
 -- Bridge table view based on survey id.
 CREATE VIEW survey_question_view AS
-	SELECT S.id survey_id, Q.*, B.position position
+	SELECT S.id AS survey_id, Q.*, B.position AS position
 	FROM survey S JOIN survey_question B ON S.id = B.survey_id JOIN question Q ON B.question_id = Q.id;
 
--- Table for capturing survey response.
+-- Unique instances for each time a user completes a survey type
 CREATE TABLE survey_response (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	app_user_id INT NOT NULL, 
@@ -47,7 +47,7 @@ CREATE TABLE survey_response (
 	PRIMARY KEY (id)
 );
 
--- Table for capturing answers to survey quetions.
+-- Captures answer and ties it to corresponding question and survey_response
 CREATE TABLE answer (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	survey_response_id INT NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE answer (
 	PRIMARY KEY (id)
 );
 
--- Table for user progress.
+-- User overall progress
 CREATE TABLE progress (
 	app_user_id INT NOT NULL,
 	earned DECIMAL(8, 2) NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE progress (
 	PRIMARY KEY (app_user_id)
 );
 
--- Table for incentives.
+-- List the earnings for different surveys
 CREATE TABLE incentive (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	name VARCHAR(255) NOT NULL UNIQUE,
@@ -79,7 +79,7 @@ CREATE TABLE incentive (
 	PRIMARY KEY (id)
 );
 
--- Table for goals.
+-- Lists the goals, how they are attained, and their reward
 CREATE TABLE goal (
 	id INT GENERATED ALWAYS AS IDENTITY,
 	name VARCHAR(255) NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE goal (
 	PRIMARY KEY (id)
 );
 
--- Table for user goal progress.
+-- Connects users to their goal progress
 CREATE TABLE goal_progress (
 	app_user_id INT NOT NULL,
 	goal_id INT NOT NULL,

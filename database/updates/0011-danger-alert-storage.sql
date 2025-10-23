@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS public.danger_alert CASCADE;
 
+-- Table populated every time a danger alert is trigger
 CREATE TABLE public.danger_alert (
 	threshold_id serial4 NOT NULL,
 	answer_id int4 NOT NULL,
@@ -9,6 +10,7 @@ CREATE TABLE public.danger_alert (
 	CONSTRAINT danger_alert_answer_id_fkey FOREIGN KEY (answer_id) REFERENCES public.answer(id)
 );
 
+-- Function to check if a response has surpassed a danger alert threshold
 CREATE OR REPLACE FUNCTION check_danger_threshold()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -43,13 +45,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Trigger to populate danger_alert table when danger threshold is passed in an answer
 CREATE or replace TRIGGER new_danger_alert
 AFTER INSERT ON Answer
 FOR EACH ROW
 EXECUTE FUNCTION check_danger_threshold();
 
 
--- public.all_danger_alert source
 -- view of relevant information for quickly reviewing danger alerts
 CREATE OR REPLACE VIEW public.all_danger_alert
 AS SELECT s.app_user_id,

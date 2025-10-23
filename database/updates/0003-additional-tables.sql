@@ -20,15 +20,8 @@ CREATE TABLE screentime_app (
 	PRIMARY KEY (id)
 );
 
--- Table for capturing audio data.
-CREATE TABLE audio (
-	id INT GENERATED ALWAYS AS IDENTITY,
-	app_user_id INT NOT NULL, 
-	timestamp TIMESTAMP NOT NULL,
-	audio BYTEA NOT NULL,
-  FOREIGN KEY(app_user_id) REFERENCES app_user(id),
-	PRIMARY KEY (id)
-);
+/*
+Outdated & unnecessary table. Can introduce similar & improved functionality with a view.
 
 -- Table for combined data for a single session.
 CREATE TABLE combined_data (
@@ -42,3 +35,4 @@ CREATE TABLE combined_data (
   FOREIGN KEY(audio_id) REFERENCES audio(id),
 	PRIMARY KEY (app_user_id, day, session_name)
 );
+ */

@@ -160,9 +160,6 @@ public class AuthMicrosoftService {
     Claims claims =
         Jwts.parser().keyLocator(locator).build().parseSignedClaims(idToken).getPayload();
 
-    // log the claims for debugging
-    claims.forEach((k, v) -> log.info("Claim: {} = {}", k, v));
-
     Set<String> aud = claims.getAudience();
     if (!aud.contains(env.getMicrosoftAppID())) {
       throw new BadCredentialsException("Invalid client authenticator.");

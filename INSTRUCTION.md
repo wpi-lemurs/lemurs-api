@@ -254,7 +254,7 @@ Setting up the production server is similar to the development environment, with
 - Access to the production server is similar to the development server. Contact the development team to obtain the necessary credentials and permissions.
 
 ## Git Clone with PAT
-- Cloning the repository on the production server requires a GitHub Personal Access Token (PAT) if using HTTPS. Ensure you have a PAT with minimal permissions (read and write).
+- Cloning the repository on the production server requires a GitHub Personal Access Token (PAT) if using HTTPS. Ensure you have a PAT with at least minimal permissions (read and write).
 - For guidance on creating a PAT, refer to the GitHub documentation: [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 
 ## Docker Snap Issues

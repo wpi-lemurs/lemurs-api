@@ -7,9 +7,10 @@
   - [Web](#web)
 - [Working with the Deployed Version](#working-with-the-deployed-version)
   - [Updating Specific Docker Containers](#updating-specific-docker-containers)
-- [Common Container Operations](#common-container-operations-as-lemurs-user)
+- [Common Container Operations](#common-container-operations)
   - [How to Deploy New Release APK to Server and Update Download Link](#how-to-deploy-new-release-apk-to-server-and-update-download-link)
-  - [Additional Resources](#additional-resources)
+- [Additional Resources](#additional-resources)
+  - [Production Server Setup](#production-server-setup)
 
 # Repository Structure
 
@@ -183,7 +184,7 @@ The deployed lemurs-api is hosted on a WPI server. To work with it, set up an SS
    docker compose up -d --no-deps <service-name>
    ```
 
-### Common Container Operations (as `lemurs` user)
+### Common Container Operations
 
 **Database Re-creation (with no data loss):**
 ```bash
@@ -244,3 +245,37 @@ docker compose up -d --no-deps web-dev
 
 **Notes:**
 - [Lemurs 2025-2026 Docker Container Notes](https://docs.google.com/document/d/1mwNR2yMIgc1VMW6Z0VvXaVFCJR1UQDEwWutNlstt3Rs/edit?usp=sharing)
+
+# Production Server Setup
+
+Setting up the production server is similar to the development environment, with a few additional considerations:
+
+## Access
+- Access to the production server is similar to the development server. Contact the development team to obtain the necessary credentials and permissions.
+
+## Git Clone with PAT
+- Cloning the repository on the production server requires a GitHub Personal Access Token (PAT) if using HTTPS. Ensure you have a PAT with at least minimal permissions (read and write).
+- For guidance on creating a PAT, refer to the GitHub documentation: [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+
+## Docker Snap Issues
+- If Docker was installed via Snap and you encounter issues rebuilding containers, you can reinstall Docker fresh using the following commands:
+
+```bash
+sudo snap remove docker
+sudo snap install docker
+sudo snap start docker
+sudo snap services docker
+```
+
+## Clean Install of All Containers (Including Database)
+- To perform a clean install of all containers, including the database, follow these steps:
+
+```bash
+docker compose down
+
+# Build the production images
+docker compose --profile prod build
+
+# Start up the containers
+docker compose --profile prod up -d
+```

@@ -225,7 +225,7 @@ app.layout = html.Div(
         html.Hr(style={"margin": "16px 0"}),
         dcc.Loading(id="loading", type="circle", children=[
             dash_table.DataTable(
-                id="users-table", columns=[], data=[], page_size=20,
+                id="users-table", columns=[], data=[],
                 style_table={"overflowX": "auto", "position": "relative", "zIndex": "0"},
                 style_cell={"padding": "8px", "border": "1px solid #eee", "fontFamily": "system-ui",
                             "fontSize": "14px", "textAlign": "left", "minWidth": "120px",

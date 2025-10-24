@@ -7,7 +7,7 @@ import { Button } from "react-bootstrap";
 export const SignOutButton = ({setToken}) => {
 
     const handleLogout = () => {
-        fetch('/auth/logout', {
+        fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/auth/logout`, {
             method: 'POST'
         })
         .finally(() => {

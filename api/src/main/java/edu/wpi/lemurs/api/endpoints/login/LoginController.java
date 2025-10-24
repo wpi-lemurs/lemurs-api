@@ -7,7 +7,6 @@ import edu.wpi.lemurs.api.security.auth.jwt.JwtService;
 import edu.wpi.lemurs.api.security.auth.microsoft.AuthMicrosoftService;
 import edu.wpi.lemurs.api.security.auth.microsoft.MicrosoftLoginDto;
 import jakarta.servlet.http.HttpServletResponse;
-// No TimeUnit import
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

@@ -28,7 +28,7 @@ CREATE TABLE distance (
     PRIMARY KEY (id)
 );
 
-CREATE TABLE calories (
+CREATE TABLE calorie (
    id INT GENERATED ALWAYS AS IDENTITY,
    app_user_id INT NOT NULL,
    calories BIGINT NOT NULL,
@@ -79,15 +79,15 @@ CREATE INDEX idx_distance_user_time
 CREATE INDEX idx_distance_status_type 
     ON distance (status, type);
 
--- CALORIES table
-CREATE INDEX idx_calories_user_date 
-    ON calories (app_user_id, recorded_date DESC);
+-- CALORIE table
+CREATE INDEX idx_calorie_user_date
+    ON calorie (app_user_id, recorded_date DESC);
 
-CREATE INDEX idx_calories_user_time 
-    ON calories (app_user_id, start_timestamp, end_timestamp);
+CREATE INDEX idx_calorie_user_time
+    ON calorie (app_user_id, start_timestamp, end_timestamp);
 
-CREATE INDEX idx_calories_status_type 
-    ON calories (status, type);
+CREATE INDEX idx_calorie_status_type
+    ON calorie (status, type);
 
 -- SPEED table
 CREATE INDEX idx_speed_user_date 

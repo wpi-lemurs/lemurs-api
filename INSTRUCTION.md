@@ -7,9 +7,10 @@
   - [Web](#web)
 - [Working with the Deployed Version](#working-with-the-deployed-version)
   - [Updating Specific Docker Containers](#updating-specific-docker-containers)
-  - [Common Container Operations](#common-container-operations)
+- [Common Container Operations](#common-container-operations)
   - [How to Deploy New Release APK to Server and Update Download Link](#how-to-deploy-new-release-apk-to-server-and-update-download-link)
-  - [Additional Resources](#additional-resources)
+- [Additional Resources](#additional-resources)
+  - [Production Server Setup](#production-server-setup)
 
 # Repository Structure
 
@@ -34,6 +35,24 @@ This directory contains the backend code for the application, built with Spring 
 - `src/main/java/edu/wpi/lemurs/api/endpoints/`: REST API endpoint definitions (controller classes).
 - `application.properties`: Configuration settings (database connection, server settings, etc.).
 - `tests/`: Unit and integration tests for backend code quality and functionality.
+
+**Endpoint Structure:**
+
+**Key Classes:**
+- `EndpointNameController.java`: Handles HTTP requests for a specific resource, defining routes and methods (GET, POST, PUT, DELETE), and delegates to the service layer. Returns appropriate HTTP responses.
+- `EndpointNameService.java`: Contains business logic for the resource, processes data, turns DTO into EndpointName entity and saves to the database. Handles validation and complex operations.
+- `EndpointNameRepository.java`: Interface for database operations related to the resource, extending CrudRepository. Provides methods for CRUD operations and custom queries.
+- `EndpointName.java`: Entity class representing the resource, with fields, getters/setters, names and types should mirror database tables.
+- `EndpointNameDTO.java`: Data Transfer Object for transferring data between client and server, used in controller methods for request/response bodies. The fields specified here should match those sent from the client.
+
+**Flow of a Request:**
+1. Client sends an HTTP request to a specific endpoint (e.g., `/api/endpoint-name`).
+2. The request is routed to the corresponding controller method in `EndpointNameController.java.`
+3. The controller method processes the request with the correct DTO fields, extracts parameters or body data, and calls the appropriate method in `EndpointNameService.java`.
+4. The service method contains the business logic, processes the data to turn DTO input into entity output, and interacts with the database through `EndpointNameRepository.java`.
+5. The repository performs the necessary database operations (e.g., fetching, saving, updating data).
+6. The service method returns the result to the controller.
+7. The controller constructs an HTTP response (e.g., JSON) and sends it back to the client.
 
 **Setup and Usage:**
 1. Ensure Java (JDK 17+) is installed.
@@ -90,6 +109,7 @@ Use a PostgreSQL client (e.g., DBeaver) with the following details:
 - Migration scripts should be idempotent and ordered.
 - Review and test migrations before production.
 - Manage database credentials securely.
+- If using a Mac, you may have to turn off the Private Wi-Fi address for WPI-wireless to connect to the server.
 
 **Contact:**
 For database setup questions/issues, contact the backend development team.
@@ -164,7 +184,7 @@ The deployed lemurs-api is hosted on a WPI server. To work with it, set up an SS
    docker compose up -d --no-deps <service-name>
    ```
 
-### Common Container Operations (as `lemurs` user)
+### Common Container Operations
 
 **Database Re-creation (with no data loss):**
 ```bash
@@ -225,3 +245,39 @@ docker compose up -d --no-deps web-dev
 
 **Notes:**
 - [Lemurs 2025-2026 Docker Container Notes](https://docs.google.com/document/d/1mwNR2yMIgc1VMW6Z0VvXaVFCJR1UQDEwWutNlstt3Rs/edit?usp=sharing)
+
+# Production Server Setup
+
+Setting up the production server is similar to the development environment, with a few additional considerations:
+
+## Access
+- Access to the production server is similar to the development server. Contact the development team to obtain the necessary credentials and permissions.
+
+## Git Clone with PAT
+- Cloning the repository on the production server requires a GitHub Personal Access Token (PAT) if using HTTPS. Ensure you have a PAT with at least minimal permissions (read and write).
+- For guidance on creating a PAT, refer to the GitHub documentation: [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+
+## Docker Snap Issues
+- If Docker was installed via Snap and you encounter issues rebuilding containers, you can reinstall Docker fresh using the following commands:
+
+```bash
+sudo snap remove docker
+sudo snap install docker
+sudo snap start docker
+sudo snap services docker
+```
+
+## Clean Install of All Containers (Including Database)
+- To perform a clean install of all containers, including the database, follow these steps:
+
+Note: May need to docker compose down first to remove volume. Check by running `docker volume list` and `docker volume rm <any-left-over>
+```bash
+# Go to the Snap-visible path
+cd /mnt/lemurs-api
+
+# Rebuild updated containers
+sudo /snap/bin/docker compose --profile prod build
+
+# Restart containers if needed
+sudo /snap/bin/docker compose --profile prod up -d
+```

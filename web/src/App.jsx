@@ -11,8 +11,8 @@ import HomePage from './pages/HomePage';
 import Dashboard from './pages/Dashboard';
 
 export default function App() {
-     const {token, setToken} = useToken()
-     const tokenProvider = useMemo(() => ({token: token, setToken: setToken}), [token, setToken])
+    const {token, setToken} = useToken()
+    const tokenProvider = useMemo(() => ({token: token, setToken: setToken}), [token, setToken])
 
     return (
         <TokenContext.Provider value={tokenProvider}>

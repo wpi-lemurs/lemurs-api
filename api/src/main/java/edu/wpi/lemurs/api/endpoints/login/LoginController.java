@@ -50,7 +50,7 @@ public class LoginController {
 
       String accessToken = jwtAuthResponse.getAccessToken();
       long durationInSeconds =
-          TimeUnit.MILLISECONDS.toSeconds(jwtService.getJwtExpirationMs(accessToken));
+          TimeUnit.MILLISECONDS.toSeconds(jwtService.getJwtExpirationMs());
 
       ResponseCookie cookie =
           ResponseCookie.from(ACCESS_TOKEN_COOKIE, accessToken)

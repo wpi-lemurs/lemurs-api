@@ -5,7 +5,7 @@
 
 import React, { useContext } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
-
+import { useMsal } from "@azure/msal-react";
 import { SignInButton } from './SignInButton';
 import { SignOutButton } from './SignOutButton';
 import { TokenContext } from './token/TokenContext';
@@ -17,7 +17,8 @@ import 'react-notifications/lib/notifications.css';
  * @param props
  */
 export const PageLayout = (props) => {
-    const { token } = useContext(TokenContext)
+    const { token } = useContext(TokenContext);
+    const { accounts } = useMsal();
 
     return (
         <>
@@ -32,7 +33,20 @@ export const PageLayout = (props) => {
                             <a className="nav-link text-white" href="dashboard" style={{marginRight: "10px"}}>Dashboard</a>
                         </>
                     }
-                    {(token === "") ? <SignInButton setToken={props.setToken}/> : <SignOutButton setToken={props.setToken} />}
+
+                    {(token === "") ? (
+                        <SignInButton setToken={props.setToken}/>
+                    ) : (
+                        <>
+                            {accounts.length > 0 && (
+                                <span style={{ color: "white", marginRight: "15px", alignSelf: "center" }}>
+                                    Welcome, {accounts[0].name}
+                                </span>
+                            )}
+                            <SignOutButton setToken={props.setToken} />
+                        </>
+                    )}
+
                 </div>
             </Navbar>
             <div className="content">

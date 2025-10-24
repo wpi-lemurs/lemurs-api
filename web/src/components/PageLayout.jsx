@@ -1,10 +1,5 @@
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-
 import React, { useContext } from 'react';
-import Navbar from 'react-bootstrap/Navbar';
+import { Navbar, Nav } from 'react-bootstrap';
 import { useMsal } from "@azure/msal-react";
 import { SignInButton } from './SignInButton';
 import { SignOutButton } from './SignOutButton';
@@ -12,10 +7,6 @@ import { TokenContext } from './token/TokenContext';
 import { NotificationContainer } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
 
-/**
- * Renders the navbar component with a sign-in or sign-out button depending on whether or not a user is authenticated
- * @param props
- */
 export const PageLayout = (props) => {
     const { token } = useContext(TokenContext);
     const { accounts } = useMsal();
@@ -27,31 +18,37 @@ export const PageLayout = (props) => {
 
     return (
         <>
-            <Navbar bg="primary" variant="dark" className="navbarStyle">
-                <a className="navbar-brand" href="/">
+            <Navbar bg="primary" variant="dark" className="navbarStyle" expand="lg">
+                <a className="navbar-brand" href="/" style={{marginRight: "20px"}}>
                     LEMURS
                 </a>
-                <div className="collapse navbar-collapse justify-content-end">
+
+                <Nav className="me-auto">
                     {token !== "" &&
                         <>
-                            <a className="nav-link text-white" href="admin" style={{marginRight: "10px"}}>Admin Panel</a>
-                            <a className="nav-link text-white" href="dashboard" style={{marginRight: "10px"}}>Dashboard</a>
+                            <a className="nav-link text-white" href="admin">Admin Panel</a>
+                            <a className="nav-link text-white" href="dashboard">Dashboard</a>
                         </>
                     }
+                </Nav>
 
-                    {(token === "") ? (
-                        <SignInButton setToken={props.setToken}/>
-                    ) : (
-                        <>
-                            {firstName && (
-                                <span style={{ color: "white", marginRight: "15px", alignSelf: "center" }}>
-                                    Welcome, {firstName}
-                                </span>
-                            )}
-                            <SignOutButton setToken={props.setToken} />
-                        </>
-                    )}
-                </div>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+                    <Nav>
+                        {(token === "") ? (
+                            <SignInButton setToken={props.setToken}/>
+                        ) : (
+                            <>
+                                {firstName && (
+                                    <Navbar.Text style={{ color: "white", marginRight: "15px" }}>
+                                        Welcome, {firstName}
+                                    </Navbar.Text>
+                                )}
+                                <SignOutButton setToken={props.setToken} />
+                            </>
+                        )}
+                    </Nav>
+                </Navbar.Collapse>
             </Navbar>
             <div className="content">
                 <   NotificationContainer />

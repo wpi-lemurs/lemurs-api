@@ -5,6 +5,7 @@ import edu.wpi.lemurs.api.security.auth.jwt.AuthJwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -48,6 +49,9 @@ public class SecurityConfig {
                     .requestMatchers("/auth/**")
                     .permitAll()
                     .requestMatchers("/status")
+                    .permitAll()
+                    // Allows Nginx's internal auth check for the dashboard
+                    .requestMatchers(HttpMethod.GET, "/api/validate")
                     .permitAll()
                     .anyRequest()
                     .permitAll())

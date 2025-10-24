@@ -5,8 +5,8 @@ export default function Dashboard() {
     const {token} = useContext(TokenContext)
     return (
         <div>
-            <h2 className="card-title">Dashboard</h2>
-            <br/>
+            {/*<h2 className="card-title">Dashboard</h2>*/}
+            {/*<br/>*/}
             {(token === "") ? (
                 <h5 className="card-title">Please sign in to view the dashboard.</h5>
             ) : (

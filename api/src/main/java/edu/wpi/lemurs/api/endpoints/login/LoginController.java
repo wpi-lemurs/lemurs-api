@@ -7,7 +7,7 @@ import edu.wpi.lemurs.api.security.auth.jwt.JwtService;
 import edu.wpi.lemurs.api.security.auth.microsoft.AuthMicrosoftService;
 import edu.wpi.lemurs.api.security.auth.microsoft.MicrosoftLoginDto;
 import jakarta.servlet.http.HttpServletResponse;
-// import java.util.concurrent.TimeUnit;
+// No TimeUnit import
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -39,16 +39,15 @@ public class LoginController {
 
   @PostMapping("/auth/login")
   public ResponseEntity<JwtResponse> loginUserAccount(
-      @RequestBody MicrosoftLoginDto microsoftLoginDto,
-      HttpServletResponse response // <-- Add HttpServletResponse
-  ) {
+      @RequestBody MicrosoftLoginDto microsoftLoginDto, HttpServletResponse response) {
     try {
       Authentication tempAuthentication =
           authMicrosoftService.login(microsoftLoginDto.getAccessToken());
 
       JwtResponse jwtAuthResponse = jwtService.getJwtResponse(tempAuthentication);
-
       String accessToken = jwtAuthResponse.getAccessToken();
+
+      // 1 hour (60 * 60 * 1000 ms) in seconds
       long durationInSeconds = 3600;
 
       ResponseCookie cookie =
@@ -76,8 +75,7 @@ public class LoginController {
   @GetMapping("/api/validate")
   public ResponseEntity<Void> validate(
       // Read the token from the cookie, not the header
-      @CookieValue(name = ACCESS_TOKEN_COOKIE, required = false) String token
-  ) {
+      @CookieValue(name = ACCESS_TOKEN_COOKIE, required = false) String token) {
     if (token == null) { // Check for null token
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }

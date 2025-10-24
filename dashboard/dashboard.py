@@ -345,4 +345,4 @@ def update_display(load_clicks, active_cell, user_id_from_input, table_data):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5433, debug=True)
+    app.run(host="0.0.0.0", port=5433, debug=False)

@@ -270,12 +270,14 @@ sudo snap services docker
 ## Clean Install of All Containers (Including Database)
 - To perform a clean install of all containers, including the database, follow these steps:
 
+Note: May need to docker compose down first to remove volume. Check by running `docker volume list` and `docker volume rm <any-left-over>
 ```bash
-docker compose down
+# Go to the Snap-visible path
+cd /mnt/lemurs-api
 
-# Build the production images
-docker compose --profile prod build
+# Rebuild updated containers
+sudo /snap/bin/docker compose --profile prod build
 
-# Start up the containers
-docker compose --profile prod up -d
+# Restart containers if needed
+sudo /snap/bin/docker compose --profile prod up -d
 ```

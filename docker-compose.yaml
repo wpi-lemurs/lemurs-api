@@ -205,8 +205,6 @@ services:
       - dev
       - dev-partial
     <<: *dashboard
-    ports:
-      - "5433:5433"
     depends_on:
       - db-dev
 

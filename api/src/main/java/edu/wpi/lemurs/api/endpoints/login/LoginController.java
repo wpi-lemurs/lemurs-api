@@ -26,8 +26,9 @@ public class LoginController {
   private JwtService jwtService;
   private AuthMicrosoftService authMicrosoftService;
   private static final String ACCESS_TOKEN_COOKIE = "access_token";
+  private static final String REFRESH_TOKEN_COOKIE = "refresh_token";
 
-  @Value("${app.security.cookie-secure:true}") // Injects from application.properties
+  @Value("${app.security.cookie-secure:true}")
   private boolean cookieSecure;
 
   @Autowired
@@ -45,37 +46,70 @@ public class LoginController {
 
       JwtResponse jwtAuthResponse = jwtService.getJwtResponse(tempAuthentication);
       String accessToken = jwtAuthResponse.getAccessToken();
+      String refreshToken = jwtAuthResponse.getRefreshToken();
 
-      // 1 hour (60 * 60 * 1000 ms) in seconds
-      long durationInSeconds = 3600;
+      long accessDurationInSeconds = 3600;
+      long refreshDurationInSeconds = 1209600; // 14 days
 
-      ResponseCookie cookie =
+      ResponseCookie accessCookie =
           ResponseCookie.from(ACCESS_TOKEN_COOKIE, accessToken)
               .httpOnly(true)
-              .secure(this.cookieSecure) // Dynamic value from properties
+              .secure(this.cookieSecure)
               .path("/")
-              .maxAge(durationInSeconds)
-              .sameSite("Lax") // For CSRF protection
+              .maxAge(accessDurationInSeconds)
+              .sameSite("Lax")
               .build();
+      response.addHeader("Set-Cookie", accessCookie.toString());
 
-      response.addHeader("Set-Cookie", cookie.toString());
+      ResponseCookie refreshCookie =
+          ResponseCookie.from(REFRESH_TOKEN_COOKIE, refreshToken)
+              .httpOnly(true)
+              .secure(this.cookieSecure)
+              .path("/")
+              .maxAge(refreshDurationInSeconds)
+              .sameSite("Lax")
+              .build();
+      response.addHeader("Set-Cookie", refreshCookie.toString());
 
-      // This is unchanged and still returns the token for React
       return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
     } catch (BadCredentialsException | UnauthenticatedException e) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
   }
 
-  /**
-   * The {@code /api/validate} {@code GET} endpoint receives a request from the NGINX proxy and
-   * validates the JWT token FROM THE COOKIE.
-   */
+  @PostMapping("/auth/refresh")
+  public ResponseEntity<Void> refreshAccessToken(
+      @CookieValue(name = REFRESH_TOKEN_COOKIE, required = false) String refreshToken,
+      HttpServletResponse response) {
+    if (refreshToken == null) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    try {
+      JwtResponse newJwtResponse = jwtService.refreshJwtResponse(refreshToken);
+      String newAccessToken = newJwtResponse.getAccessToken();
+
+      long accessDurationInSeconds = 3600; // 1 hour
+      ResponseCookie accessCookie =
+          ResponseCookie.from(ACCESS_TOKEN_COOKIE, newAccessToken)
+              .httpOnly(true)
+              .secure(this.cookieSecure)
+              .path("/")
+              .maxAge(accessDurationInSeconds)
+              .sameSite("Lax")
+              .build();
+      response.addHeader("Set-Cookie", accessCookie.toString());
+
+      return new ResponseEntity<>(HttpStatus.OK);
+    } catch (Exception e) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+  }
+
   @GetMapping("/api/validate")
   public ResponseEntity<Void> validate(
-      // Read the token from the cookie, not the header
       @CookieValue(name = ACCESS_TOKEN_COOKIE, required = false) String token) {
-    if (token == null) { // Check for null token
+    if (token == null) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
     try {
@@ -86,23 +120,28 @@ public class LoginController {
     }
   }
 
-  /**
-   * The {@code /auth/logout} {@code POST} endpoint clears the access_token cookie. React must call
-   * this on logout.
-   */
   @PostMapping("/auth/logout")
   public ResponseEntity<Void> logout(HttpServletResponse response) {
-    // Build a cookie that instructs the browser to delete the existing one
-    ResponseCookie cookie =
-        ResponseCookie.from(ACCESS_TOKEN_COOKIE, "") // Empty value
+    ResponseCookie accessCookie =
+        ResponseCookie.from(ACCESS_TOKEN_COOKIE, "")
             .httpOnly(true)
-            .secure(this.cookieSecure) // Must match the properties of the login cookie
+            .secure(this.cookieSecure)
             .path("/")
-            .maxAge(0) // <-- Tells the browser to expire it immediately
+            .maxAge(0)
             .sameSite("Lax")
             .build();
+    response.addHeader("Set-Cookie", accessCookie.toString());
 
-    response.addHeader("Set-Cookie", cookie.toString());
+    ResponseCookie refreshCookie =
+        ResponseCookie.from(REFRESH_TOKEN_COOKIE, "")
+            .httpOnly(true)
+            .secure(this.cookieSecure)
+            .path("/")
+            .maxAge(0)
+            .sameSite("Lax")
+            .build();
+    response.addHeader("Set-Cookie", refreshCookie.toString());
+
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

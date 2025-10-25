@@ -3,16 +3,14 @@ import { TokenContext } from '../components/token/TokenContext';
 
 export default function Dashboard() {
     const { token } = useContext(TokenContext);
-
-    // 1. Add a new state to track if we are verified
-    // 'verifying', 'success', or 'failed'
     const [authStatus, setAuthStatus] = useState('verifying');
 
-    // 2. Add an effect to check our auth status on page load
     useEffect(() => {
-        // This only runs if the React token exists
         if (token !== "") {
-            fetch('/api/validate')
+            fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/api/validate`, {
+                method: 'GET',
+                credentials: 'include'
+            })
                 .then(res => {
                     if (res.ok) {
                         setAuthStatus('success');
@@ -25,9 +23,7 @@ export default function Dashboard() {
                     setAuthStatus('failed');
                 });
         }
-    }, [token]); // Re-run if the token changes
-
-    // 3. Update the render logic based on authStatus
+    }, [token]);
 
     // Case 1: User is definitely logged out (no React token)
     if (token === "") {

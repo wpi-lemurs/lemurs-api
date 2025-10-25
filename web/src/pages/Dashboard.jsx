@@ -5,56 +5,42 @@ export default function Dashboard() {
     const { token } = useContext(TokenContext);
     const [authStatus, setAuthStatus] = useState('verifying');
 
-    const validateUrl = `${process.env.REACT_APP_LEMURS_API_HOST}/api/validate`;
-    const refreshUrl = `${process.env.REACT_APP_LEMURS_API_HOST}/auth/refresh`;
-
     useEffect(() => {
         if (token !== "") {
-            fetch(validateUrl, {
+            fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/api/validate`, {
                 method: 'GET',
                 credentials: 'include'
             })
-            .then(validateRes => {
-                if (validateRes.ok) {
-                    return 'success';
-                }
-                if (validateRes.status === 401) {
-                    return fetch(refreshUrl, {
-                        method: 'POST',
-                        credentials: 'include'
-                    })
-                    .then(refreshRes => {
-                        if (refreshRes.ok) {
-                            return 'success';
-                        } else {
-                            return 'failed';
-                        }
-                    });
-                }
-                return 'failed';
-            })
-            .then(status => {
-                setAuthStatus(status);
-            })
-            .catch(err => {
-                console.error("Auth check/refresh failed:", err);
-                setAuthStatus('failed');
-            });
+                .then(res => {
+                    if (res.ok) {
+                        setAuthStatus('success');
+                    } else {
+                        setAuthStatus('failed');
+                    }
+                })
+                .catch(err => {
+                    console.error("Auth check failed:", err);
+                    setAuthStatus('failed');
+                });
         }
-    }, [token, validateUrl, refreshUrl]);
+    }, [token]);
 
+    // Case 1: User is definitely logged out (no React token)
     if (token === "") {
         return <h5 className="card-title">Please sign in to view the dashboard.</h5>;
     }
 
+    // Case 2: We have a token, but we are checking it...
     if (authStatus === 'verifying') {
         return <h5 className="card-title">Verifying session...</h5>;
     }
 
+    // Case 3: We have a token, but the check failed (cookie expired)
     if (authStatus === 'failed') {
         return <h5 className="card-title">Your session has expired. Please sign out and sign back in to continue.</h5>;
     }
 
+    // Case 4: We have a token AND the check succeeded
     return (
         <iframe
             src="/dashboard/"

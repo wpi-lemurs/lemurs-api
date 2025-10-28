@@ -11,7 +11,7 @@ RUN ./gradlew dependencies
 
 # Build the app.  This will build to /usr/app/build/libs/lemurs-api.jar
 COPY . . 
-RUN ./gradlew build -x check
+RUN ./gradlew build
 
 # ==== Package Stage ====
 

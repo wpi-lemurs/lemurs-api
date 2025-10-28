@@ -1,0 +1,5 @@
+dash
+pandas
+plotly_calplot
+psycopg2-binary
+python-dotenv

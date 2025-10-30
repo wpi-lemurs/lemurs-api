@@ -11,19 +11,32 @@ export const PageLayout = (props) => {
     const { token } = useContext(TokenContext);
     const { accounts } = useMsal();
 
+    // Helper function to extract first name from a full name string
+    function extractFirstName(fullName) {
+        if (!fullName) return "";
+
+        // Handle "lastName, firstName" format
+        if (fullName.includes(",")) {
+            const parts = fullName.split(",");
+            return parts[1].trim();
+        }
+
+        // Handle "firstName lastName" format
+        const parts = fullName.trim().split(" ");
+        return parts[0]; // first part assumed to be first name
+    }
+
     let firstName = "";
 
     if (accounts.length > 0) {
         const account = accounts[0];
-
-        console.log(accounts); // TODO: remove for prod
-
         const claims = account.idTokenClaims || {};
 
-        // Safely handle name retrieval
+        // Determine first name
         firstName =
             claims.given_name ||
-            account.name ||
+            extractFirstName(claims.name) ||
+            extractFirstName(account.name) ||
             "";
     }
 

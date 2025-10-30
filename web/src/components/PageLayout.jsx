@@ -15,6 +15,9 @@ export const PageLayout = (props) => {
 
     if (accounts.length > 0) {
         const account = accounts[0];
+
+        console.log(accounts); // TODO: remove for prod
+
         const claims = account.idTokenClaims || {};
 
         // Safely handle name retrieval

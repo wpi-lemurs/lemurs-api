@@ -11,10 +11,18 @@ export const PageLayout = (props) => {
     const { token } = useContext(TokenContext);
     const { accounts } = useMsal();
 
-    // let firstName = "";
-    // if (accounts.length > 0 && accounts[0].name) {
-    //     firstName = accounts[0].name.split(',')[1].trim();
-    // }
+    let firstName = "";
+
+    if (accounts.length > 0) {
+        const account = accounts[0];
+        const claims = account.idTokenClaims || {};
+
+        // Safely handle name retrieval
+        firstName =
+            claims.given_name ||
+            account.name ||
+            "";
+    }
 
     return (
         <>
@@ -39,6 +47,11 @@ export const PageLayout = (props) => {
                             <SignInButton setToken={props.setToken}/>
                         ) : (
                             <>
+                                {firstName && (
+                                    <Navbar.Text style={{ color: "white", marginRight: "15px" }}>
+                                        Welcome, {firstName}
+                                    </Navbar.Text>
+                                )}
                                 <SignOutButton setToken={props.setToken} />
                             </>
                         )}

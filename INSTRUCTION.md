@@ -279,5 +279,5 @@ cd /mnt/lemurs-api
 sudo /snap/bin/docker compose --profile prod build
 
 # Restart containers if needed
-sudo /snap/bin/docker compose --profile prod up -d
+sudo /snap/bin/docker compose --env-file .env --profile prod up -d
 ```

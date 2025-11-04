@@ -252,6 +252,7 @@ Setting up the production server is similar to the development environment, with
 
 ## Access
 - Access to the production server is similar to the development server. Contact the development team to obtain the necessary credentials and permissions.
+- Get someone on the development team to add admin roles in order to login to the lemurs dashboard
 
 ## Git Clone with PAT
 - Cloning the repository on the production server requires a GitHub Personal Access Token (PAT) if using HTTPS. Ensure you have a PAT with at least minimal permissions (read and write).

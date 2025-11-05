@@ -79,3 +79,9 @@ CREATE TABLE danger_alert_email (
 	email VARCHAR,
 	PRIMARY KEY (email)
 );
+
+INSERT INTO "danger_alert_email" ("email") OVERRIDING SYSTEM VALUE VALUES
+    ('khickey@wpi.edu'),
+    ('rundenst@wpi.edu'),
+    ('cmaerker@umass.edu'),
+    ('katiedg@umass.edu');

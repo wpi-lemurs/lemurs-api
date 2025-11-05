@@ -2,7 +2,7 @@ CREATE TABLE written_response (
   id INT GENERATED ALWAYS AS IDENTITY,
   survey_response_id INT NOT NULL,
   written_question_id INT NOT NULL,
-  written_data DATE NOT NULL,
+  written_data TEXT NOT NULL,
   timestamp TIMESTAMP NOT NULL,
   FOREIGN KEY(survey_response_id) REFERENCES survey_response(id),
   PRIMARY KEY (id)

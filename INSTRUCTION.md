@@ -241,6 +241,11 @@ docker compose up -d --no-deps web-dev
    docker compose up -d --no-deps web-dev
    ```
 
+6. **Note:** You may see issues with the proxy and web being out of sync. Fix this by refreshing the proxy:
+   ```bash
+   docker restart lemurs-proxy
+   ```
+
 ### Additional Resources
 
 **Notes:**

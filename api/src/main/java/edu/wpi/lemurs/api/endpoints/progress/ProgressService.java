@@ -84,7 +84,9 @@ public class ProgressService {
     securityService.assertHasRole(LemursRole.USER);
 
     List<GoalProgress> existingGoals = new ArrayList<>();
-    goalProgressRepository.findByUserID(securityService.getUser().getId()).forEach(existingGoals::add);
+    goalProgressRepository
+        .findByUserID(securityService.getUser().getId())
+        .forEach(existingGoals::add);
 
     if (!existingGoals.isEmpty()) {
       return existingGoals;
@@ -152,9 +154,9 @@ public class ProgressService {
   }
 
   /**
-   * Determines the active weekly goal based on goal progress and completion status.
-   * Prioritizes the 2-week goal if it's not completed and still within time limit,
-   * otherwise falls back to the 3-week goal.
+   * Determines the active weekly goal based on goal progress and completion status. Prioritizes the
+   * 2-week goal if it's not completed and still within time limit, otherwise falls back to the
+   * 3-week goal.
    *
    * @param goalProgresses List of user's goal progress
    * @param currentTime Current timestamp for comparison
@@ -165,9 +167,9 @@ public class ProgressService {
     for (GoalProgress goalProgress : goalProgresses) {
       if (goalProgress.getGoalID().equals(GOAL_2_WEEKS)) {
         // Check if goal is not completed and still within time limit
-        if (!goalProgress.isComplete() &&
-            goalProgress.getTimeLimit() != null &&
-            goalProgress.getTimeLimit().after(currentTime)) {
+        if (!goalProgress.isComplete()
+            && goalProgress.getTimeLimit() != null
+            && goalProgress.getTimeLimit().after(currentTime)) {
           return GOAL_2_WEEKS;
         }
         break; // We found the 2-week goal, no need to continue looking for it
@@ -178,9 +180,9 @@ public class ProgressService {
     for (GoalProgress goalProgress : goalProgresses) {
       if (goalProgress.getGoalID().equals(GOAL_3_WEEKS)) {
         // Check if goal is not completed and still within time limit
-        if (!goalProgress.isComplete() &&
-            goalProgress.getTimeLimit() != null &&
-            goalProgress.getTimeLimit().after(currentTime)) {
+        if (!goalProgress.isComplete()
+            && goalProgress.getTimeLimit() != null
+            && goalProgress.getTimeLimit().after(currentTime)) {
           return GOAL_3_WEEKS;
         }
         break;
@@ -226,7 +228,8 @@ public class ProgressService {
 
     Optional<Incentive> incentiveOpt = incentiveRepository.findById(DAILY_INCENTIVE_ID);
     if (incentiveOpt.isEmpty()) {
-      throw new IllegalStateException("Daily incentive with ID " + DAILY_INCENTIVE_ID + " not found");
+      throw new IllegalStateException(
+          "Daily incentive with ID " + DAILY_INCENTIVE_ID + " not found");
     }
 
     Incentive incentive = incentiveOpt.get();
@@ -272,7 +275,8 @@ public class ProgressService {
 
     Optional<Incentive> incentiveOpt = incentiveRepository.findById(WEEKLY_INCENTIVE_ID);
     if (incentiveOpt.isEmpty()) {
-      throw new IllegalStateException("Weekly incentive with ID " + WEEKLY_INCENTIVE_ID + " not found");
+      throw new IllegalStateException(
+          "Weekly incentive with ID " + WEEKLY_INCENTIVE_ID + " not found");
     }
 
     Incentive incentive = incentiveOpt.get();

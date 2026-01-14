@@ -74,7 +74,7 @@ public class ProgressService {
   }
 
   /**
-   * Starts goal progress for a user that doesn't already have progress.
+   * Gets goal progress for a user, creating initial progress if none exists.
    *
    * @throws UnauthenticatedException Thrown if the user is not authenticated.
    * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
@@ -83,31 +83,29 @@ public class ProgressService {
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
-    List<GoalProgress> goals = new ArrayList<>();
-    for (GoalProgress goal :
-        goalProgressRepository.findByUserID(securityService.getUser().getId())) {
-      goals.add(goal);
-    }
-    if (!goals.isEmpty()) {
-      return goals;
+    List<GoalProgress> existingGoals = new ArrayList<>();
+    goalProgressRepository.findByUserID(securityService.getUser().getId()).forEach(existingGoals::add);
+
+    if (!existingGoals.isEmpty()) {
+      return existingGoals;
     }
 
     Date now = new Date();
     Integer userID = securityService.getUser().getId();
+    List<GoalProgress> newGoals = new ArrayList<>();
 
     for (Goal goal : goalRepository.findAll()) {
-      goals.add(
+      newGoals.add(
           new GoalProgress(
               userID,
               goal.getId(),
               false,
-              new Date(now.getTime() + 1000 * 60 * 60 * goal.getMaxDays())));
+              new Date(now.getTime() + 1000L * 60 * 60 * 24 * goal.getMaxDays())));
     }
-    List<GoalProgress> out = new ArrayList<>();
-    for (GoalProgress goal : goalProgressRepository.saveAll(goals)) {
-      out.add(goal);
-    }
-    return out;
+
+    List<GoalProgress> savedGoals = new ArrayList<>();
+    goalProgressRepository.saveAll(newGoals).forEach(savedGoals::add);
+    return savedGoals;
   }
 
   /**
@@ -126,17 +124,22 @@ public class ProgressService {
 
     Date now = new Date();
 
-    // TODO: Make this much better, preferably after a discussion on api contract.
-    Integer weeklyGoalID = GOAL_3_WEEKS;
-    for (GoalProgress goalProgress : goalProgresses) {
-      if (goalProgress.getGoalID().equals(GOAL_2_WEEKS) && goalProgress.getTimeLimit().after(now)) {
-        weeklyGoalID = GOAL_2_WEEKS;
-        break;
-      }
+    // Determine the appropriate weekly goal to display
+    Integer weeklyGoalID = determineActiveWeeklyGoal(goalProgresses, now);
+
+    // Get goals with proper error handling
+    Optional<Goal> weeklyGoalOpt = goalRepository.findById(weeklyGoalID);
+    Optional<Goal> totalGoalOpt = goalRepository.findById(GOAL_TOTAL);
+
+    if (weeklyGoalOpt.isEmpty()) {
+      throw new IllegalStateException("Weekly goal with ID " + weeklyGoalID + " not found");
+    }
+    if (totalGoalOpt.isEmpty()) {
+      throw new IllegalStateException("Total goal with ID " + GOAL_TOTAL + " not found");
     }
 
-    Goal weeklyGoal = goalRepository.findById(weeklyGoalID).get();
-    Goal totalGoal = goalRepository.findById(GOAL_TOTAL).get();
+    Goal weeklyGoal = weeklyGoalOpt.get();
+    Goal totalGoal = totalGoalOpt.get();
 
     return new ProgressResponse(
         progress.getEarned(),
@@ -146,6 +149,46 @@ public class ProgressService {
         progress.getDailySurveysCompleted(),
         weeklyGoal.getRequiredDailySurveys(),
         weeklyGoal.getReward());
+  }
+
+  /**
+   * Determines the active weekly goal based on goal progress and completion status.
+   * Prioritizes the 2-week goal if it's not completed and still within time limit,
+   * otherwise falls back to the 3-week goal.
+   *
+   * @param goalProgresses List of user's goal progress
+   * @param currentTime Current timestamp for comparison
+   * @return The ID of the active weekly goal
+   */
+  private Integer determineActiveWeeklyGoal(List<GoalProgress> goalProgresses, Date currentTime) {
+    // First, try to find an active 2-week goal
+    for (GoalProgress goalProgress : goalProgresses) {
+      if (goalProgress.getGoalID().equals(GOAL_2_WEEKS)) {
+        // Check if goal is not completed and still within time limit
+        if (!goalProgress.isComplete() &&
+            goalProgress.getTimeLimit() != null &&
+            goalProgress.getTimeLimit().after(currentTime)) {
+          return GOAL_2_WEEKS;
+        }
+        break; // We found the 2-week goal, no need to continue looking for it
+      }
+    }
+
+    // If 2-week goal is completed or expired, check 3-week goal
+    for (GoalProgress goalProgress : goalProgresses) {
+      if (goalProgress.getGoalID().equals(GOAL_3_WEEKS)) {
+        // Check if goal is not completed and still within time limit
+        if (!goalProgress.isComplete() &&
+            goalProgress.getTimeLimit() != null &&
+            goalProgress.getTimeLimit().after(currentTime)) {
+          return GOAL_3_WEEKS;
+        }
+        break;
+      }
+    }
+
+    // Default to 3-week goal if no active goals found
+    return GOAL_3_WEEKS;
   }
 
   /**
@@ -181,22 +224,40 @@ public class ProgressService {
       return;
     }
 
-    Incentive incentive = incentiveRepository.findById(DAILY_INCENTIVE_ID).get();
+    Optional<Incentive> incentiveOpt = incentiveRepository.findById(DAILY_INCENTIVE_ID);
+    if (incentiveOpt.isEmpty()) {
+      throw new IllegalStateException("Daily incentive with ID " + DAILY_INCENTIVE_ID + " not found");
+    }
+
+    Incentive incentive = incentiveOpt.get();
     BigDecimal totalEarned = progress.getEarned().add(incentive.getReward());
 
+    // Update daily surveys completed count first
+    int newDailySurveysCompleted = progress.getDailySurveysCompleted() + 1;
+
+    // Check and complete goals based on the new count
     for (GoalProgress goalProgress : getGoalProgress()) {
       if (!goalProgress.isComplete()) {
-        Goal goal = goalRepository.findById(goalProgress.getGoalID()).get();
-        if (goal.getRequiredDailySurveys() <= progress.getDailySurveysCompleted()) {
+        Optional<Goal> goalOpt = goalRepository.findById(goalProgress.getGoalID());
+        if (goalOpt.isEmpty()) {
+          // Log warning but continue processing other goals
+          System.err.println("Warning: Goal with ID " + goalProgress.getGoalID() + " not found");
+          continue;
+        }
+
+        Goal goal = goalOpt.get();
+        if (goal.getRequiredDailySurveys() <= newDailySurveysCompleted) {
           goalProgress.setComplete(true);
-          totalEarned.add(goal.getReward());
+          totalEarned = totalEarned.add(goal.getReward());
+          goalProgressRepository.save(goalProgress); // Persist the completion status
         }
       }
     }
 
     progress.setNextDailySurvey(surveyAvailabilityService.getEndOfCurrentAvailableSurvey(now));
-    progress.setDailySurveysCompleted(progress.getDailySurveysCompleted() + 1);
+    progress.setDailySurveysCompleted(newDailySurveysCompleted);
     progress.setEarned(totalEarned);
+    progressRepository.save(progress); // Ensure progress is persisted
   }
 
   public void recordWeekly(Date timestamp) throws UnauthenticatedException, UnauthorizedException {
@@ -209,11 +270,17 @@ public class ProgressService {
       return;
     }
 
-    Incentive incentive = incentiveRepository.findById(WEEKLY_INCENTIVE_ID).get();
+    Optional<Incentive> incentiveOpt = incentiveRepository.findById(WEEKLY_INCENTIVE_ID);
+    if (incentiveOpt.isEmpty()) {
+      throw new IllegalStateException("Weekly incentive with ID " + WEEKLY_INCENTIVE_ID + " not found");
+    }
+
+    Incentive incentive = incentiveOpt.get();
 
     progress.setNextWeeklySurvey(
-        new Date(now.getTime() + 1000 * 60 * 60 * 24 * 7)); // TODO: Improve the logic.
+        new Date(now.getTime() + 1000L * 60 * 60 * 24 * 7)); // TODO: Improve the logic.
     progress.setWeeklySurveysCompleted(progress.getWeeklySurveysCompleted() + 1);
     progress.setEarned(progress.getEarned().add(incentive.getReward()));
+    progressRepository.save(progress); // Ensure progress is persisted
   }
 }

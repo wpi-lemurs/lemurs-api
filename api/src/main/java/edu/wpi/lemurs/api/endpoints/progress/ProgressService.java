@@ -310,7 +310,7 @@ public class ProgressService {
     }
 
     // Check if written responses exist for this survey and add bonus
-    if (writtenResponseRepository.existsBySurvey_response_id(surveyResponseId)) {
+    if (writtenResponseRepository.existsBySurveyResponseId(surveyResponseId)) {
       Optional<Incentive> writtenIncentiveOpt =
           incentiveRepository.findById(WEEKLY_WRITTEN_BONUS_ID);
       if (writtenIncentiveOpt.isPresent()) {

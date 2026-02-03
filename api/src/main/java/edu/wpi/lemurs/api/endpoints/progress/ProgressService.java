@@ -274,8 +274,8 @@ public class ProgressService {
   }
 
   /**
-   * Records completion of a weekly survey and calculates reward based on completed components.
-   * Base reward is given for PHQ-9, with bonuses for audio and written responses.
+   * Records completion of a weekly survey and calculates reward based on completed components. Base
+   * reward is given for PHQ-9, with bonuses for audio and written responses.
    *
    * @param timestamp The timestamp of survey completion.
    * @param surveyResponseId The survey response ID to check for audio/written responses.

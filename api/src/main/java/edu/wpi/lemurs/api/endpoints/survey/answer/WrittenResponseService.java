@@ -1,6 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey.answer;
 
+import edu.wpi.lemurs.api.endpoints.progress.ProgressService;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
@@ -24,12 +25,16 @@ public class WrittenResponseService {
 
   private final SecurityService securityService;
   private final WrittenResponseRepository writingResponseRepository;
+  private final ProgressService progressService;
 
   @Autowired
   public WrittenResponseService(
-      SecurityService securityService, WrittenResponseRepository writingResponseRepository) {
+      SecurityService securityService,
+      WrittenResponseRepository writingResponseRepository,
+      ProgressService progressService) {
     this.securityService = securityService;
     this.writingResponseRepository = writingResponseRepository;
+    this.progressService = progressService;
   }
 
   public void saveWritingData(WrittenResponseDto request)
@@ -58,6 +63,9 @@ public class WrittenResponseService {
           request.getTimestamp() != null ? request.getTimestamp() : new Date());
 
       WrittenResponse savedResponse = writingResponseRepository.save(writingResponse);
+
+      // Add written response bonus to user's earnings
+      progressService.recordWrittenBonus();
 
       logger.info(
           "Successfully saved writing response {} for user {}", savedResponse.getId(), userId);

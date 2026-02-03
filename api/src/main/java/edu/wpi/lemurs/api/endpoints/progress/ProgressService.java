@@ -2,8 +2,6 @@
 package edu.wpi.lemurs.api.endpoints.progress;
 
 import edu.wpi.lemurs.api.data.availability.SurveyAvailabilityService;
-import edu.wpi.lemurs.api.endpoints.data.AudioResponseRepository;
-import edu.wpi.lemurs.api.endpoints.survey.answer.WrittenResponseRepository;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
@@ -40,8 +38,6 @@ public class ProgressService {
   private GoalProgressRepository goalProgressRepository;
   private IncentiveRepository incentiveRepository;
   private SurveyAvailabilityService surveyAvailabilityService;
-  private AudioResponseRepository audioResponseRepository;
-  private WrittenResponseRepository writtenResponseRepository;
 
   @Autowired
   public ProgressService(
@@ -50,17 +46,13 @@ public class ProgressService {
       GoalRepository goalRepository,
       GoalProgressRepository goalProgressRepository,
       IncentiveRepository incentiveRepository,
-      SurveyAvailabilityService surveyAvailabilityService,
-      AudioResponseRepository audioResponseRepository,
-      WrittenResponseRepository writtenResponseRepository) {
+      SurveyAvailabilityService surveyAvailabilityService) {
     this.securityService = securityService;
     this.progressRepository = progressRepository;
     this.goalRepository = goalRepository;
     this.goalProgressRepository = goalProgressRepository;
     this.incentiveRepository = incentiveRepository;
     this.surveyAvailabilityService = surveyAvailabilityService;
-    this.audioResponseRepository = audioResponseRepository;
-    this.writtenResponseRepository = writtenResponseRepository;
   }
 
   /**
@@ -277,11 +269,11 @@ public class ProgressService {
   }
 
   /**
-   * Records completion of a weekly survey and calculates reward based on completed components. Base
-   * reward is given for PHQ-9, with bonuses for audio and written responses.
+   * Records completion of a weekly survey and pays the base PHQ-9 reward. Audio and written bonuses
+   * are added separately when those responses are submitted.
    *
    * @param timestamp The timestamp of survey completion.
-   * @param surveyResponseId The survey response ID to check for audio/written responses.
+   * @param surveyResponseId The survey response ID (kept for future use/logging).
    * @throws UnauthenticatedException Thrown if the user is not authenticated.
    * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
    */
@@ -296,23 +288,41 @@ public class ProgressService {
       return;
     }
 
-    // Start with base PHQ-9 reward ($2)
+    // Pay base PHQ-9 reward ($2). Audio/written bonuses added when those responses are submitted.
     BigDecimal totalReward = WEEKLY_BASE_REWARD;
-
-    // Check if audio responses exist for this survey and add bonus ($1.50)
-    if (audioResponseRepository.existsBySurveyResponseId(surveyResponseId)) {
-      totalReward = totalReward.add(WEEKLY_AUDIO_BONUS);
-    }
-
-    // Check if written responses exist for this survey and add bonus ($1.50)
-    if (writtenResponseRepository.existsBySurveyResponseId(surveyResponseId)) {
-      totalReward = totalReward.add(WEEKLY_WRITTEN_BONUS);
-    }
 
     progress.setNextWeeklySurvey(
         new Date(now.getTime() + 1000L * 60 * 60 * 24 * 7)); // TODO: Improve the logic.
     progress.setWeeklySurveysCompleted(progress.getWeeklySurveysCompleted() + 1);
     progress.setEarned(progress.getEarned().add(totalReward));
     progressRepository.save(progress); // Ensure progress is persisted
+  }
+
+  /**
+   * Records a written response bonus for completing the written portion of a weekly survey.
+   *
+   * @throws UnauthenticatedException Thrown if the user is not authenticated.
+   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
+   */
+  public void recordWrittenBonus() throws UnauthenticatedException, UnauthorizedException {
+    securityService.assertHasRole(LemursRole.USER);
+
+    Progress progress = getProgress();
+    progress.setEarned(progress.getEarned().add(WEEKLY_WRITTEN_BONUS));
+    progressRepository.save(progress);
+  }
+
+  /**
+   * Records an audio response bonus for completing the audio portion of a weekly survey.
+   *
+   * @throws UnauthenticatedException Thrown if the user is not authenticated.
+   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
+   */
+  public void recordAudioBonus() throws UnauthenticatedException, UnauthorizedException {
+    securityService.assertHasRole(LemursRole.USER);
+
+    Progress progress = getProgress();
+    progress.setEarned(progress.getEarned().add(WEEKLY_AUDIO_BONUS));
+    progressRepository.save(progress);
   }
 }

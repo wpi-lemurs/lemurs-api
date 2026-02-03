@@ -1,6 +1,7 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.data;
 
+import edu.wpi.lemurs.api.endpoints.progress.ProgressService;
 import edu.wpi.lemurs.api.exceptions.EntityDoesNotExistException;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
@@ -27,12 +28,16 @@ public class AudioService {
 
   private final SecurityService securityService;
   private final AudioResponseRepository audioResponseRepository;
+  private final ProgressService progressService;
 
   @Autowired
   public AudioService(
-      AudioResponseRepository audioResponseRepository, SecurityService securityService) {
+      AudioResponseRepository audioResponseRepository,
+      SecurityService securityService,
+      ProgressService progressService) {
     this.audioResponseRepository = audioResponseRepository;
     this.securityService = securityService;
+    this.progressService = progressService;
   }
 
   /**
@@ -75,6 +80,9 @@ public class AudioService {
       audioResponse.setTimestamp(audioDataRequest.getTimestamp());
 
       AudioResponse savedResponse = audioResponseRepository.save(audioResponse);
+
+      // Add audio response bonus to user's earnings
+      progressService.recordAudioBonus();
 
       logger.info(
           "Successfully saved audio response {} for user {} - {} bytes",

@@ -66,11 +66,14 @@ public class AnswerService {
 
     List<Integer> surveyResponseIds = recordAnswers(combinedSurveyResponseDto);
 
-    progressService.recordWeekly(combinedSurveyResponseDto.getTimestamp());
-
     // Return the first survey response ID (primary survey for linking)
     if (!surveyResponseIds.isEmpty()) {
       Integer primarySurveyResponseId = surveyResponseIds.get(0);
+
+      // Record weekly progress with survey response ID to check for audio/written bonuses
+      progressService.recordWeekly(
+          combinedSurveyResponseDto.getTimestamp(), primarySurveyResponseId);
+
       logger.info(
           "Weekly survey submission completed for user {} - primary survey response ID: {}",
           userId,

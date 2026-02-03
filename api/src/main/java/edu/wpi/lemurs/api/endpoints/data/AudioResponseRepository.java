@@ -31,6 +31,9 @@ public interface AudioResponseRepository extends JpaRepository<AudioResponse, In
   /** Counts audio responses for a survey response. */
   Long countBySurveyResponseId(Integer surveyResponseId);
 
+  /** Checks if any audio responses exist for a survey response. */
+  boolean existsBySurveyResponseId(Integer surveyResponseId);
+
   /** Gets total audio data size for a survey response using native SQL. */
   @Query(
       value =

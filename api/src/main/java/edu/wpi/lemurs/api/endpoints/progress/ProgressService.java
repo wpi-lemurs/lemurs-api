@@ -2,6 +2,8 @@
 package edu.wpi.lemurs.api.endpoints.progress;
 
 import edu.wpi.lemurs.api.data.availability.SurveyAvailabilityService;
+import edu.wpi.lemurs.api.endpoints.data.AudioResponseRepository;
+import edu.wpi.lemurs.api.endpoints.survey.answer.WrittenResponseRepository;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import edu.wpi.lemurs.api.security.SecurityService;
@@ -25,7 +27,9 @@ public class ProgressService {
   private static final Integer GOAL_TOTAL = 2;
 
   private static final Integer DAILY_INCENTIVE_ID = 0;
-  private static final Integer WEEKLY_INCENTIVE_ID = 1;
+  private static final Integer WEEKLY_BASE_INCENTIVE_ID = 1;
+  private static final Integer WEEKLY_AUDIO_BONUS_ID = 2;
+  private static final Integer WEEKLY_WRITTEN_BONUS_ID = 3;
 
   private SecurityService securityService;
   private ProgressRepository progressRepository;
@@ -33,6 +37,8 @@ public class ProgressService {
   private GoalProgressRepository goalProgressRepository;
   private IncentiveRepository incentiveRepository;
   private SurveyAvailabilityService surveyAvailabilityService;
+  private AudioResponseRepository audioResponseRepository;
+  private WrittenResponseRepository writtenResponseRepository;
 
   @Autowired
   public ProgressService(
@@ -41,13 +47,17 @@ public class ProgressService {
       GoalRepository goalRepository,
       GoalProgressRepository goalProgressRepository,
       IncentiveRepository incentiveRepository,
-      SurveyAvailabilityService surveyAvailabilityService) {
+      SurveyAvailabilityService surveyAvailabilityService,
+      AudioResponseRepository audioResponseRepository,
+      WrittenResponseRepository writtenResponseRepository) {
     this.securityService = securityService;
     this.progressRepository = progressRepository;
     this.goalRepository = goalRepository;
     this.goalProgressRepository = goalProgressRepository;
     this.incentiveRepository = incentiveRepository;
     this.surveyAvailabilityService = surveyAvailabilityService;
+    this.audioResponseRepository = audioResponseRepository;
+    this.writtenResponseRepository = writtenResponseRepository;
   }
 
   /**
@@ -263,7 +273,17 @@ public class ProgressService {
     progressRepository.save(progress); // Ensure progress is persisted
   }
 
-  public void recordWeekly(Date timestamp) throws UnauthenticatedException, UnauthorizedException {
+  /**
+   * Records completion of a weekly survey and calculates reward based on completed components.
+   * Base reward is given for PHQ-9, with bonuses for audio and written responses.
+   *
+   * @param timestamp The timestamp of survey completion.
+   * @param surveyResponseId The survey response ID to check for audio/written responses.
+   * @throws UnauthenticatedException Thrown if the user is not authenticated.
+   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
+   */
+  public void recordWeekly(Date timestamp, Integer surveyResponseId)
+      throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
     Progress progress = getProgress();
@@ -273,18 +293,35 @@ public class ProgressService {
       return;
     }
 
-    Optional<Incentive> incentiveOpt = incentiveRepository.findById(WEEKLY_INCENTIVE_ID);
-    if (incentiveOpt.isEmpty()) {
+    // Start with base PHQ-9 reward
+    Optional<Incentive> baseIncentiveOpt = incentiveRepository.findById(WEEKLY_BASE_INCENTIVE_ID);
+    if (baseIncentiveOpt.isEmpty()) {
       throw new IllegalStateException(
-          "Weekly incentive with ID " + WEEKLY_INCENTIVE_ID + " not found");
+          "Weekly base incentive with ID " + WEEKLY_BASE_INCENTIVE_ID + " not found");
+    }
+    BigDecimal totalReward = baseIncentiveOpt.get().getReward();
+
+    // Check if audio responses exist for this survey and add bonus
+    if (audioResponseRepository.existsBySurveyResponseId(surveyResponseId)) {
+      Optional<Incentive> audioIncentiveOpt = incentiveRepository.findById(WEEKLY_AUDIO_BONUS_ID);
+      if (audioIncentiveOpt.isPresent()) {
+        totalReward = totalReward.add(audioIncentiveOpt.get().getReward());
+      }
     }
 
-    Incentive incentive = incentiveOpt.get();
+    // Check if written responses exist for this survey and add bonus
+    if (writtenResponseRepository.existsBySurvey_response_id(surveyResponseId)) {
+      Optional<Incentive> writtenIncentiveOpt =
+          incentiveRepository.findById(WEEKLY_WRITTEN_BONUS_ID);
+      if (writtenIncentiveOpt.isPresent()) {
+        totalReward = totalReward.add(writtenIncentiveOpt.get().getReward());
+      }
+    }
 
     progress.setNextWeeklySurvey(
         new Date(now.getTime() + 1000L * 60 * 60 * 24 * 7)); // TODO: Improve the logic.
     progress.setWeeklySurveysCompleted(progress.getWeeklySurveysCompleted() + 1);
-    progress.setEarned(progress.getEarned().add(incentive.getReward()));
+    progress.setEarned(progress.getEarned().add(totalReward));
     progressRepository.save(progress); // Ensure progress is persisted
   }
 }

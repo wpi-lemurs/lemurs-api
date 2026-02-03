@@ -201,9 +201,12 @@ INSERT INTO "survey_question" ("survey_id", "question_id", "position") OVERRIDIN
 	('2', '69', '96');
 
 --- Incentive Constants
+-- Weekly survey reward breakdown: PHQ-9 base ($2) + audio bonus ($1.50) + written bonus ($1.50) = $5 total
 INSERT INTO "incentive" ("id", "name", "reward") OVERRIDING SYSTEM VALUE VALUES
 	('0', 'daily_survey', '3'),
-	('1', 'weekly_survey', '5');
+	('1', 'weekly_survey_base', '2'),
+	('2', 'weekly_audio_bonus', '1.5'),
+	('3', 'weekly_written_bonus', '1.5');
 
 -- Goal Constants
 INSERT INTO "goal" ("id", "name", "required_daily_surveys", "max_days", "reward") OVERRIDING SYSTEM VALUE VALUES

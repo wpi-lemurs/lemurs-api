@@ -25,7 +25,12 @@ public class ProgressService {
   private static final Integer GOAL_TOTAL = 2;
 
   private static final Integer DAILY_INCENTIVE_ID = 0;
-  private static final Integer WEEKLY_INCENTIVE_ID = 1;
+
+  // Weekly survey reward breakdown (hardcoded to avoid database changes)
+  // PHQ-9 base ($2) + audio bonus ($1.50) + written bonus ($1.50) = $5 total
+  private static final BigDecimal WEEKLY_BASE_REWARD = new BigDecimal("2.00");
+  private static final BigDecimal WEEKLY_AUDIO_BONUS = new BigDecimal("1.50");
+  private static final BigDecimal WEEKLY_WRITTEN_BONUS = new BigDecimal("1.50");
 
   private SecurityService securityService;
   private ProgressRepository progressRepository;
@@ -263,7 +268,17 @@ public class ProgressService {
     progressRepository.save(progress); // Ensure progress is persisted
   }
 
-  public void recordWeekly(Date timestamp) throws UnauthenticatedException, UnauthorizedException {
+  /**
+   * Records completion of a weekly survey and pays the base PHQ-9 reward. Audio and written bonuses
+   * are added separately when those responses are submitted.
+   *
+   * @param timestamp The timestamp of survey completion.
+   * @param surveyResponseId The survey response ID (kept for future use/logging).
+   * @throws UnauthenticatedException Thrown if the user is not authenticated.
+   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
+   */
+  public void recordWeekly(Date timestamp, Integer surveyResponseId)
+      throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 
     Progress progress = getProgress();
@@ -273,18 +288,41 @@ public class ProgressService {
       return;
     }
 
-    Optional<Incentive> incentiveOpt = incentiveRepository.findById(WEEKLY_INCENTIVE_ID);
-    if (incentiveOpt.isEmpty()) {
-      throw new IllegalStateException(
-          "Weekly incentive with ID " + WEEKLY_INCENTIVE_ID + " not found");
-    }
-
-    Incentive incentive = incentiveOpt.get();
+    // Pay base PHQ-9 reward ($2). Audio/written bonuses added when those responses are submitted.
+    BigDecimal totalReward = WEEKLY_BASE_REWARD;
 
     progress.setNextWeeklySurvey(
         new Date(now.getTime() + 1000L * 60 * 60 * 24 * 7)); // TODO: Improve the logic.
     progress.setWeeklySurveysCompleted(progress.getWeeklySurveysCompleted() + 1);
-    progress.setEarned(progress.getEarned().add(incentive.getReward()));
+    progress.setEarned(progress.getEarned().add(totalReward));
     progressRepository.save(progress); // Ensure progress is persisted
+  }
+
+  /**
+   * Records a written response bonus for completing the written portion of a weekly survey.
+   *
+   * @throws UnauthenticatedException Thrown if the user is not authenticated.
+   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
+   */
+  public void recordWrittenBonus() throws UnauthenticatedException, UnauthorizedException {
+    securityService.assertHasRole(LemursRole.USER);
+
+    Progress progress = getProgress();
+    progress.setEarned(progress.getEarned().add(WEEKLY_WRITTEN_BONUS));
+    progressRepository.save(progress);
+  }
+
+  /**
+   * Records an audio response bonus for completing the audio portion of a weekly survey.
+   *
+   * @throws UnauthenticatedException Thrown if the user is not authenticated.
+   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
+   */
+  public void recordAudioBonus() throws UnauthenticatedException, UnauthorizedException {
+    securityService.assertHasRole(LemursRole.USER);
+
+    Progress progress = getProgress();
+    progress.setEarned(progress.getEarned().add(WEEKLY_AUDIO_BONUS));
+    progressRepository.save(progress);
   }
 }

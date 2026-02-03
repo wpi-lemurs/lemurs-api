@@ -27,9 +27,12 @@ public class ProgressService {
   private static final Integer GOAL_TOTAL = 2;
 
   private static final Integer DAILY_INCENTIVE_ID = 0;
-  private static final Integer WEEKLY_BASE_INCENTIVE_ID = 1;
-  private static final Integer WEEKLY_AUDIO_BONUS_ID = 2;
-  private static final Integer WEEKLY_WRITTEN_BONUS_ID = 3;
+
+  // Weekly survey reward breakdown (hardcoded to avoid database changes)
+  // PHQ-9 base ($2) + audio bonus ($1.50) + written bonus ($1.50) = $5 total
+  private static final BigDecimal WEEKLY_BASE_REWARD = new BigDecimal("2.00");
+  private static final BigDecimal WEEKLY_AUDIO_BONUS = new BigDecimal("1.50");
+  private static final BigDecimal WEEKLY_WRITTEN_BONUS = new BigDecimal("1.50");
 
   private SecurityService securityService;
   private ProgressRepository progressRepository;
@@ -293,29 +296,17 @@ public class ProgressService {
       return;
     }
 
-    // Start with base PHQ-9 reward
-    Optional<Incentive> baseIncentiveOpt = incentiveRepository.findById(WEEKLY_BASE_INCENTIVE_ID);
-    if (baseIncentiveOpt.isEmpty()) {
-      throw new IllegalStateException(
-          "Weekly base incentive with ID " + WEEKLY_BASE_INCENTIVE_ID + " not found");
-    }
-    BigDecimal totalReward = baseIncentiveOpt.get().getReward();
+    // Start with base PHQ-9 reward ($2)
+    BigDecimal totalReward = WEEKLY_BASE_REWARD;
 
-    // Check if audio responses exist for this survey and add bonus
+    // Check if audio responses exist for this survey and add bonus ($1.50)
     if (audioResponseRepository.existsBySurveyResponseId(surveyResponseId)) {
-      Optional<Incentive> audioIncentiveOpt = incentiveRepository.findById(WEEKLY_AUDIO_BONUS_ID);
-      if (audioIncentiveOpt.isPresent()) {
-        totalReward = totalReward.add(audioIncentiveOpt.get().getReward());
-      }
+      totalReward = totalReward.add(WEEKLY_AUDIO_BONUS);
     }
 
-    // Check if written responses exist for this survey and add bonus
+    // Check if written responses exist for this survey and add bonus ($1.50)
     if (writtenResponseRepository.existsBySurveyResponseId(surveyResponseId)) {
-      Optional<Incentive> writtenIncentiveOpt =
-          incentiveRepository.findById(WEEKLY_WRITTEN_BONUS_ID);
-      if (writtenIncentiveOpt.isPresent()) {
-        totalReward = totalReward.add(writtenIncentiveOpt.get().getReward());
-      }
+      totalReward = totalReward.add(WEEKLY_WRITTEN_BONUS);
     }
 
     progress.setNextWeeklySurvey(

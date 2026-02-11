@@ -150,7 +150,8 @@ public class ProgressService {
         totalGoal.getReward(),
         progress.getDailySurveysCompleted(),
         weeklyGoal.getRequiredDailySurveys(),
-        weeklyGoal.getReward());
+        weeklyGoal.getReward(),
+        progress.getNextWeeklySurvey().toString());
   }
 
   /**

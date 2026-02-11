@@ -19,4 +19,5 @@ public class ProgressResponse {
   private Integer dailySurveysWeeklyCompleted;
   private Integer dailySurveysWeeklyGoal;
   private BigDecimal dailySurveysWeeklyBonus;
+  private String nextWeeklySurvey;
 }

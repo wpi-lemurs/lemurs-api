@@ -203,13 +203,23 @@ docker compose build web-dev
 docker compose up -d --no-deps web-dev
 ```
 
-### How to Deploy New Release APK to Server and Update Download Link
+### How to Deploy New Release APK to Production Server and Update Download Link
 
 1. **Upload local release file to tmp** (Using /tmp avoids permission issues because it is world-writable):
    ```bash
-   scp "/path/to/app-release.apk" your_username@lemurs-dev.wpi.edu:/tmp/
+   scp "/path/to/composeApp-release.apk" your_username@lemurs.wpi.edu:/tmp/app-release.apk
    ```
-
+   Note: Uploading a new APK to dev is the same process, just target lemurs-dev.wpi.edu instead
+2. **Assuming you have permissions***
+  ```bash
+   cp /tmp/app-release.apk /opt/lemurs/lemurs-api/web/src/downloadables/lemurs.apk.<version>
+   sudo cp /opt/lemurs/lemurs-api/web/src/downloadables/lemurs.apk.<version> /opt/lemurs/lemurs-api/web/src/downloadables/lemurs.apk
+   docker stop lemurs-web && docker rm lemurs-web
+   docker compose --env-file .env --profile prod build
+   docker compose --env-file .env --profile prod up -d
+   docker restart lemurs-proxy
+  ```
+#### For Dev:
 2. **Log in as `lemurs` user and confirm the `app-release.apk` exists in the `/tmp` directory:**
    ```bash
    lemurs@lemurs-dev:/tmp$ ls

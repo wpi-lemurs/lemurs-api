@@ -8,7 +8,7 @@
 - [Working with the Deployed Version](#working-with-the-deployed-version)
   - [Updating Specific Docker Containers](#updating-specific-docker-containers)
 - [Common Container Operations](#common-container-operations)
-  - [How to Deploy New Release APK to Server and Update Download Link](#how-to-deploy-new-release-apk-to-server-and-update-download-link)
+  - [How to Deploy New Release APK to Production Server and Update Download Link](#how-to-deploy-new-release-apk-to-production-server-and-update-download-link)
 - [Additional Resources](#additional-resources)
   - [Production Server Setup](#production-server-setup)
 

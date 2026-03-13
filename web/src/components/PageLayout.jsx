@@ -15,11 +15,9 @@ export const PageLayout = (props) => {
 
     useEffect(() => {
         if (token) {
-            fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/validate`, {
+            fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/api/validate`, {
                 method: 'GET',
-                headers: {
-                    'Authorization': token
-                }
+                credentials: 'include'
             })
             .then(res => {
                 if (res.ok) {
@@ -28,11 +26,10 @@ export const PageLayout = (props) => {
                     setIsAdmin(false);
                 }
             })
-            .catch(() => {
-                setIsAdmin(false);
-            });
-        } else {
-            setIsAdmin(false);
+                .catch(err => {
+                    console.error("Auth check failed:", err);
+                    setIsAdmin(false);
+                });
         }
     }, [token]);
 

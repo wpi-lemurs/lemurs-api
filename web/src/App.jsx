@@ -9,7 +9,6 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AdminPanel from './pages/AdminPanel';
 import HomePage from './pages/HomePage';
 import Dashboard from './pages/Dashboard';
-import AdminRoute from './components/AdminRoute';
 
 export default function App() {
     const {token, setToken} = useToken()
@@ -21,14 +20,7 @@ export default function App() {
                 <PageLayout setToken={setToken}>
                     <Routes>
                         <Route path="/" element={<HomePage />} />
-                        <Route
-                          path="/admin"
-                          element={
-                            <AdminRoute>
-                              <AdminPanel />
-                            </AdminRoute>
-                          }
-                        />
+                        <Route path="/admin" element={<AdminPanel />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

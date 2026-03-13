@@ -6,6 +6,7 @@ import { SignOutButton } from './SignOutButton';
 import { TokenContext } from './token/TokenContext';
 import { NotificationContainer } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+import { NavLink } from 'react-router-dom';
 
 export const PageLayout = (props) => {
     const { token } = useContext(TokenContext);
@@ -48,12 +49,8 @@ export const PageLayout = (props) => {
                 </a>
 
                 <Nav className="me-auto">
-                    {token !== "" &&
-                        <>
-                            <a className="nav-link text-white" href="admin">Admin Panel</a>
-                            <a className="nav-link text-white" href="dashboard">Dashboard</a>
-                        </>
-                    }
+                    {token && <Nav.Link as={NavLink} to="/dashboard">Dashboard</Nav.Link>}
+                    {isAdmin() && <Nav.Link as={NavLink} to="/admin">Admin</Nav.Link>}
                 </Nav>
 
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />

@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Button, Form, Table, Alert, Spinner } from 'react-bootstrap';
 import {
-  getDailySurvey,
+  getDailyMorningSurvey,
+  getDailyAfternoonSurvey,
   getWeeklySurvey,
   saveSurveyQuestion,
   deleteSurveyQuestion,
@@ -12,13 +13,24 @@ const emptyQuestion = { id: '', question: '', type: 'text' };
 
 const SurveyQuestions = () => {
   const { token } = useContext(TokenContext);
-  const [kind, setKind] = useState('daily'); // daily | weekly
+  const [kind, setKind] = useState('daily-morning'); // daily-morning | daily-afternoon | weekly
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [editing, setEditing] = useState(emptyQuestion);
 
-  const fetcher = useMemo(() => (kind === 'weekly' ? getWeeklySurvey : getDailySurvey), [kind]);
+  const fetcher = useMemo(() => {
+    switch (kind) {
+        case 'daily-morning':
+            return getDailyMorningSurvey;
+        case 'daily-afternoon':
+            return getDailyAfternoonSurvey;
+        case 'weekly':
+            return getWeeklySurvey;
+        default:
+            return getDailyMorningSurvey;
+    }
+  }, [kind]);
 
   const load = async () => {
     setLoading(true);
@@ -86,7 +98,8 @@ const SurveyQuestions = () => {
             onChange={(e) => setKind(e.target.value)}
             style={{ width: '180px' }}
           >
-            <option value="daily">Daily</option>
+            <option value="daily-morning">Daily Morning</option>
+            <option value="daily-afternoon">Daily Afternoon</option>
             <option value="weekly">Weekly</option>
           </Form.Select>
           <Button variant="outline-secondary" size="sm" onClick={load} disabled={loading}>
@@ -164,4 +177,3 @@ const SurveyQuestions = () => {
 };
 
 export default SurveyQuestions;
-

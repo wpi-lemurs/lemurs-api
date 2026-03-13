@@ -15,20 +15,37 @@ const mockRewards = [
   { id: 'r2', name: 'Movie Ticket', points: 200 },
 ];
 
-export async function getDailySurvey(token) {
-  const response = await fetch(`${getApiHost()}/survey/daily`, {
-    headers: { Authorization: token },
-  });
+export async function getDailyMorningSurvey(token) {
+    const response = await fetch(`${getApiHost()}/survey/daily`, {
+      headers: { Authorization: token },
+    });
 
-  if (response.status === 201) {
-    return { status: 201, data: null, message: 'Survey not currently available. Try again within survey available times.' };
+    if (response.status === 201) {
+      return { status: 201, data: null, message: 'Survey not currently available. Try again within survey available times.' };
+    }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    const morningSurveys = data.filter(survey => survey.id === 0);
+    return { status: 200, data: morningSurveys };
   }
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+
+  export async function getDailyAfternoonSurvey(token) {
+    const response = await fetch(`${getApiHost()}/survey/daily`, {
+      headers: { Authorization: token },
+    });
+
+    if (response.status === 201) {
+      return { status: 201, data: null, message: 'Survey not currently available. Try again within survey available times.' };
+    }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    const afternoonSurveys = data.filter(survey => survey.id === 1);
+    return { status: 200, data: afternoonSurveys };
   }
-  const data = await response.json();
-  return { status: 200, data };
-}
 
 export async function getWeeklySurvey(token) {
   const response = await fetch(`${getApiHost()}/survey/weekly`, {
@@ -42,7 +59,8 @@ export async function getWeeklySurvey(token) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
   const data = await response.json();
-  return { status: 200, data };
+  const weeklySurveys = data.filter(survey => survey.id === 2);
+  return { status: 200, data: weeklySurveys };
 }
 
 export async function saveSurveyQuestion(kind, question, token) {

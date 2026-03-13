@@ -70,12 +70,6 @@ export default function AdminPanel() {
             ) : (
                 <>
                     <Tabs defaultActiveKey="surveys" className="mb-3">
-                        <Tab eventKey="surveys" title="Survey Questions">
-                            <SurveyQuestions />
-                        </Tab>
-                        <Tab eventKey="rewards" title="Rewards">
-                            <Rewards />
-                        </Tab>
                         <Tab eventKey="users" title="Users & Roles">
                             <div style={{width: "50%", margin: "auto"}}>
                                 <br/>
@@ -118,6 +112,12 @@ export default function AdminPanel() {
                                     </Button>
                                 </Form>
                             </div>
+                        </Tab>
+                        <Tab eventKey="surveys" title="Survey Questions">
+                            <SurveyQuestions />
+                        </Tab>
+                        <Tab eventKey="rewards" title="Rewards">
+                            <Rewards />
                         </Tab>
                     </Tabs>
                 </>

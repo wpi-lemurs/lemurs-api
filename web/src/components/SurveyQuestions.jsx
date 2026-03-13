@@ -41,7 +41,9 @@ const SurveyQuestions = () => {
         setQuestions([]);
         setMessage(res.message || 'Survey not currently available. Try again within survey available times.');
       } else {
-        setQuestions(res.data || []);
+        // The API returns an array of surveys, and the questions are inside the first survey object.
+        const surveyData = res.data && res.data.length > 0 ? res.data[0].questions : [];
+        setQuestions(surveyData || []);
       }
     } catch (e) {
       setMessage('Failed to load survey questions.');

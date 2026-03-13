@@ -15,7 +15,7 @@ export const PageLayout = (props) => {
 
     useEffect(() => {
         if (token) {
-            fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/validate/admin`, {
+            fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/validate`, {
                 method: 'GET',
                 headers: {
                     'Authorization': token

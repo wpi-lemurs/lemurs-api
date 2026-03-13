@@ -13,7 +13,7 @@ const AdminRoute = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-        fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/api/validate/admin`, {
+        fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/validate/admin`, {
             method: 'GET',
             headers: {
                 'Authorization': token

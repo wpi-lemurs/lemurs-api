@@ -69,7 +69,7 @@ export default function AdminPanel() {
                 <h5 className="card-title">Please sign in to use the LEMURS admin panel.</h5>
             ) : (
                 <>
-                    <Tabs defaultActiveKey="surveys" className="mb-3">
+                    <Tabs defaultActiveKey="users" className="mb-3">
                         <Tab eventKey="users" title="Users & Roles">
                             <div style={{width: "50%", margin: "auto"}}>
                                 <br/>

@@ -132,7 +132,7 @@ const SurveyQuestions = () => {
               <tr key={q.id}>
                 <td>{q.id}</td>
                 <td>{q.question}</td>
-                <td>{q.type}</td>
+                <td>{q.style}</td>
                 <td className="d-flex gap-2 justify-content-center">
                   <Button size="sm" variant="outline-primary" onClick={() => startEdit(q)}>Edit</Button>
                   <Button size="sm" variant="outline-danger" onClick={() => onDelete(q.id)}>Delete</Button>

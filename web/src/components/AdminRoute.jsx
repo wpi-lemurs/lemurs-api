@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import useToken from './token/useToken';
 
@@ -8,19 +8,41 @@ const isLocalhost = () => typeof window !== 'undefined' && window.location.hostn
 // Wrap protected admin content: <AdminRoute><AdminPanel /></AdminRoute>
 const AdminRoute = ({ children }) => {
   const { token } = useToken();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const isAdmin = () => {
-    if (ALLOW_LOCAL_ADMIN && isLocalhost()) return true;
-    if (!token) return false;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.roles && payload.roles.includes('admin');
-    } catch (e) {
-      return false;
+  useEffect(() => {
+    if (token) {
+        fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/api/validate/admin`, {
+            method: 'GET',
+            headers: {
+                'Authorization': token
+            }
+        })
+        .then(res => {
+            if (res.ok) {
+                setIsAdmin(true);
+            } else {
+                setIsAdmin(false);
+            }
+        })
+        .catch(() => {
+            setIsAdmin(false);
+        })
+        .finally(() => {
+            setIsLoading(false);
+        });
+    } else {
+        setIsAdmin(false);
+        setIsLoading(false);
     }
-  };
+  }, [token]);
 
-  return isAdmin() ? children : <Navigate to="/" replace />;
+  if (isLoading) {
+      return <div>Loading...</div>; // Or a spinner component
+  }
+
+  return isAdmin ? children : <Navigate to="/" replace />;
 };
 
 export default AdminRoute;

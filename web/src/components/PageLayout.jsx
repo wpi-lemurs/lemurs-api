@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { useMsal } from "@azure/msal-react";
 import { SignInButton } from './SignInButton';
@@ -11,6 +11,30 @@ import { NavLink } from 'react-router-dom';
 export const PageLayout = (props) => {
     const { token } = useContext(TokenContext);
     const { accounts } = useMsal();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        if (token) {
+            fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/api/validate/admin`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': token
+                }
+            })
+            .then(res => {
+                if (res.ok) {
+                    setIsAdmin(true);
+                } else {
+                    setIsAdmin(false);
+                }
+            })
+            .catch(() => {
+                setIsAdmin(false);
+            });
+        } else {
+            setIsAdmin(false);
+        }
+    }, [token]);
 
     // Helper function to extract first name from a full name string
     function extractFirstName(fullName) {
@@ -50,7 +74,7 @@ export const PageLayout = (props) => {
 
                 <Nav className="me-auto">
                     {token && <Nav.Link as={NavLink} to="/dashboard">Dashboard</Nav.Link>}
-                    {isAdmin() && <Nav.Link as={NavLink} to="/admin">Admin</Nav.Link>}
+                    {isAdmin && <Nav.Link as={NavLink} to="/admin">Admin</Nav.Link>}
                 </Nav>
 
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />

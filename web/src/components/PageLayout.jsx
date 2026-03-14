@@ -71,7 +71,7 @@ export const PageLayout = (props) => {
 
                 <Nav className="me-auto">
                     {token && <Nav.Link as={NavLink} to="/dashboard">Dashboard</Nav.Link>}
-                    {isAdmin && <Nav.Link as={NavLink} to="/admin">Admin</Nav.Link>}
+                    {isAdmin && <Nav.Link as={NavLink} to="/admin">Admin Panel</Nav.Link>}
                 </Nav>
 
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />

@@ -1,4 +1,4 @@
-const getApiHost = () => process.env.REACT_APP_LEMURS_API_HOST || 'https://lemurs-dev.wpi.edu/api';
+const getApiHost = () => process.env.REACT_APP_LEMURS_API_HOST;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

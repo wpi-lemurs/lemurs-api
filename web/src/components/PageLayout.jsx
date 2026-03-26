@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { useMsal } from "@azure/msal-react";
 import { SignInButton } from './SignInButton';
@@ -6,10 +6,32 @@ import { SignOutButton } from './SignOutButton';
 import { TokenContext } from './token/TokenContext';
 import { NotificationContainer } from 'react-notifications';
 import 'react-notifications/lib/notifications.css';
+import { NavLink } from 'react-router-dom';
 
 export const PageLayout = (props) => {
     const { token } = useContext(TokenContext);
     const { accounts } = useMsal();
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        if (token) {
+            fetch(`${process.env.REACT_APP_LEMURS_API_HOST}/api/validate`, {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(res => {
+                if (res.ok) {
+                    setIsAdmin(true);
+                } else {
+                    setIsAdmin(false);
+                }
+            })
+                .catch(err => {
+                    console.error("Auth check failed:", err);
+                    setIsAdmin(false);
+                });
+        }
+    }, [token]);
 
     // Helper function to extract first name from a full name string
     function extractFirstName(fullName) {
@@ -48,12 +70,8 @@ export const PageLayout = (props) => {
                 </a>
 
                 <Nav className="me-auto">
-                    {token !== "" &&
-                        <>
-                            <a className="nav-link text-white" href="admin">Admin Panel</a>
-                            <a className="nav-link text-white" href="dashboard">Dashboard</a>
-                        </>
-                    }
+                    {token && <Nav.Link as={NavLink} to="/dashboard">Dashboard</Nav.Link>}
+                    {isAdmin && <Nav.Link as={NavLink} to="/admin">Admin Panel</Nav.Link>}
                 </Nav>
 
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />

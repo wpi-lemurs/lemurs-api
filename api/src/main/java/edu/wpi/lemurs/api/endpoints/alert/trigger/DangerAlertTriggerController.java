@@ -20,7 +20,7 @@ public class DangerAlertTriggerController {
     this.service = service;
   }
 
-  @GetMapping ("/danger-alert-triggers")
+  @GetMapping("/danger-alert-triggers")
   public ResponseEntity<List<DangerAlertTriggerDto>> getAllTriggers()
       throws UnauthenticatedException, UnauthorizedException {
     return ResponseEntity.ok(service.getAllTriggers());

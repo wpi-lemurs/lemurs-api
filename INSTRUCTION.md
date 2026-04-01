@@ -47,7 +47,7 @@ This directory contains the backend code for the application, built with Spring 
 
 **Flow of a Request:**
 1. Client sends an HTTP request to a specific endpoint (e.g., `/api/endpoint-name`).
-2. The request is routed to the corresponding controller method in `EndpointNameController.java.`
+2. The request is routed through our Nginx Reverse Proxy to the corresponding controller method in `EndpointNameController.java.`
 3. The controller method processes the request with the correct DTO fields, extracts parameters or body data, and calls the appropriate method in `EndpointNameService.java`.
 4. The service method contains the business logic, processes the data to turn DTO input into entity output, and interacts with the database through `EndpointNameRepository.java`.
 5. The repository performs the necessary database operations (e.g., fetching, saving, updating data).
@@ -71,6 +71,7 @@ This directory contains configuration files for the Nginx reverse proxy server. 
 **Routing Configuration:**
 - Requests to `/api/` are forwarded to the backend API service (lemurs-api).
 - Requests to `/web/` are forwarded to the frontend web service (lemurs-web).
+- Requests to `/dashboard/` are forwarded to the frontend dashboard/radar service (lemurs-dashboard).
 - Requests to `/` are redirected to `/web/`.
 
 **Key Files:**
@@ -86,7 +87,7 @@ Use a PostgreSQL client (e.g., DBeaver) with the following details:
 - **Host:** `130.215.43.64`
 - **Port:** `5432`
 - **Database Name:** `lemurs`
-- **Username/Password:** Contact the backend team
+- **Username/Password:** Contact the project maintainers
 
 **Key Files and Directories:**
 - `Dockerfile`: Builds the database container for development and deployment.
@@ -110,19 +111,22 @@ Use a PostgreSQL client (e.g., DBeaver) with the following details:
 - Review and test migrations before production.
 - Manage database credentials securely.
 - If using a Mac, you may have to turn off the Private Wi-Fi address for WPI-wireless to connect to the server.
+- We've hardcoded postgres:17 in the Dockerfile for backwards compatability, so if you want to use a different version, update that and make sure you migrate the exiting data.
 
 **Contact:**
-For database setup questions/issues, contact the backend development team.
+For database setup questions/issues, contact the project maintainers.
 
 ## Web
 
-**Deployed at:** https://lemurs-dev.wpi.edu/web
+**Development Site Deployed at:** https://lemurs-dev.wpi.edu/web
+**Production Site Deployed at:** https://lemurs.wpi.edu/web
 
-This directory contains the frontend code, built with React. It serves as a site for users to download the Android APK. Administrators can manage users and assign roles at `/admin`. The dashboard is being developed to visualize app data.
+This directory contains the frontend code, built with React. It serves as a site for users to download the Android APK. Administrators can manage users and assign roles at `/admin`. The dashboard/radar visualizes app data.
+We have done preliminary work on the admin panel, specifically defining the frontend components to support project maintenance (viewing, editing, removing) questions and bonuses, but the corresponding backend api logic is incomplete.
 
-# Working with the Deployed Version
+# Working with the Deployed DEV API
 
-The deployed lemurs-api is hosted on a WPI server. To work with it, set up an SSH tunnel:
+The deployed dev lemurs-api is hosted on a WPI server. To work with it, set up an SSH tunnel:
 
 1. **Obtain Access:** Ensure you have permissions and credentials. Contact the system administrator if needed.
 2. **Set Up SSH Key:** Generate an SSH key pair:
@@ -196,6 +200,16 @@ docker stop lemurs-db && docker rm lemurs-db && docker compose --profile dev up 
 docker compose build proxy
 docker compose up -d --no-deps proxy
 ```
+
+# Working with the Deployed PROD API
+The production API is also hosted on a WPI server. The process for working with it is similar to the dev API.
+1. Get access and credentials from the administrator.
+2. Set up SSH key and share with administrator.
+3. SSH to the server:
+4. ```bash
+    ssh lemurs.wpi.edu
+    ```
+All the commands are same as dev, git repo lives under `/opt/lemurs/lemurs-api` and the containers are named `lemurs-api`, `lemurs-web`, `lemurs-dashboard`, `lemurs-proxy`, and `lemurs-db` (no -dev suffix). The only difference is that you need to use `--profile prod` instead of `--profile dev` when building and deploying containers.
 
 **Redeploy Web Service:**
 ```bash
@@ -283,7 +297,7 @@ sudo snap start docker
 sudo snap services docker
 ```
 
-## Clean Install of All Containers (Including Database)
+## DANGER!! - Clean Install of All Containers (Including Database)
 - To perform a clean install of all containers, including the database, follow these steps:
 
 Note: May need to docker compose down first to remove volume. Check by running `docker volume list` and `docker volume rm <any-left-over>

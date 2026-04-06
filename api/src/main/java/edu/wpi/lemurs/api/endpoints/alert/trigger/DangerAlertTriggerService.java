@@ -68,6 +68,7 @@ public class DangerAlertTriggerService {
   public void checkAnswersForDangerAlerts(Integer userId, List<AnswerDto> answers) {
     List<String> dangerReasons = new ArrayList<>();
     boolean sendEmail = false;
+    boolean yesNoAnswer = false;
 
     for (AnswerDto answerDto : answers) {
       DangerAlertTrigger trigger = activeTriggers.get(answerDto.getQuestionId());
@@ -78,14 +79,19 @@ public class DangerAlertTriggerService {
         try {
           if ("yes".equalsIgnoreCase(answer)) {
             score = 1;
+            yesNoAnswer = true;
           } else if ("no".equalsIgnoreCase(answer)) {
             score = 0;
+            yesNoAnswer = false;
           } else {
             score = Integer.parseInt(answer);
           }
           if (score >= trigger.getThreshold() - 1) {
             sendEmail = sendEmail || trigger.getSendEmail();
-            String message = trigger.getAlertMessage().replace("{score}", String.valueOf(score));
+            String message =
+                trigger
+                    .getAlertMessage()
+                    .replace("{score}", String.valueOf(yesNoAnswer ? score : score + 1));
             dangerReasons.add(message);
           }
         } catch (NumberFormatException e) {

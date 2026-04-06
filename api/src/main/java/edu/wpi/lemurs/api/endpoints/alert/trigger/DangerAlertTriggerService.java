@@ -67,6 +67,7 @@ public class DangerAlertTriggerService {
 
   public void checkAnswersForDangerAlerts(Integer userId, List<AnswerDto> answers) {
     List<String> dangerReasons = new ArrayList<>();
+    boolean sendEmail = false;
 
     for (AnswerDto answerDto : answers) {
       DangerAlertTrigger trigger = activeTriggers.get(answerDto.getQuestionId());
@@ -82,7 +83,8 @@ public class DangerAlertTriggerService {
           } else {
             score = Integer.parseInt(answer);
           }
-          if (score >= trigger.getThreshold()) {
+          if (score >= trigger.getThreshold()-1) {
+              sendEmail = sendEmail || trigger.getSendEmail();
             String message = trigger.getAlertMessage().replace("{score}", String.valueOf(score));
             dangerReasons.add(message);
           }
@@ -96,7 +98,7 @@ public class DangerAlertTriggerService {
       }
     }
 
-    if (!dangerReasons.isEmpty()) {
+    if (!dangerReasons.isEmpty() && sendEmail) {
       try {
         dangerAlertEmailService.sendAlertWithoutAuthCheck(userId, dangerReasons);
       } catch (MessagingException

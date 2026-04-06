@@ -75,7 +75,8 @@ public class DangerAlertTriggerManagementService {
             dto.getAlertMessage(),
             dto.getIsActive() != null ? dto.getIsActive() : true,
             null, // createdAt - will be set by database default
-            null // updatedAt - will be set by database default
+            null, // updatedAt - will be set by database default
+            dto.getSend_email()
             );
 
     entity = triggerRepository.save(entity);
@@ -136,7 +137,8 @@ public class DangerAlertTriggerManagementService {
         entity.getQuestionId(),
         entity.getThreshold(),
         entity.getAlertMessage(),
-        entity.getIsActive());
+        entity.getIsActive(),
+        entity.getSendEmail());
   }
 
   // For dependency injection

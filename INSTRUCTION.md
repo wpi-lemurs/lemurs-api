@@ -187,7 +187,7 @@ The deployed dev lemurs-api is hosted on a WPI server. To work with it, set up a
    ```bash
    docker compose up -d --no-deps <service-name>
    ```
-
+## Note: When updating lemurs-api, ensure`./gradlew spotlessApply` was run on the code you are trying to deploy
 ### Common Container Operations
 
 **Database Re-creation (with no data loss):**
@@ -216,6 +216,7 @@ All the commands are same as dev, git repo lives under `/opt/lemurs/lemurs-api` 
 docker compose build web-dev
 docker compose up -d --no-deps web-dev
 ```
+## Note: When updating lemurs-api, ensure`./gradlew spotlessApply` was run on the code you are trying to deploy
 
 ### How to Deploy New Release APK to Production Server and Update Download Link
 

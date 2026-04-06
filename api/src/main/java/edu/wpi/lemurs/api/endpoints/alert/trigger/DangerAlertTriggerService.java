@@ -83,8 +83,8 @@ public class DangerAlertTriggerService {
           } else {
             score = Integer.parseInt(answer);
           }
-          if (score >= trigger.getThreshold()-1) {
-              sendEmail = sendEmail || trigger.getSendEmail();
+          if (score >= trigger.getThreshold() - 1) {
+            sendEmail = sendEmail || trigger.getSendEmail();
             String message = trigger.getAlertMessage().replace("{score}", String.valueOf(score));
             dangerReasons.add(message);
           }

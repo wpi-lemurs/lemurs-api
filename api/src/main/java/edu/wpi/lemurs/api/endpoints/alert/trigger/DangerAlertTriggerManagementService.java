@@ -76,8 +76,7 @@ public class DangerAlertTriggerManagementService {
             dto.getIsActive() != null ? dto.getIsActive() : true,
             null, // createdAt - will be set by database default
             null, // updatedAt - will be set by database default
-            dto.getSend_email()
-            );
+            dto.getSend_email());
 
     entity = triggerRepository.save(entity);
     triggerService.refreshTriggers(); // Refresh cached triggers

@@ -16,6 +16,7 @@ public class DangerAlertTriggerDto {
   private Integer threshold;
   private String alertMessage;
   private Boolean isActive;
+  private Boolean send_email;
 
   // // Constructors
   // public DangerAlertTriggerDto() {}

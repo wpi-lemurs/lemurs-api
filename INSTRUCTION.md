@@ -124,7 +124,8 @@ For database setup questions/issues, contact the project maintainers.
 This directory contains the frontend code, built with React. It serves as a site for users to download the Android APK. Administrators can manage users and assign roles at `/admin`. The dashboard/radar visualizes app data.
 We have done preliminary work on the admin panel, specifically defining the frontend components to support project maintenance (viewing, editing, removing) questions and bonuses, but the corresponding backend api logic is incomplete.
 
-# Working with the Deployed DEV API
+# Working with the Deployed Version
+## Working with the Deployed DEV API
 
 The deployed dev lemurs-api is hosted on a WPI server. To work with it, set up an SSH tunnel:
 
@@ -147,6 +148,16 @@ The deployed dev lemurs-api is hosted on a WPI server. To work with it, set up a
    su lemurs
    ```
    (ask admin for password)
+
+## Working with the Deployed PROD API
+The production API is also hosted on a WPI server. The process for working with it is similar to the dev API.
+1. Get **access and credentials** from the administrator.
+2. **Set up SSH key** and share with administrator.
+3. **SSH to the server:**
+   ```bash
+   ssh lemurs.wpi.edu
+   ```
+All the commands are same as dev, git repo lives under `/opt/lemurs/lemurs-api` and the containers are named `lemurs-api`, `lemurs-web`, `lemurs-dashboard`, `lemurs-proxy`, and `lemurs-db` (no -dev suffix). The only difference is that you need to use `--profile prod` instead of `--profile dev` when building and deploying containers.
 
 ### Updating Specific Docker Containers
 
@@ -187,7 +198,11 @@ The deployed dev lemurs-api is hosted on a WPI server. To work with it, set up a
    ```bash
    docker compose up -d --no-deps <service-name>
    ```
-## Note: When updating lemurs-api, ensure`./gradlew spotlessApply` was run on the code you are trying to deploy
+## Note 1: When updating lemurs-api, ensure`./gradlew spotlessApply` was run on the code you are trying to deploy
+## Note 2: On updating a specific container, such as lemurs-api, refresh the proxy after making the change by running: 
+   ```bash
+   docker restart lemurs-proxy
+   ```
 ### Common Container Operations
 
 **Database Re-creation (with no data loss):**
@@ -201,22 +216,16 @@ docker compose build proxy
 docker compose up -d --no-deps proxy
 ```
 
-# Working with the Deployed PROD API
-The production API is also hosted on a WPI server. The process for working with it is similar to the dev API.
-1. Get access and credentials from the administrator.
-2. Set up SSH key and share with administrator.
-3. SSH to the server:
-4. ```bash
-    ssh lemurs.wpi.edu
-    ```
-All the commands are same as dev, git repo lives under `/opt/lemurs/lemurs-api` and the containers are named `lemurs-api`, `lemurs-web`, `lemurs-dashboard`, `lemurs-proxy`, and `lemurs-db` (no -dev suffix). The only difference is that you need to use `--profile prod` instead of `--profile dev` when building and deploying containers.
-
 **Redeploy Web Service:**
 ```bash
 docker compose build web-dev
 docker compose up -d --no-deps web-dev
 ```
-## Note: When updating lemurs-api, ensure`./gradlew spotlessApply` was run on the code you are trying to deploy
+
+**Restart Proxy**
+```bash
+docker restart lemurs-proxy
+```
 
 ### How to Deploy New Release APK to Production Server and Update Download Link
 

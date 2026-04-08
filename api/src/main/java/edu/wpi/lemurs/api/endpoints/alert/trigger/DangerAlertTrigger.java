@@ -38,4 +38,7 @@ public class DangerAlertTrigger {
 
   @Column(name = "updated_at", insertable = false)
   private ZonedDateTime updatedAt;
+
+  @Column(name = "send_email", nullable = false)
+  private Boolean sendEmail;
 }

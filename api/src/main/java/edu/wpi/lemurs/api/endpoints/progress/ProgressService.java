@@ -199,29 +199,6 @@ public class ProgressService {
     return GOAL_3_WEEKS;
   }
 
-  /**
-   * Gets the date for the next available daily and weekly survey.
-   *
-   * @throws UnauthenticatedException Thrown if the user is not authenticated.
-   * @throws UnauthorizedException Thrown if the user does not have {@code LemursRole.USER} role.
-   */
-  public List<AvailableResponse> getSurveyAvailability()
-      throws UnauthenticatedException, UnauthorizedException {
-    securityService.assertHasRole(LemursRole.USER);
-
-    Progress progress = getProgress();
-
-    List<AvailableResponse> availability = new ArrayList<>();
-    AvailableResponse daily =
-        new AvailableResponse(
-            "daily",
-            surveyAvailabilityService.getNextAvailableSurveyOpen(progress.getNextDailySurvey()));
-    AvailableResponse weekly = new AvailableResponse("weekly", progress.getNextWeeklySurvey());
-    availability.add(daily);
-    availability.add(weekly);
-    return availability;
-  }
-
   public void recordDaily(Date timestamp) throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasRole(LemursRole.USER);
 

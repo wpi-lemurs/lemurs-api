@@ -9,6 +9,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import edu.wpi.lemurs.api.TestConstants;
+import edu.wpi.lemurs.api.endpoints.progress.Progress;
+import edu.wpi.lemurs.api.endpoints.progress.ProgressRepository;
 import edu.wpi.lemurs.api.endpoints.survey.SurveyStatusResponse;
 import edu.wpi.lemurs.api.endpoints.survey.SurveyWindowDto;
 import edu.wpi.lemurs.api.endpoints.survey.answer.SurveyResponse;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -42,6 +45,7 @@ class SurveyAvailabilityServiceTest implements TestConstants {
   private SecurityService securityService;
   private SurveyAvailabilityRepository surveyAvailabilityRepository;
   private SurveyResponseRepository surveyResponseRepository;
+  private ProgressRepository progressRepository;
   private SurveyAvailabilityService service;
 
   /** Submissions the fake repository will serve, filtered by the requested instant range. */
@@ -52,6 +56,8 @@ class SurveyAvailabilityServiceTest implements TestConstants {
     securityService = mock(SecurityService.class);
     surveyAvailabilityRepository = mock(SurveyAvailabilityRepository.class);
     surveyResponseRepository = mock(SurveyResponseRepository.class);
+    progressRepository = mock(ProgressRepository.class);
+    when(progressRepository.findById(TEST_ID_0)).thenReturn(Optional.empty());
 
     SurveyWindowProperties properties = new SurveyWindowProperties();
     properties.setWindowSurveyIds(
@@ -59,7 +65,11 @@ class SurveyAvailabilityServiceTest implements TestConstants {
 
     service =
         new SurveyAvailabilityService(
-            securityService, surveyAvailabilityRepository, surveyResponseRepository, properties);
+            securityService,
+            surveyAvailabilityRepository,
+            surveyResponseRepository,
+            progressRepository,
+            properties);
 
     when(securityService.getUser()).thenReturn(new User(TEST_ID_0, false, false));
     when(surveyAvailabilityRepository.findAll())
@@ -234,6 +244,36 @@ class SurveyAvailabilityServiceTest implements TestConstants {
     assertThat(length).isEqualTo(Duration.ofHours(25));
   }
 
+  // --- weekly survey --------------------------------------------------------
+
+  /** Tests that a participant with no progress row yet has the weekly survey open. */
+  @Test
+  void testWeeklyIsOpenWithoutProgress() throws Exception {
+    SurveyStatusResponse status = service.getStatus(LocalDate.of(2026, 7, 30), NEW_YORK);
+
+    assertThat(status.getWeeklyNextAvailable()).isNull();
+  }
+
+  /** Tests that the weekly next-available instant is reported verbatim from progress. */
+  @Test
+  void testWeeklyNextAvailableComesFromProgress() throws Exception {
+    Instant nextWeekly = Instant.parse("2026-08-06T17:00:00Z");
+    Progress progress =
+        new Progress(
+            TEST_ID_0,
+            java.math.BigDecimal.ZERO,
+            0,
+            0,
+            new Date(),
+            new Date(),
+            Date.from(nextWeekly));
+    when(progressRepository.findById(TEST_ID_0)).thenReturn(Optional.of(progress));
+
+    SurveyStatusResponse status = service.getStatus(LocalDate.of(2026, 7, 30), KOLKATA);
+
+    assertThat(status.getWeeklyNextAvailable().toInstant()).isEqualTo(nextWeekly);
+  }
+
   // --- configuration --------------------------------------------------------
 
   /** Tests that a window with no configured survey id is reported but never marked complete. */
@@ -242,7 +282,11 @@ class SurveyAvailabilityServiceTest implements TestConstants {
     SurveyWindowProperties empty = new SurveyWindowProperties();
     service =
         new SurveyAvailabilityService(
-            securityService, surveyAvailabilityRepository, surveyResponseRepository, empty);
+            securityService,
+            surveyAvailabilityRepository,
+            surveyResponseRepository,
+            progressRepository,
+            empty);
     submitted(MORNING_SURVEY_ID, localTime(NEW_YORK, 2026, 7, 30, 9, 0));
 
     SurveyStatusResponse status = service.getStatus(LocalDate.of(2026, 7, 30), NEW_YORK);

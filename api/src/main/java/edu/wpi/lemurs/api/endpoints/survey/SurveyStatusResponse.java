@@ -1,6 +1,8 @@
 /* Copyright (C) 2024 Worcester Polytechnic University */
 package edu.wpi.lemurs.api.endpoints.survey;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,4 +25,17 @@ public class SurveyStatusResponse {
 
   /** Names of the windows the participant has already completed on the requested local date. */
   private List<String> completedWindows;
+
+  /**
+   * When the weekly survey next becomes available, or null if it is available now.
+   *
+   * <p>Unlike the daily windows this genuinely is an absolute instant: the weekly survey is gated
+   * on "seven days since the last one" rather than on a time of day, so it needs no local
+   * interpretation.
+   */
+  @JsonFormat(
+      shape = JsonFormat.Shape.STRING,
+      pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+      timezone = "UTC")
+  private Date weeklyNextAvailable;
 }

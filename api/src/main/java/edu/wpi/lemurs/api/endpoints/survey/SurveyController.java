@@ -2,8 +2,7 @@
 package edu.wpi.lemurs.api.endpoints.survey;
 
 import edu.wpi.lemurs.api.data.availability.SurveyAvailabilityService;
-import edu.wpi.lemurs.api.endpoints.progress.AvailableResponse;
-import edu.wpi.lemurs.api.endpoints.progress.ProgressService;
+import edu.wpi.lemurs.api.exceptions.BadRequestException;
 import edu.wpi.lemurs.api.exceptions.UnauthenticatedException;
 import edu.wpi.lemurs.api.exceptions.UnauthorizedException;
 import java.time.DateTimeException;
@@ -23,16 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class SurveyController {
 
   private SurveyService surveyService;
-  private ProgressService progressService;
   private SurveyAvailabilityService surveyAvailabilityService;
 
   @Autowired
   public SurveyController(
-      SurveyService surveyService,
-      ProgressService progressService,
-      SurveyAvailabilityService surveyAvailabilityService) {
+      SurveyService surveyService, SurveyAvailabilityService surveyAvailabilityService) {
     this.surveyService = surveyService;
-    this.progressService = progressService;
     this.surveyAvailabilityService = surveyAvailabilityService;
   }
 
@@ -61,12 +56,21 @@ public class SurveyController {
     }
   }
 
+  /**
+   * The <code>/survey/daily</code> {@code GET} endpoint returns the questions for the window the
+   * participant is currently in.
+   *
+   * @param windowName The window the client has determined it is in, e.g. {@code morning}.
+   */
   @GetMapping("/survey/daily")
-  public ResponseEntity<List<SurveyApiResponse>> getDailySurveys() {
+  public ResponseEntity<List<SurveyApiResponse>> getDailySurveys(
+      @RequestParam("windowName") String windowName) {
     try {
-      List<SurveyApiResponse> surveys = surveyService.getDailySurveys();
+      List<SurveyApiResponse> surveys = surveyService.getDailySurveys(windowName);
 
       return new ResponseEntity<>(surveys, HttpStatus.OK);
+    } catch (BadRequestException e) {
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     } catch (UnauthenticatedException e) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     } catch (UnauthorizedException e) {
@@ -80,20 +84,6 @@ public class SurveyController {
       List<SurveyApiResponse> surveys = surveyService.getWeeklySurveys();
 
       return new ResponseEntity<>(surveys, HttpStatus.OK);
-    } catch (UnauthenticatedException e) {
-      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    } catch (UnauthorizedException e) {
-      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-    }
-  }
-
-  @GetMapping("/survey/available")
-  public ResponseEntity<List<AvailableResponse>> getAvailability() {
-    try {
-
-      List<AvailableResponse> availability = progressService.getSurveyAvailability();
-
-      return new ResponseEntity<>(availability, HttpStatus.OK);
     } catch (UnauthenticatedException e) {
       return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     } catch (UnauthorizedException e) {

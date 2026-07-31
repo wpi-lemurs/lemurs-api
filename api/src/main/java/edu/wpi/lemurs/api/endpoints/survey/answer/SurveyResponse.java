@@ -37,4 +37,13 @@ public class SurveyResponse {
 
   @Column(nullable = false)
   private Date notificationStart;
+
+  /**
+   * Identifies one submission attempt, so a retry of that attempt is not stored twice.
+   *
+   * <p>Nullable: rows written before submissions had an identity do not have one, and a client that
+   * omits it still submits successfully, just without the duplicate protection.
+   */
+  @Column(name = "client_submission_id", length = 64)
+  private String clientSubmissionId;
 }

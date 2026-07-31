@@ -41,15 +41,28 @@ public class AnswerService {
     this.dangerAlertTriggerService = dangerAlertTriggerService;
   }
 
+  /**
+   * The outcome of storing a submission.
+   *
+   * @param surveyResponseIds The stored responses, whether newly written or found from an earlier
+   *     attempt.
+   * @param alreadyStored True when this attempt had already been recorded, so nothing was written.
+   */
+  private record RecordResult(List<Integer> surveyResponseIds, boolean alreadyStored) {}
+
   public void recordAnswersDaily(CombinedSurveyResponseDto combinedSurveyResponseDto)
       throws UnauthenticatedException, UnauthorizedException {
     securityService.assertHasPermission(LemursRole.USER);
 
     // TODO: Check that the survey are all daily surveys.
 
-    recordAnswers(combinedSurveyResponseDto);
+    RecordResult result = recordAnswers(combinedSurveyResponseDto);
 
-    progressService.recordDaily(combinedSurveyResponseDto.getTimestamp());
+    // Progress drives participant payment, so a retry must not count the survey
+    // a second time.
+    if (!result.alreadyStored()) {
+      progressService.recordDaily(combinedSurveyResponseDto.getTimestamp());
+    }
   }
 
   public Integer recordAnswersWeekly(CombinedSurveyResponseDto combinedSurveyResponseDto)
@@ -64,15 +77,19 @@ public class AnswerService {
         userId,
         combinedSurveyResponseDto.getTimestamp());
 
-    List<Integer> surveyResponseIds = recordAnswers(combinedSurveyResponseDto);
+    RecordResult result = recordAnswers(combinedSurveyResponseDto);
+    List<Integer> surveyResponseIds = result.surveyResponseIds();
 
     // Return the first survey response ID (primary survey for linking)
     if (!surveyResponseIds.isEmpty()) {
       Integer primarySurveyResponseId = surveyResponseIds.get(0);
 
-      // Record weekly progress with survey response ID to check for audio/written bonuses
-      progressService.recordWeekly(
-          combinedSurveyResponseDto.getTimestamp(), primarySurveyResponseId);
+      // Record weekly progress with survey response ID to check for audio/written bonuses.
+      // Skipped for a retry, which would otherwise pay the weekly bonus twice.
+      if (!result.alreadyStored()) {
+        progressService.recordWeekly(
+            combinedSurveyResponseDto.getTimestamp(), primarySurveyResponseId);
+      }
 
       logger.info(
           "Weekly survey submission completed for user {} - primary survey response ID: {}",
@@ -85,9 +102,27 @@ public class AnswerService {
     }
   }
 
-  private List<Integer> recordAnswers(CombinedSurveyResponseDto combinedSurveyResponseDto)
+  private RecordResult recordAnswers(CombinedSurveyResponseDto combinedSurveyResponseDto)
       throws UnauthenticatedException, UnauthorizedException {
     Integer userId = securityService.getUser().getId();
+    String clientSubmissionId = combinedSurveyResponseDto.getClientSubmissionId();
+
+    // A retry of an attempt already stored is treated as success and changes
+    // nothing. Without this a double-tap wrote a full duplicate set, which is
+    // what the duplicate_survey_responses view was built to find after the fact.
+    if (clientSubmissionId != null && !clientSubmissionId.isBlank()) {
+      List<SurveyResponse> existing =
+          surveyResponseRepository.findByUserAndClientSubmissionId(userId, clientSubmissionId);
+      if (!existing.isEmpty()) {
+        logger.info(
+            "Ignoring duplicate submission {} for user {}; {} response(s) already stored",
+            clientSubmissionId,
+            userId,
+            existing.size());
+        return new RecordResult(existing.stream().map(SurveyResponse::getId).toList(), true);
+      }
+    }
+
     List<Integer> surveyResponseIds = new ArrayList<>();
 
     for (SurveyResponseDto surveyResponseDto : combinedSurveyResponseDto.getSurveys()) {
@@ -97,7 +132,8 @@ public class AnswerService {
               userId,
               surveyResponseDto.getId(),
               combinedSurveyResponseDto.getTimestamp(),
-              combinedSurveyResponseDto.getNotificationStart());
+              combinedSurveyResponseDto.getNotificationStart(),
+              clientSubmissionId);
       survey = surveyResponseRepository.save(survey);
       surveyResponseIds.add(survey.getId());
 
@@ -112,6 +148,6 @@ public class AnswerService {
       dangerAlertTriggerService.checkAnswersForDangerAlerts(userId, surveyResponseDto.getAnswers());
     }
 
-    return surveyResponseIds;
+    return new RecordResult(surveyResponseIds, false);
   }
 }

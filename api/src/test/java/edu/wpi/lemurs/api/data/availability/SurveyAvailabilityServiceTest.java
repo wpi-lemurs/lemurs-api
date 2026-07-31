@@ -102,7 +102,7 @@ class SurveyAvailabilityServiceTest implements TestConstants {
   /** Records a submission of the given survey at the given instant. */
   private void submitted(Integer surveyId, Instant when) {
     storedResponses.add(
-        new SurveyResponse(1, TEST_ID_0, surveyId, Date.from(when), Date.from(when)));
+        new SurveyResponse(1, TEST_ID_0, surveyId, Date.from(when), Date.from(when), null));
   }
 
   /** The instant at which it is the given wall-clock time in the given zone. */

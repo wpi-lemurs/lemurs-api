@@ -25,4 +25,16 @@ public interface SurveyResponseRepository extends CrudRepository<SurveyResponse,
           + "WHERE r.userID = :userId AND r.timestamp >= :from AND r.timestamp < :to")
   List<SurveyResponse> findByUserBetween(
       @Param("userId") Integer userId, @Param("from") Date from, @Param("to") Date to);
+
+  /**
+   * Finds the responses already stored for one submission attempt.
+   *
+   * <p>Scoped to the user, matching the unique index: two participants generating the same id must
+   * not block one another.
+   */
+  @Query(
+      "SELECT r FROM SurveyResponse r "
+          + "WHERE r.userID = :userId AND r.clientSubmissionId = :clientSubmissionId")
+  List<SurveyResponse> findByUserAndClientSubmissionId(
+      @Param("userId") Integer userId, @Param("clientSubmissionId") String clientSubmissionId);
 }

@@ -16,4 +16,12 @@ public class CombinedSurveyResponseDto {
   private Date timestamp;
   private List<SurveyResponseDto> surveys;
   private Date notificationStart;
+
+  /**
+   * Identifies this submission attempt so retrying it does not store it twice.
+   *
+   * <p>Generated once by the client when the participant submits and reused for every retry of that
+   * attempt. Optional: a client that omits it still submits, but without duplicate protection.
+   */
+  private String clientSubmissionId;
 }

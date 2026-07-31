@@ -1,5 +1,13 @@
 -- Make survey submission idempotent.
 --
+-- Numbered 0015 rather than 0013 on purpose. 0013 and 0014 are claimed by the
+-- danger-alert re-indexing work on DangerAlertTriggerEndpointRefactor, which has
+-- been applied to the dev database (its schema.version reads 0014) even though
+-- the files are not in main. update-schema.sh only runs a file when its index is
+-- greater than the recorded version, so anything numbered 0013 or 0014 would be
+-- skipped on dev silently -- no error, no column, and an app sending
+-- client_submission_id to a database that cannot store it.
+--
 -- A submission had no identity of its own: recordAnswers always inserted a new
 -- survey_response row, so a double-tap, a network retry, or a background sync
 -- replay each produced a full duplicate set. The duplicate_survey_responses view

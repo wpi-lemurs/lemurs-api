@@ -38,4 +38,13 @@ public class SurveyStatusResponse {
       pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
       timezone = "UTC")
   private Date weeklyNextAvailable;
+
+  private Boolean studyConcluded = false;
+
+  public SurveyStatusResponse(
+      List<SurveyWindowDto> windows,
+      List<String> completedWindows,
+      Date weeklyNextAvailable) {
+    this(windows, completedWindows, weeklyNextAvailable, false);
+  }
 }

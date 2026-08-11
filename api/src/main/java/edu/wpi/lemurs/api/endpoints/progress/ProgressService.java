@@ -71,9 +71,11 @@ public class ProgressService {
     }
 
     Date now = new Date();
+    // The official study start date is the day after onboarding
+    Date startedDate = Date.from(now.toInstant().plus(1, java.time.temporal.ChronoUnit.DAYS));
 
     Progress progress =
-        new Progress(securityService.getUser().getId(), new BigDecimal(0), 0, 0, now, now, now);
+        new Progress(securityService.getUser().getId(), new BigDecimal(0), 0, 0, startedDate, now, now);
 
     return progressRepository.save(progress);
   }

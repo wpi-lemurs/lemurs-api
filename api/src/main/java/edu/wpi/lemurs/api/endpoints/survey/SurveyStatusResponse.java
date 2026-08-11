@@ -42,9 +42,7 @@ public class SurveyStatusResponse {
   private Boolean studyConcluded = false;
 
   public SurveyStatusResponse(
-      List<SurveyWindowDto> windows,
-      List<String> completedWindows,
-      Date weeklyNextAvailable) {
+      List<SurveyWindowDto> windows, List<String> completedWindows, Date weeklyNextAvailable) {
     this(windows, completedWindows, weeklyNextAvailable, false);
   }
 }

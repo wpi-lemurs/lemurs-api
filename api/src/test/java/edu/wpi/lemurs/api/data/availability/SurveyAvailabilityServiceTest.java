@@ -294,4 +294,46 @@ class SurveyAvailabilityServiceTest implements TestConstants {
     assertThat(status.getWindows()).hasSize(2);
     assertThat(status.getCompletedWindows()).isEmpty();
   }
+
+  @Test
+  void testStudyNotConcludedOnDayTwentyEight() throws Exception {
+    LocalDate startedDate = LocalDate.of(2026, 7, 1);
+    Instant startedInstant = startedDate.atStartOfDay(NEW_YORK).toInstant();
+    Progress progress =
+        new Progress(
+            TEST_ID_0,
+            java.math.BigDecimal.ZERO,
+            1,
+            0,
+            Date.from(startedInstant),
+            new Date(),
+            new Date());
+    when(progressRepository.findById(TEST_ID_0)).thenReturn(Optional.of(progress));
+
+    // July 29 is 28 days after July 1
+    SurveyStatusResponse status = service.getStatus(LocalDate.of(2026, 7, 29), NEW_YORK);
+    assertThat(status.getStudyConcluded()).isFalse();
+    assertThat(status.getWindows()).hasSize(2);
+  }
+
+  @Test
+  void testStudyConcludedAfterTwentyEightFullDays() throws Exception {
+    LocalDate startedDate = LocalDate.of(2026, 7, 1);
+    Instant startedInstant = startedDate.atStartOfDay(NEW_YORK).toInstant();
+    Progress progress =
+        new Progress(
+            TEST_ID_0,
+            java.math.BigDecimal.ZERO,
+            1,
+            0,
+            Date.from(startedInstant),
+            new Date(),
+            new Date());
+    when(progressRepository.findById(TEST_ID_0)).thenReturn(Optional.of(progress));
+
+    // July 30 is 29 days after July 1 (> 28 days elapsed)
+    SurveyStatusResponse status = service.getStatus(LocalDate.of(2026, 7, 30), NEW_YORK);
+    assertThat(status.getStudyConcluded()).isTrue();
+    assertThat(status.getWindows()).isEmpty();
+  }
 }

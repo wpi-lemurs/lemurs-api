@@ -97,13 +97,20 @@ public class SurveyAvailabilityService {
       }
     }
 
-    // The weekly survey is gated on elapsed days rather than a time of day, so
-    // its next-available time is a genuine instant and needs no local framing.
-    // A participant with no progress row yet has never taken one, so it is open.
-    Date weeklyNextAvailable =
-        progressRepository.findById(userId).map(Progress::getNextWeeklySurvey).orElse(null);
+    Progress progress = progressRepository.findById(userId).orElse(null);
+    Date weeklyNextAvailable = progress != null ? progress.getNextWeeklySurvey() : null;
 
-    return new SurveyStatusResponse(windows, completedWindows, weeklyNextAvailable);
+    boolean studyConcluded = false;
+    if (progress != null && progress.getStarted() != null) {
+      LocalDate startDate = progress.getStarted().toInstant().atZone(clientZone).toLocalDate();
+      long daysElapsed = java.time.temporal.ChronoUnit.DAYS.between(startDate, clientLocalDate);
+      if (daysElapsed > 28) {
+        studyConcluded = true;
+        windows = new ArrayList<>();
+      }
+    }
+
+    return new SurveyStatusResponse(windows, completedWindows, weeklyNextAvailable, studyConcluded);
   }
 
   /**

@@ -20,7 +20,11 @@ fi
 
 # Run 0000-initial-tables.sql first unconditionally
 echo "Running initial tables update: 0000-initial-tables.sql"
-psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "/usr/config/updates/0000-initial-tables.sql"
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "/usr/config/updates/0000-initial-tables.sql"
+if [[ $? -ne 0 ]]; then
+  echo "0000-initial-tables.sql failed; aborting before touching schema.version"
+  exit 1
+fi
 
 # Initialize schema version file if it doesn't exist
 if [ ! -e /var/lib/postgresql/data/schema.version ]; then
@@ -43,7 +47,16 @@ for entry in /usr/config/updates/*.sql; do
   if [[ "$index" > "$current" ]]; then
     if [[ "$test_tag" != "TEST" || "$POPULATE_TEST_DATA" = "Y" ]]; then
       echo "Running update: $index ($filename)"
-      psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "$entry"
+      # ON_ERROR_STOP so a failing statement fails psql's exit code instead of
+      # being swallowed; current/schema.version are only advanced below once
+      # that exit code has been checked. Previously $current advanced
+      # unconditionally, so a migration that died partway through was still
+      # recorded as applied and silently never retried on the next deploy.
+      psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "$entry"
+      if [[ $? -ne 0 ]]; then
+        echo "Update $index ($filename) failed; leaving schema.version at $current"
+        exit 1
+      fi
     else
       echo "Skipping test update: $index ($filename)"
     fi
